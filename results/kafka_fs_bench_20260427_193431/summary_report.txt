@@ -1,0 +1,354 @@
+============================================================
+  KAFKA FILESYSTEM PERFORMANCE EXPERIMENT REPORT (M1-#1)
+============================================================
+Start Time : 2026-04-27 19:34:31
+Current Round Completed : 5
+End Time   : 2026-04-27 23:29:39
+
+Experiment Scope
+- Kafka 4.2 (KRaft single broker, replication=1)
+- metadata.log.dir separated: True (target=/var/lib/kafka-meta)
+- Filesystems: ext4, f2fs (vanilla mkfs, mount with noatime,nodiratime)
+- Record sizes: [1024, 10240, 102400, 1024000]
+- Scenarios: A (Producer only), B (Producer + Consumer + Dynamic Topics)
+- Dynamic topic rate (/sec): 5
+- Measure    : 120s (warmup 30s)
+- OPS mode   : fixed (no calibration)
+- FIXED_OPS_BY_RECORD_SIZE: {1024: 200000, 10240: 20000, 102400: 2000, 1024000: 200}
+- FIXED_LOG_FLUSH_MESSAGES_BY_RECORD_SIZE: {1024: 150, 10240: 60, 102400: 20, 1024000: 3}
+
+######################### FILESYSTEM: EXT4 #########################
+
+[Record Size: 1024 Bytes]
+  [scenario_a]
+    rounds                : 5
+    target_ops mean       : 200000.00
+    achieved_ops mean     : 3646.85
+    achieved/target mean  : 1.80 %
+    total_requests mean   : 328814.20
+    send_errors mean      : 0.00
+    avg ms mean / stdev   : 0.16 / 0.00  (CV=0.0%)
+    p50 mean              : 0.00 ms
+    p90 mean              : 0.01 ms
+    p99 mean / stdev      : 5.23 / 0.08 ms  (CV=1.5%)
+    max mean              : 45.50 ms
+    disk util mean        : 81.67 %
+    disk await mean       : 0.00 ms
+    cpu iowait mean       : 11.58 %
+    bottleneck rounds     : 5/5
+  [scenario_b]
+    rounds                : 5
+    target_ops mean       : 200000.00
+    achieved_ops mean     : 3686.93
+    achieved/target mean  : 1.82 %
+    total_requests mean   : 332726.80
+    send_errors mean      : 0.00
+    avg ms mean / stdev   : 0.14 / 0.00  (CV=0.0%)
+    p50 mean              : 0.00 ms
+    p90 mean              : 0.01 ms
+    p99 mean / stdev      : 4.61 / 0.08 ms  (CV=1.8%)
+    max mean              : 56.27 ms
+    disk util mean        : 86.68 %
+    disk await mean       : 0.00 ms
+    cpu iowait mean       : 13.44 %
+    bottleneck rounds     : 5/5
+
+[Record Size: 10240 Bytes]
+  [scenario_a]
+    rounds                : 5
+    target_ops mean       : 20000.00
+    achieved_ops mean     : 1236.21
+    achieved/target mean  : 6.18 %
+    total_requests mean   : 138621.60
+    send_errors mean      : 0.00
+    avg ms mean / stdev   : 6.75 / 0.30  (CV=4.4%)
+    p50 mean              : 0.01 ms
+    p90 mean              : 8.44 ms
+    p99 mean / stdev      : 131.88 / 11.59 ms  (CV=8.8%)
+    max mean              : 351.79 ms
+    disk util mean        : 73.95 %
+    disk await mean       : 0.00 ms
+    cpu iowait mean       : 10.89 %
+    bottleneck rounds     : 0/5
+  [scenario_b]
+    rounds                : 5
+    target_ops mean       : 20000.00
+    achieved_ops mean     : 1230.63
+    achieved/target mean  : 6.16 %
+    total_requests mean   : 137328.40
+    send_errors mean      : 0.00
+    avg ms mean / stdev   : 6.93 / 1.15  (CV=16.6%)
+    p50 mean              : 0.01 ms
+    p90 mean              : 10.38 ms
+    p99 mean / stdev      : 140.18 / 12.92 ms  (CV=9.2%)
+    max mean              : 303.15 ms
+    disk util mean        : 77.56 %
+    disk await mean       : 0.00 ms
+    cpu iowait mean       : 12.68 %
+    bottleneck rounds     : 1/5
+
+[Record Size: 102400 Bytes]
+  [scenario_a]
+    rounds                : 5
+    target_ops mean       : 2000.00
+    achieved_ops mean     : 648.68
+    achieved/target mean  : 32.44 %
+    total_requests mean   : 65501.00
+    send_errors mean      : 0.00
+    avg ms mean / stdev   : 12.01 / 0.78  (CV=6.5%)
+    p50 mean              : 0.02 ms
+    p90 mean              : 35.80 ms
+    p99 mean / stdev      : 175.85 / 12.11 ms  (CV=6.9%)
+    max mean              : 398.80 ms
+    disk util mean        : 83.52 %
+    disk await mean       : 0.00 ms
+    cpu iowait mean       : 13.56 %
+    bottleneck rounds     : 5/5
+  [scenario_b]
+    rounds                : 5
+    target_ops mean       : 2000.00
+    achieved_ops mean     : 613.06
+    achieved/target mean  : 30.64 %
+    total_requests mean   : 62268.80
+    send_errors mean      : 0.00
+    avg ms mean / stdev   : 12.96 / 1.54  (CV=11.9%)
+    p50 mean              : 0.02 ms
+    p90 mean              : 35.70 ms
+    p99 mean / stdev      : 195.53 / 20.58 ms  (CV=10.5%)
+    max mean              : 474.20 ms
+    disk util mean        : 84.51 %
+    disk await mean       : 0.00 ms
+    cpu iowait mean       : 14.50 %
+    bottleneck rounds     : 5/5
+
+[Record Size: 1024000 Bytes]
+  [scenario_a]
+    rounds                : 5
+    target_ops mean       : 200.00
+    achieved_ops mean     : 124.08
+    achieved/target mean  : 62.04 %
+    total_requests mean   : 14959.20
+    send_errors mean      : 6.40
+    avg ms mean / stdev   : 11.98 / 4.94  (CV=41.2%)
+    p50 mean              : 0.19 ms
+    p90 mean              : 13.97 ms
+    p99 mean / stdev      : 254.28 / 87.13 ms  (CV=34.3%)
+    max mean              : 672.57 ms
+    disk util mean        : 70.37 %
+    disk await mean       : 0.00 ms
+    cpu iowait mean       : 11.17 %
+    bottleneck rounds     : 0/5
+  [scenario_b]
+    rounds                : 5
+    target_ops mean       : 200.00
+    achieved_ops mean     : 134.37
+    achieved/target mean  : 67.16 %
+    total_requests mean   : 13461.00
+    send_errors mean      : 0.00
+    avg ms mean / stdev   : 27.27 / 4.89  (CV=17.9%)
+    p50 mean              : 0.19 ms
+    p90 mean              : 52.42 ms
+    p99 mean / stdev      : 487.35 / 49.06 ms  (CV=10.1%)
+    max mean              : 1005.32 ms
+    disk util mean        : 90.56 %
+    disk await mean       : 0.00 ms
+    cpu iowait mean       : 14.08 %
+    bottleneck rounds     : 4/5
+
+
+######################### FILESYSTEM: F2FS #########################
+
+[Record Size: 1024 Bytes]
+  [scenario_a]
+    rounds                : 5
+    target_ops mean       : 200000.00
+    achieved_ops mean     : 3720.24
+    achieved/target mean  : 1.90 %
+    total_requests mean   : 335334.80
+    send_errors mean      : 0.00
+    avg ms mean / stdev   : 0.17 / 0.01  (CV=3.3%)
+    p50 mean              : 0.00 ms
+    p90 mean              : 0.01 ms
+    p99 mean / stdev      : 5.27 / 0.04 ms  (CV=0.8%)
+    max mean              : 49.86 ms
+    disk util mean        : 71.61 %
+    disk await mean       : 0.00 ms
+    cpu iowait mean       : 7.99 %
+    bottleneck rounds     : 0/5
+  [scenario_b]
+    rounds                : 5
+    target_ops mean       : 200000.00
+    achieved_ops mean     : 3615.50
+    achieved/target mean  : 1.80 %
+    total_requests mean   : 326565.60
+    send_errors mean      : 0.00
+    avg ms mean / stdev   : 0.14 / 0.00  (CV=0.0%)
+    p50 mean              : 0.00 ms
+    p90 mean              : 0.01 ms
+    p99 mean / stdev      : 4.50 / 0.11 ms  (CV=2.5%)
+    max mean              : 57.18 ms
+    disk util mean        : 87.53 %
+    disk await mean       : 0.00 ms
+    cpu iowait mean       : 17.16 %
+    bottleneck rounds     : 5/5
+
+[Record Size: 10240 Bytes]
+  [scenario_a]
+    rounds                : 5
+    target_ops mean       : 20000.00
+    achieved_ops mean     : 1487.81
+    achieved/target mean  : 7.44 %
+    total_requests mean   : 163359.00
+    send_errors mean      : 0.00
+    avg ms mean / stdev   : 5.11 / 0.91  (CV=17.7%)
+    p50 mean              : 0.01 ms
+    p90 mean              : 4.89 ms
+    p99 mean / stdev      : 123.89 / 3.10 ms  (CV=2.5%)
+    max mean              : 315.39 ms
+    disk util mean        : 76.01 %
+    disk await mean       : 0.00 ms
+    cpu iowait mean       : 11.81 %
+    bottleneck rounds     : 1/5
+  [scenario_b]
+    rounds                : 5
+    target_ops mean       : 20000.00
+    achieved_ops mean     : 1221.74
+    achieved/target mean  : 6.10 %
+    total_requests mean   : 134540.20
+    send_errors mean      : 0.00
+    avg ms mean / stdev   : 7.07 / 0.48  (CV=6.8%)
+    p50 mean              : 0.01 ms
+    p90 mean              : 9.26 ms
+    p99 mean / stdev      : 135.00 / 10.18 ms  (CV=7.5%)
+    max mean              : 361.55 ms
+    disk util mean        : 76.38 %
+    disk await mean       : 0.00 ms
+    cpu iowait mean       : 12.90 %
+    bottleneck rounds     : 0/5
+
+[Record Size: 102400 Bytes]
+  [scenario_a]
+    rounds                : 5
+    target_ops mean       : 2000.00
+    achieved_ops mean     : 646.36
+    achieved/target mean  : 32.32 %
+    total_requests mean   : 65453.00
+    send_errors mean      : 0.00
+    avg ms mean / stdev   : 11.93 / 1.05  (CV=8.8%)
+    p50 mean              : 0.02 ms
+    p90 mean              : 35.31 ms
+    p99 mean / stdev      : 179.16 / 18.27 ms  (CV=10.2%)
+    max mean              : 403.27 ms
+    disk util mean        : 84.35 %
+    disk await mean       : 0.00 ms
+    cpu iowait mean       : 13.69 %
+    bottleneck rounds     : 5/5
+  [scenario_b]
+    rounds                : 5
+    target_ops mean       : 2000.00
+    achieved_ops mean     : 524.65
+    achieved/target mean  : 26.22 %
+    total_requests mean   : 53388.20
+    send_errors mean      : 0.00
+    avg ms mean / stdev   : 16.93 / 1.79  (CV=10.6%)
+    p50 mean              : 0.02 ms
+    p90 mean              : 60.47 ms
+    p99 mean / stdev      : 242.82 / 21.48 ms  (CV=8.8%)
+    max mean              : 532.19 ms
+    disk util mean        : 82.45 %
+    disk await mean       : 0.00 ms
+    cpu iowait mean       : 14.84 %
+    bottleneck rounds     : 5/5
+
+[Record Size: 1024000 Bytes]
+  [scenario_a]
+    rounds                : 5
+    target_ops mean       : 200.00
+    achieved_ops mean     : 132.81
+    achieved/target mean  : 66.40 %
+    total_requests mean   : 15974.80
+    send_errors mean      : 0.00
+    avg ms mean / stdev   : 5.11 / 0.87  (CV=16.9%)
+    p50 mean              : 0.17 ms
+    p90 mean              : 2.81 ms
+    p99 mean / stdev      : 29.94 / 19.20 ms  (CV=64.1%)
+    max mean              : 4978.63 ms
+    disk util mean        : 76.15 %
+    disk await mean       : 0.00 ms
+    cpu iowait mean       : 10.23 %
+    bottleneck rounds     : 1/5
+  [scenario_b]
+    rounds                : 5
+    target_ops mean       : 200.00
+    achieved_ops mean     : 135.48
+    achieved/target mean  : 67.76 %
+    total_requests mean   : 12951.00
+    send_errors mean      : 0.00
+    avg ms mean / stdev   : 32.43 / 4.36  (CV=13.4%)
+    p50 mean              : 0.18 ms
+    p90 mean              : 73.97 ms
+    p99 mean / stdev      : 548.38 / 20.65 ms  (CV=3.8%)
+    max mean              : 1192.31 ms
+    disk util mean        : 90.00 %
+    disk await mean       : 0.00 ms
+    cpu iowait mean       : 13.53 %
+    bottleneck rounds     : 5/5
+
+
+######################### CROSS-FS COMPARISON #########################
+
+[Record Size 1024 Bytes]
+  [scenario_a]
+    Achieved OP/s : ext4=3646.85 | f2fs=3720.24
+    AVG latency   : ext4=0.16 ms | f2fs=0.17 ms
+    P99 latency   : ext4=5.23 ms | f2fs=5.27 ms
+    Disk util     : ext4=81.67% | f2fs=71.61%
+    Disk await    : ext4=0.00 ms | f2fs=0.00 ms
+  [scenario_b]
+    Achieved OP/s : ext4=3686.93 | f2fs=3615.50
+    AVG latency   : ext4=0.14 ms | f2fs=0.14 ms
+    P99 latency   : ext4=4.61 ms | f2fs=4.50 ms
+    Disk util     : ext4=86.68% | f2fs=87.53%
+    Disk await    : ext4=0.00 ms | f2fs=0.00 ms
+
+[Record Size 10240 Bytes]
+  [scenario_a]
+    Achieved OP/s : ext4=1236.21 | f2fs=1487.81
+    AVG latency   : ext4=6.75 ms | f2fs=5.11 ms
+    P99 latency   : ext4=131.88 ms | f2fs=123.89 ms
+    Disk util     : ext4=73.95% | f2fs=76.01%
+    Disk await    : ext4=0.00 ms | f2fs=0.00 ms
+  [scenario_b]
+    Achieved OP/s : ext4=1230.63 | f2fs=1221.74
+    AVG latency   : ext4=6.93 ms | f2fs=7.07 ms
+    P99 latency   : ext4=140.18 ms | f2fs=135.00 ms
+    Disk util     : ext4=77.56% | f2fs=76.38%
+    Disk await    : ext4=0.00 ms | f2fs=0.00 ms
+
+[Record Size 102400 Bytes]
+  [scenario_a]
+    Achieved OP/s : ext4=648.68 | f2fs=646.36
+    AVG latency   : ext4=12.01 ms | f2fs=11.93 ms
+    P99 latency   : ext4=175.85 ms | f2fs=179.16 ms
+    Disk util     : ext4=83.52% | f2fs=84.35%
+    Disk await    : ext4=0.00 ms | f2fs=0.00 ms
+  [scenario_b]
+    Achieved OP/s : ext4=613.06 | f2fs=524.65
+    AVG latency   : ext4=12.96 ms | f2fs=16.93 ms
+    P99 latency   : ext4=195.53 ms | f2fs=242.82 ms
+    Disk util     : ext4=84.51% | f2fs=82.45%
+    Disk await    : ext4=0.00 ms | f2fs=0.00 ms
+
+[Record Size 1024000 Bytes]
+  [scenario_a]
+    Achieved OP/s : ext4=124.08 | f2fs=132.81
+    AVG latency   : ext4=11.98 ms | f2fs=5.11 ms
+    P99 latency   : ext4=254.28 ms | f2fs=29.94 ms
+    Disk util     : ext4=70.37% | f2fs=76.15%
+    Disk await    : ext4=0.00 ms | f2fs=0.00 ms
+  [scenario_b]
+    Achieved OP/s : ext4=134.37 | f2fs=135.48
+    AVG latency   : ext4=27.27 ms | f2fs=32.43 ms
+    P99 latency   : ext4=487.35 ms | f2fs=548.38 ms
+    Disk util     : ext4=90.56% | f2fs=90.00%
+    Disk await    : ext4=0.00 ms | f2fs=0.00 ms

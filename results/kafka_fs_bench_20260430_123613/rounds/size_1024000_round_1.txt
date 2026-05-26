@@ -1,0 +1,936 @@
+
+================================================================================
+ RECORD SIZE 1024000 / ROUND 1/1 START 
+================================================================================
+
+######################################################################
+# FILESYSTEM = EXT4
+######################################################################
+[Record Size] 1024000 Bytes
+[Fixed OP/s] EXT4 / scenario_a / 1024000B -> target_ops=100
+[Service] Stopping Kafka KRaft broker ...
+
+[Setup] Formatting & Mounting as ext4 ...
+NAME MAJ:MIN RM SIZE RO TYPE MOUNTPOINTS
+sdc    8:32   0  20G  0 disk /mnt/kafka-logs
+/dev/sdc on /mnt/kafka-logs type ext4 (rw,noatime,nodiratime)
+[Service] Starting Kafka in KRaft mode ...
+[Service] Recreating benchmark topic ...
+
+--- [MEASURE] EXT4 / scenario_a / 1024000B / 100 ops ---
+  > =====================================
+  >  Kafka Filesystem Benchmark (Java API)
+  > =====================================
+  >  - Record Size: 1024000 Bytes
+  >  - Target OP/s (total): 100
+  >  - Producers: 8
+  >  - Consumer Active: false
+  >  - Dynamic Topic Creation: false (rate=5/sec)
+  >  - Warmup: 30 sec / Total Duration: 180 sec
+  >  - Send mode: ASYNC (callback-based latency measurement)
+  > [Config] BUFFER_MEMORY per producer = 64 MB
+  > [Run] Producers started. warmup=30s, total=180s
+  > 
+  > --- [ Latency Results (ms) ] ---
+  >  (App-level: send() call -> broker ACK; reaches OS page cache)
+  >  Total Requests : 13862
+  >  Average        : 26.01 ms
+  >  p50 (Median)   : 18.70 ms
+  >  p90            : 51.55 ms
+  >  p99            : 104.69 ms
+  >  p999           : 158.07 ms
+  >  Max            : 242.62 ms
+  > --------------------------------
+  > --- [ Throughput / Errors ] ---
+  >  Target OP/s         : 100
+  >  Achieved OP/s       : 92.29
+  >  Achieved/Target (%) : 92.3
+  >  Total Sent (incl. warmup) : 16572
+  >  Send Errors               : 0
+  > --------------------------------
+  > 
+  > --- [ Per-second Throughput & Latency ] ---
+  > Sec   0 | send=    42 | ack=    37 | p50=197.68 ms | p99=972.74 ms
+  > Sec   1 | send=    95 | ack=    94 | p50=24.11 ms | p99=103.04 ms
+  > Sec   2 | send=    89 | ack=    87 | p50=24.53 ms | p99=46.59 ms
+  > Sec   3 | send=    94 | ack=   101 | p50=21.32 ms | p99=104.82 ms
+  > Sec   4 | send=    92 | ack=    93 | p50=15.24 ms | p99=64.46 ms
+  > Sec   5 | send=    94 | ack=    90 | p50=18.08 ms | p99=78.42 ms
+  > Sec   6 | send=    92 | ack=    94 | p50=20.53 ms | p99=72.42 ms
+  > Sec   7 | send=    92 | ack=    93 | p50=24.32 ms | p99=121.36 ms
+  > Sec   8 | send=    89 | ack=    89 | p50=21.93 ms | p99=66.66 ms
+  > Sec   9 | send=    94 | ack=    95 | p50=16.16 ms | p99=97.31 ms
+  > Sec  10 | send=    95 | ack=    91 | p50=17.82 ms | p99=49.28 ms
+  > Sec  11 | send=    91 | ack=    93 | p50=29.61 ms | p99=81.69 ms
+  > Sec  12 | send=    94 | ack=    89 | p50=20.14 ms | p99=99.81 ms
+  > Sec  13 | send=    87 | ack=    83 | p50=50.06 ms | p99=201.55 ms
+  > Sec  14 | send=    90 | ack=    99 | p50=43.21 ms | p99=158.13 ms
+  > Sec  15 | send=    94 | ack=    93 | p50=26.37 ms | p99=91.93 ms
+  > Sec  16 | send=    92 | ack=    93 | p50=27.28 ms | p99=74.27 ms
+  > Sec  17 | send=    94 | ack=    93 | p50=14.13 ms | p99=102.05 ms
+  > Sec  18 | send=    92 | ack=    91 | p50=15.95 ms | p99=52.00 ms
+  > Sec  19 | send=    93 | ack=    95 | p50=13.87 ms | p99=59.59 ms
+  > Sec  20 | send=    88 | ack=    88 | p50=39.81 ms | p99=200.17 ms
+  > Sec  21 | send=    93 | ack=    91 | p50=43.25 ms | p99=145.20 ms
+  > Sec  22 | send=    91 | ack=    95 | p50=16.27 ms | p99=87.63 ms
+  > Sec  23 | send=    96 | ack=    95 | p50=12.59 ms | p99=76.74 ms
+  > Sec  24 | send=    94 | ack=    92 | p50=17.26 ms | p99=46.89 ms
+  > Sec  25 | send=    90 | ack=    93 | p50=23.72 ms | p99=110.08 ms
+  > Sec  26 | send=    94 | ack=    88 | p50=20.69 ms | p99=63.22 ms
+  > Sec  27 | send=    95 | ack=    96 | p50=23.34 ms | p99=76.61 ms
+  > Sec  28 | send=    91 | ack=    96 | p50=12.56 ms | p99=51.22 ms
+  > Sec  29 | send=    91 | ack=    83 | p50=14.38 ms | p99=78.14 ms
+  > Sec  30 | send=    96 | ack=    97 | p50=16.49 ms | p99=135.80 ms
+  > Sec  31 | send=    92 | ack=    95 | p50=14.82 ms | p99=102.40 ms
+  > Sec  32 | send=    92 | ack=    96 | p50=24.79 ms | p99=131.22 ms
+  > Sec  33 | send=    91 | ack=    88 | p50=46.64 ms | p99=125.19 ms
+  > Sec  34 | send=    88 | ack=    91 | p50=43.07 ms | p99=94.16 ms
+  > Sec  35 | send=    96 | ack=    92 | p50=35.03 ms | p99=100.18 ms
+  > Sec  36 | send=    91 | ack=    92 | p50=14.74 ms | p99=41.30 ms
+  > Sec  37 | send=    93 | ack=    92 | p50=16.98 ms | p99=40.93 ms
+  > Sec  38 | send=    93 | ack=    97 | p50=16.28 ms | p99=54.99 ms
+  > Sec  39 | send=    94 | ack=    92 | p50=12.99 ms | p99=45.19 ms
+  > Sec  40 | send=    93 | ack=    91 | p50=16.51 ms | p99=54.89 ms
+  > Sec  41 | send=    91 | ack=    90 | p50=39.91 ms | p99=101.14 ms
+  > Sec  42 | send=    91 | ack=    95 | p50=32.40 ms | p99=118.79 ms
+  > Sec  43 | send=    93 | ack=    91 | p50=11.57 ms | p99=39.87 ms
+  > Sec  44 | send=    92 | ack=    95 | p50=14.66 ms | p99=53.13 ms
+  > Sec  45 | send=    95 | ack=    93 | p50=12.48 ms | p99=61.39 ms
+  > Sec  46 | send=    92 | ack=    92 | p50=13.93 ms | p99=49.77 ms
+  > Sec  47 | send=    94 | ack=    94 | p50=11.96 ms | p99=81.29 ms
+  > Sec  48 | send=    93 | ack=    93 | p50=17.04 ms | p99=71.72 ms
+  > Sec  49 | send=    93 | ack=    94 | p50=12.86 ms | p99=71.87 ms
+  > Sec  50 | send=    93 | ack=    91 | p50=21.60 ms | p99=75.38 ms
+  > Sec  51 | send=    91 | ack=    88 | p50=21.34 ms | p99=74.86 ms
+  > Sec  52 | send=    93 | ack=    98 | p50=13.11 ms | p99=107.37 ms
+  > Sec  53 | send=    90 | ack=    87 | p50=44.55 ms | p99=97.51 ms
+  > Sec  54 | send=    88 | ack=    88 | p50=39.45 ms | p99=129.76 ms
+  > Sec  55 | send=    92 | ack=    91 | p50=35.96 ms | p99=102.42 ms
+  > Sec  56 | send=    90 | ack=    93 | p50=13.51 ms | p99=82.55 ms
+  > Sec  57 | send=    94 | ack=    95 | p50=16.14 ms | p99=39.33 ms
+  > Sec  58 | send=    94 | ack=    92 | p50=15.70 ms | p99=51.63 ms
+  > Sec  59 | send=    89 | ack=    92 | p50=15.23 ms | p99=64.74 ms
+  > Sec  60 | send=    91 | ack=    88 | p50=20.41 ms | p99=47.07 ms
+  > Sec  61 | send=    93 | ack=    93 | p50=43.59 ms | p99=97.05 ms
+  > Sec  62 | send=    91 | ack=    94 | p50=27.08 ms | p99=104.77 ms
+  > Sec  63 | send=    96 | ack=    91 | p50=13.70 ms | p99=75.41 ms
+  > Sec  64 | send=    91 | ack=    94 | p50=15.58 ms | p99=53.38 ms
+  > Sec  65 | send=    93 | ack=    93 | p50=20.59 ms | p99=75.83 ms
+  > Sec  66 | send=    93 | ack=    89 | p50=15.35 ms | p99=83.40 ms
+  > Sec  67 | send=    93 | ack=    98 | p50=13.85 ms | p99=81.71 ms
+  > Sec  68 | send=    94 | ack=    94 | p50=12.78 ms | p99=99.39 ms
+  > Sec  69 | send=    93 | ack=    92 | p50=12.21 ms | p99=45.20 ms
+  > Sec  70 | send=    94 | ack=    90 | p50=13.69 ms | p99=94.61 ms
+  > Sec  71 | send=    91 | ack=    97 | p50=13.31 ms | p99=75.40 ms
+  > Sec  72 | send=    93 | ack=    89 | p50=23.19 ms | p99=72.19 ms
+  > Sec  73 | send=    92 | ack=    92 | p50=18.29 ms | p99=142.26 ms
+  > Sec  74 | send=    90 | ack=    90 | p50=46.54 ms | p99=147.32 ms
+  > Sec  75 | send=    92 | ack=    87 | p50=49.00 ms | p99=197.63 ms
+  > Sec  76 | send=    91 | ack=    98 | p50=22.00 ms | p99=144.88 ms
+  > Sec  77 | send=    93 | ack=    93 | p50=15.12 ms | p99=51.99 ms
+  > Sec  78 | send=    92 | ack=    92 | p50=14.66 ms | p99=66.33 ms
+  > Sec  79 | send=    93 | ack=    93 | p50=15.28 ms | p99=47.79 ms
+  > Sec  80 | send=    89 | ack=    91 | p50=16.62 ms | p99=63.50 ms
+  > Sec  81 | send=    95 | ack=    90 | p50=39.40 ms | p99=79.62 ms
+  > Sec  82 | send=    88 | ack=    93 | p50=37.92 ms | p99=102.35 ms
+  > Sec  83 | send=    94 | ack=    92 | p50=15.94 ms | p99=51.90 ms
+  > Sec  84 | send=    92 | ack=    93 | p50=13.50 ms | p99=71.90 ms
+  > Sec  85 | send=    94 | ack=    94 | p50=14.39 ms | p99=53.54 ms
+  > Sec  86 | send=    93 | ack=    90 | p50=12.81 ms | p99=72.24 ms
+  > Sec  87 | send=    94 | ack=    96 | p50=10.93 ms | p99=39.41 ms
+  > Sec  88 | send=    92 | ack=    90 | p50=21.27 ms | p99=84.91 ms
+  > Sec  89 | send=    93 | ack=    97 | p50=16.25 ms | p99=123.54 ms
+  > Sec  90 | send=    92 | ack=    84 | p50=14.63 ms | p99=84.29 ms
+  > Sec  91 | send=    93 | ack=    97 | p50=19.95 ms | p99=104.52 ms
+  > Sec  92 | send=    92 | ack=    93 | p50=17.23 ms | p99=99.26 ms
+  > Sec  93 | send=    89 | ack=    90 | p50=29.42 ms | p99=111.27 ms
+  > Sec  94 | send=    87 | ack=    89 | p50=21.69 ms | p99=236.63 ms
+  > Sec  95 | send=    96 | ack=    90 | p50=16.51 ms | p99=51.55 ms
+  > Sec  96 | send=    90 | ack=    94 | p50=36.65 ms | p99=74.27 ms
+  > Sec  97 | send=    93 | ack=    95 | p50=17.32 ms | p99=57.05 ms
+  > Sec  98 | send=    95 | ack=    92 | p50=14.79 ms | p99=61.10 ms
+  > Sec  99 | send=    92 | ack=    93 | p50=12.86 ms | p99=66.04 ms
+  > Sec 100 | send=    93 | ack=    94 | p50=12.46 ms | p99=55.48 ms
+  > Sec 101 | send=    93 | ack=    90 | p50=14.78 ms | p99=53.71 ms
+  > Sec 102 | send=    92 | ack=    95 | p50=16.48 ms | p99=116.61 ms
+  > Sec 103 | send=    92 | ack=    92 | p50=18.31 ms | p99=108.79 ms
+  > Sec 104 | send=    91 | ack=    89 | p50=38.02 ms | p99=138.87 ms
+  > Sec 105 | send=    89 | ack=    86 | p50=46.67 ms | p99=158.07 ms
+  > Sec 106 | send=    89 | ack=    94 | p50=37.72 ms | p99=124.75 ms
+  > Sec 107 | send=    95 | ack=    94 | p50=12.62 ms | p99=43.94 ms
+  > Sec 108 | send=    94 | ack=    92 | p50=15.80 ms | p99=38.78 ms
+  > Sec 109 | send=    92 | ack=    94 | p50=13.33 ms | p99=47.86 ms
+  > Sec 110 | send=    94 | ack=    94 | p50=13.83 ms | p99=80.06 ms
+  > Sec 111 | send=    94 | ack=    93 | p50=12.79 ms | p99=46.88 ms
+  > Sec 112 | send=    90 | ack=    87 | p50=42.22 ms | p99=80.09 ms
+  > Sec 113 | send=    93 | ack=    96 | p50=24.74 ms | p99=150.59 ms
+  > Sec 114 | send=    91 | ack=    94 | p50=12.46 ms | p99=51.93 ms
+  > Sec 115 | send=    95 | ack=    94 | p50=14.24 ms | p99=46.82 ms
+  > Sec 116 | send=    93 | ack=    94 | p50=14.76 ms | p99=58.88 ms
+  > Sec 117 | send=    94 | ack=    91 | p50=15.35 ms | p99=40.39 ms
+  > Sec 118 | send=    93 | ack=    92 | p50=20.96 ms | p99=51.08 ms
+  > Sec 119 | send=    93 | ack=    96 | p50=12.99 ms | p99=53.01 ms
+  > Sec 120 | send=    94 | ack=    93 | p50=13.45 ms | p99=65.80 ms
+  > Sec 121 | send=    92 | ack=    91 | p50=21.64 ms | p99=104.97 ms
+  > Sec 122 | send=    92 | ack=    95 | p50=16.78 ms | p99=99.98 ms
+  > Sec 123 | send=    91 | ack=    91 | p50=14.20 ms | p99=120.22 ms
+  > Sec 124 | send=    95 | ack=    88 | p50=13.27 ms | p99=56.93 ms
+  > Sec 125 | send=    90 | ack=    94 | p50=60.07 ms | p99=148.67 ms
+  > Sec 126 | send=    92 | ack=    89 | p50=50.22 ms | p99=144.31 ms
+  > Sec 127 | send=    90 | ack=    96 | p50=29.04 ms | p99=89.90 ms
+  > Sec 128 | send=    95 | ack=    92 | p50=13.94 ms | p99=45.92 ms
+  > Sec 129 | send=    92 | ack=    92 | p50=16.89 ms | p99=68.46 ms
+  > Sec 130 | send=    92 | ack=    95 | p50=14.51 ms | p99=72.14 ms
+  > Sec 131 | send=    95 | ack=    93 | p50=12.60 ms | p99=45.65 ms
+  > Sec 132 | send=    90 | ack=    90 | p50=28.27 ms | p99=112.23 ms
+  > Sec 133 | send=    93 | ack=    89 | p50=41.39 ms | p99=98.66 ms
+  > Sec 134 | send=    90 | ack=    96 | p50=38.05 ms | p99=119.90 ms
+  > Sec 135 | send=    95 | ack=    93 | p50=17.93 ms | p99=56.12 ms
+  > Sec 136 | send=    94 | ack=    92 | p50=19.14 ms | p99=45.99 ms
+  > Sec 137 | send=    91 | ack=    95 | p50=16.82 ms | p99=52.80 ms
+  > Sec 138 | send=    95 | ack=    93 | p50=11.97 ms | p99=44.35 ms
+  > Sec 139 | send=    94 | ack=    95 | p50=11.41 ms | p99=79.69 ms
+  > Sec 140 | send=    95 | ack=    91 | p50=16.33 ms | p99=46.35 ms
+  > Sec 141 | send=    92 | ack=    92 | p50=14.11 ms | p99=51.88 ms
+  > Sec 142 | send=    93 | ack=    93 | p50=16.74 ms | p99=64.31 ms
+  > Sec 143 | send=    92 | ack=    97 | p50=12.65 ms | p99=112.01 ms
+  > Sec 144 | send=    91 | ack=    91 | p50=19.43 ms | p99=138.51 ms
+  > Sec 145 | send=    81 | ack=    75 | p50=44.57 ms | p99=242.62 ms
+  > Sec 146 | send=    94 | ack=    94 | p50=43.72 ms | p99=155.42 ms
+  > Sec 147 | send=    90 | ack=    96 | p50=23.75 ms | p99=85.64 ms
+  > Sec 148 | send=    95 | ack=    91 | p50=12.15 ms | p99=51.85 ms
+  > Sec 149 | send=    92 | ack=    95 | p50=12.16 ms | p99=56.48 ms
+  > Sec 150 | send=    93 | ack=    92 | p50=18.94 ms | p99=52.05 ms
+  > Sec 151 | send=    94 | ack=    94 | p50=14.64 ms | p99=78.99 ms
+  > Sec 152 | send=    93 | ack=    93 | p50=19.82 ms | p99=157.60 ms
+  > Sec 153 | send=    90 | ack=    92 | p50=25.05 ms | p99=138.12 ms
+  > Sec 154 | send=    95 | ack=    93 | p50=12.91 ms | p99=59.61 ms
+  > Sec 155 | send=    94 | ack=    91 | p50=12.59 ms | p99=38.22 ms
+  > Sec 156 | send=    91 | ack=    94 | p50=17.74 ms | p99=50.65 ms
+  > Sec 157 | send=    93 | ack=    94 | p50=20.04 ms | p99=66.72 ms
+  > Sec 158 | send=    94 | ack=    92 | p50=16.54 ms | p99=48.32 ms
+  > Sec 159 | send=    92 | ack=    94 | p50=20.55 ms | p99=49.44 ms
+  > Sec 160 | send=    93 | ack=    94 | p50=15.24 ms | p99=51.94 ms
+  > Sec 161 | send=    93 | ack=    92 | p50=18.19 ms | p99=71.65 ms
+  > Sec 162 | send=    94 | ack=    91 | p50=14.96 ms | p99=71.93 ms
+  > Sec 163 | send=    91 | ack=    92 | p50=15.70 ms | p99=52.66 ms
+  > Sec 164 | send=    90 | ack=    91 | p50=43.28 ms | p99=130.93 ms
+  > Sec 165 | send=    89 | ack=    88 | p50=43.94 ms | p99=173.67 ms
+  > Sec 166 | send=    93 | ack=    94 | p50=28.02 ms | p99=170.92 ms
+  > Sec 167 | send=    91 | ack=    90 | p50=14.10 ms | p99=57.67 ms
+  > Sec 168 | send=    93 | ack=    95 | p50=12.50 ms | p99=39.38 ms
+  > Sec 169 | send=    95 | ack=    93 | p50=15.42 ms | p99=75.63 ms
+  > Sec 170 | send=    91 | ack=    93 | p50=17.35 ms | p99=57.81 ms
+  > Sec 171 | send=    95 | ack=    94 | p50=14.22 ms | p99=64.20 ms
+  > Sec 172 | send=    89 | ack=    88 | p50=47.90 ms | p99=101.02 ms
+  > Sec 173 | send=    94 | ack=    91 | p50=38.17 ms | p99=146.74 ms
+  > Sec 174 | send=    90 | ack=    96 | p50=12.73 ms | p99=34.99 ms
+  > Sec 175 | send=    95 | ack=    93 | p50=14.39 ms | p99=62.55 ms
+  > Sec 176 | send=    93 | ack=    91 | p50=14.99 ms | p99=41.61 ms
+  > Sec 177 | send=    92 | ack=    96 | p50=18.57 ms | p99=87.82 ms
+  > Sec 178 | send=    95 | ack=    94 | p50=11.95 ms | p99=42.32 ms
+  > Sec 179 | send=    93 | ack=    90 | p50=13.37 ms | p99=36.36 ms
+  > ------------------------------------------
+  > Req=13862 | Achieved=92.3 OP/s (92.3%) | App-Avg=26.01ms | App-P99=104.69ms | DiskUtil=26.36% | Block-await=6.56ms | iowait=0.47% | Bottleneck=False
+[Success] JSON snapshot saved: results/kafka_fs_bench_20260430_123613/results_snapshot.json
+[Success] CSV saved: results/kafka_fs_bench_20260430_123613/csv/full_results.csv
+[Success] CSV saved: results/kafka_fs_bench_20260430_123613/csv/summary_by_fs_recordsize_scenario.csv
+[Success] Summary report saved: results/kafka_fs_bench_20260430_123613/summary_report.txt
+[Fixed OP/s] EXT4 / scenario_b / 1024000B -> target_ops=100
+[Service] Stopping Kafka KRaft broker ...
+
+[Setup] Formatting & Mounting as ext4 ...
+NAME MAJ:MIN RM SIZE RO TYPE MOUNTPOINTS
+sdc    8:32   0  20G  0 disk /mnt/kafka-logs
+/dev/sdc on /mnt/kafka-logs type ext4 (rw,noatime,nodiratime)
+[Service] Starting Kafka in KRaft mode ...
+[Service] Recreating benchmark topic ...
+
+--- [MEASURE] EXT4 / scenario_b / 1024000B / 100 ops ---
+  > =====================================
+  >  Kafka Filesystem Benchmark (Java API)
+  > =====================================
+  >  - Record Size: 1024000 Bytes
+  >  - Target OP/s (total): 100
+  >  - Producers: 8
+  >  - Consumer Active: true
+  >  - Dynamic Topic Creation: true (rate=5/sec)
+  >  - Warmup: 30 sec / Total Duration: 180 sec
+  >  - Send mode: ASYNC (callback-based latency measurement)
+  > [Config] BUFFER_MEMORY per producer = 64 MB
+  > [Run] Producers started. warmup=30s, total=180s
+  > [Consumer] consumed 16350 records
+  > [TopicCreator] created=699 failed=0 (rate=5/sec)
+  > [Consumer] error: org.apache.kafka.common.errors.InterruptException: java.lang.InterruptedException
+  > 
+  > --- [ Latency Results (ms) ] ---
+  >  (App-level: send() call -> broker ACK; reaches OS page cache)
+  >  Total Requests : 13710
+  >  Average        : 32.71 ms
+  >  p50 (Median)   : 25.98 ms
+  >  p90            : 60.57 ms
+  >  p99            : 129.48 ms
+  >  p999           : 220.75 ms
+  >  Max            : 358.95 ms
+  > --------------------------------
+  > --- [ Throughput / Errors ] ---
+  >  Target OP/s         : 100
+  >  Achieved OP/s       : 91.26
+  >  Achieved/Target (%) : 91.3
+  >  Total Sent (incl. warmup) : 16351
+  >  Send Errors               : 0
+  > --------------------------------
+  > 
+  > --- [ Per-second Throughput & Latency ] ---
+  > Sec   0 | send=    35 | ack=     0 | no data
+  > Sec   1 | send=    83 | ack=   117 | p50=243.68 ms | p99=1171.29 ms
+  > Sec   2 | send=    85 | ack=    77 | p50=59.81 ms | p99=134.46 ms
+  > Sec   3 | send=    86 | ack=    95 | p50=27.63 ms | p99=287.89 ms
+  > Sec   4 | send=    90 | ack=    90 | p50=16.59 ms | p99=39.37 ms
+  > Sec   5 | send=    96 | ack=    92 | p50=14.04 ms | p99=45.12 ms
+  > Sec   6 | send=    88 | ack=    91 | p50=19.51 ms | p99=77.88 ms
+  > Sec   7 | send=    87 | ack=    86 | p50=33.69 ms | p99=155.71 ms
+  > Sec   8 | send=    87 | ack=    89 | p50=22.49 ms | p99=68.37 ms
+  > Sec   9 | send=    92 | ack=    90 | p50=25.88 ms | p99=68.99 ms
+  > Sec  10 | send=    88 | ack=    90 | p50=25.19 ms | p99=104.12 ms
+  > Sec  11 | send=    89 | ack=    88 | p50=25.68 ms | p99=117.74 ms
+  > Sec  12 | send=    94 | ack=    88 | p50=21.33 ms | p99=85.07 ms
+  > Sec  13 | send=    81 | ack=    74 | p50=78.73 ms | p99=274.21 ms
+  > Sec  14 | send=    88 | ack=    94 | p50=72.29 ms | p99=264.73 ms
+  > Sec  15 | send=    95 | ack=   100 | p50=30.66 ms | p99=167.90 ms
+  > Sec  16 | send=    89 | ack=    88 | p50=28.03 ms | p99=97.96 ms
+  > Sec  17 | send=    94 | ack=    97 | p50=27.23 ms | p99=98.54 ms
+  > Sec  18 | send=    91 | ack=    90 | p50=21.67 ms | p99=70.78 ms
+  > Sec  19 | send=    93 | ack=    90 | p50=25.83 ms | p99=68.42 ms
+  > Sec  20 | send=    87 | ack=    90 | p50=47.82 ms | p99=145.02 ms
+  > Sec  21 | send=    90 | ack=    90 | p50=51.83 ms | p99=152.93 ms
+  > Sec  22 | send=    88 | ack=    87 | p50=28.46 ms | p99=108.90 ms
+  > Sec  23 | send=    94 | ack=    97 | p50=23.84 ms | p99=94.39 ms
+  > Sec  24 | send=    94 | ack=    90 | p50=26.54 ms | p99=107.13 ms
+  > Sec  25 | send=    88 | ack=    89 | p50=18.32 ms | p99=91.16 ms
+  > Sec  26 | send=    91 | ack=    92 | p50=17.98 ms | p99=54.31 ms
+  > Sec  27 | send=    94 | ack=    94 | p50=22.55 ms | p99=58.91 ms
+  > Sec  28 | send=    90 | ack=    92 | p50=20.00 ms | p99=58.79 ms
+  > Sec  29 | send=    96 | ack=    94 | p50=19.46 ms | p99=46.20 ms
+  > Sec  30 | send=    91 | ack=    91 | p50=19.75 ms | p99=51.18 ms
+  > Sec  31 | send=    93 | ack=    89 | p50=21.01 ms | p99=135.58 ms
+  > Sec  32 | send=    90 | ack=    85 | p50=35.83 ms | p99=99.55 ms
+  > Sec  33 | send=    89 | ack=    98 | p50=57.81 ms | p99=149.05 ms
+  > Sec  34 | send=    90 | ack=    84 | p50=49.97 ms | p99=204.03 ms
+  > Sec  35 | send=    87 | ack=    94 | p50=20.39 ms | p99=71.29 ms
+  > Sec  36 | send=    95 | ack=    96 | p50=20.50 ms | p99=89.51 ms
+  > Sec  37 | send=    93 | ack=    88 | p50=23.91 ms | p99=54.83 ms
+  > Sec  38 | send=    92 | ack=    93 | p50=25.79 ms | p99=87.56 ms
+  > Sec  39 | send=    91 | ack=    91 | p50=18.91 ms | p99=90.53 ms
+  > Sec  40 | send=    92 | ack=    91 | p50=54.87 ms | p99=111.91 ms
+  > Sec  41 | send=    92 | ack=    93 | p50=36.16 ms | p99=149.55 ms
+  > Sec  42 | send=    90 | ack=    93 | p50=24.42 ms | p99=60.13 ms
+  > Sec  43 | send=    95 | ack=    92 | p50=16.14 ms | p99=70.62 ms
+  > Sec  44 | send=    90 | ack=    86 | p50=23.00 ms | p99=48.86 ms
+  > Sec  45 | send=    88 | ack=    96 | p50=21.65 ms | p99=66.42 ms
+  > Sec  46 | send=    96 | ack=    92 | p50=24.09 ms | p99=68.54 ms
+  > Sec  47 | send=    92 | ack=    92 | p50=20.40 ms | p99=74.79 ms
+  > Sec  48 | send=    91 | ack=    91 | p50=18.59 ms | p99=109.23 ms
+  > Sec  49 | send=    89 | ack=    87 | p50=21.56 ms | p99=83.02 ms
+  > Sec  50 | send=    94 | ack=    98 | p50=24.97 ms | p99=81.40 ms
+  > Sec  51 | send=    90 | ack=    87 | p50=34.69 ms | p99=111.83 ms
+  > Sec  52 | send=    90 | ack=    88 | p50=50.62 ms | p99=130.23 ms
+  > Sec  53 | send=    89 | ack=    96 | p50=41.78 ms | p99=116.72 ms
+  > Sec  54 | send=    96 | ack=    94 | p50=20.79 ms | p99=94.81 ms
+  > Sec  55 | send=    91 | ack=    90 | p50=17.29 ms | p99=53.50 ms
+  > Sec  56 | send=    94 | ack=    96 | p50=15.48 ms | p99=71.06 ms
+  > Sec  57 | send=    92 | ack=    90 | p50=16.14 ms | p99=69.02 ms
+  > Sec  58 | send=    92 | ack=    89 | p50=23.74 ms | p99=118.96 ms
+  > Sec  59 | send=    91 | ack=    96 | p50=41.82 ms | p99=214.37 ms
+  > Sec  60 | send=    92 | ack=    91 | p50=15.60 ms | p99=44.70 ms
+  > Sec  61 | send=    86 | ack=    88 | p50=18.11 ms | p99=71.31 ms
+  > Sec  62 | send=    96 | ack=    91 | p50=17.42 ms | p99=45.97 ms
+  > Sec  63 | send=    89 | ack=    92 | p50=20.74 ms | p99=62.75 ms
+  > Sec  64 | send=    93 | ack=    92 | p50=23.25 ms | p99=61.15 ms
+  > Sec  65 | send=    93 | ack=    93 | p50=18.59 ms | p99=56.31 ms
+  > Sec  66 | send=    90 | ack=    89 | p50=20.69 ms | p99=84.60 ms
+  > Sec  67 | send=    95 | ack=    92 | p50=22.17 ms | p99=91.85 ms
+  > Sec  68 | send=    89 | ack=    90 | p50=29.38 ms | p99=85.62 ms
+  > Sec  69 | send=    90 | ack=    96 | p50=24.55 ms | p99=133.93 ms
+  > Sec  70 | send=    93 | ack=    87 | p50=37.45 ms | p99=91.84 ms
+  > Sec  71 | send=    85 | ack=    82 | p50=50.81 ms | p99=243.34 ms
+  > Sec  72 | send=    88 | ack=    97 | p50=20.47 ms | p99=358.95 ms
+  > Sec  73 | send=    93 | ack=    93 | p50=18.50 ms | p99=81.33 ms
+  > Sec  74 | send=    92 | ack=    89 | p50=24.88 ms | p99=63.68 ms
+  > Sec  75 | send=    94 | ack=    95 | p50=23.18 ms | p99=84.65 ms
+  > Sec  76 | send=    92 | ack=    91 | p50=23.36 ms | p99=63.39 ms
+  > Sec  77 | send=    90 | ack=    87 | p50=40.12 ms | p99=175.88 ms
+  > Sec  78 | send=    93 | ack=    94 | p50=24.15 ms | p99=79.16 ms
+  > Sec  79 | send=    91 | ack=    95 | p50=23.64 ms | p99=107.78 ms
+  > Sec  80 | send=    93 | ack=    90 | p50=20.91 ms | p99=73.19 ms
+  > Sec  81 | send=    90 | ack=    91 | p50=29.65 ms | p99=99.50 ms
+  > Sec  82 | send=    94 | ack=    95 | p50=17.72 ms | p99=57.02 ms
+  > Sec  83 | send=    91 | ack=    92 | p50=21.85 ms | p99=71.18 ms
+  > Sec  84 | send=    93 | ack=    88 | p50=19.87 ms | p99=52.06 ms
+  > Sec  85 | send=    90 | ack=    96 | p50=19.27 ms | p99=74.64 ms
+  > Sec  86 | send=    91 | ack=    88 | p50=34.59 ms | p99=152.78 ms
+  > Sec  87 | send=    91 | ack=    92 | p50=28.88 ms | p99=101.55 ms
+  > Sec  88 | send=    92 | ack=    91 | p50=36.90 ms | p99=78.53 ms
+  > Sec  89 | send=    89 | ack=    89 | p50=50.38 ms | p99=203.57 ms
+  > Sec  90 | send=    89 | ack=    91 | p50=53.33 ms | p99=156.70 ms
+  > Sec  91 | send=    95 | ack=    92 | p50=30.42 ms | p99=123.55 ms
+  > Sec  92 | send=    93 | ack=    92 | p50=23.63 ms | p99=85.61 ms
+  > Sec  93 | send=    92 | ack=    97 | p50=21.61 ms | p99=69.92 ms
+  > Sec  94 | send=    90 | ack=    88 | p50=28.31 ms | p99=92.22 ms
+  > Sec  95 | send=    93 | ack=    92 | p50=27.60 ms | p99=84.46 ms
+  > Sec  96 | send=    90 | ack=    92 | p50=28.21 ms | p99=96.58 ms
+  > Sec  97 | send=    94 | ack=    94 | p50=19.82 ms | p99=59.47 ms
+  > Sec  98 | send=    92 | ack=    93 | p50=15.57 ms | p99=58.12 ms
+  > Sec  99 | send=    89 | ack=    86 | p50=23.97 ms | p99=97.25 ms
+  > Sec 100 | send=    93 | ack=    94 | p50=21.58 ms | p99=57.81 ms
+  > Sec 101 | send=    93 | ack=    93 | p50=23.18 ms | p99=71.94 ms
+  > Sec 102 | send=    91 | ack=    92 | p50=20.43 ms | p99=55.32 ms
+  > Sec 103 | send=    92 | ack=    90 | p50=36.79 ms | p99=125.87 ms
+  > Sec 104 | send=    90 | ack=    92 | p50=21.43 ms | p99=53.36 ms
+  > Sec 105 | send=    94 | ack=    93 | p50=25.40 ms | p99=142.36 ms
+  > Sec 106 | send=    90 | ack=    91 | p50=24.79 ms | p99=68.41 ms
+  > Sec 107 | send=    93 | ack=    89 | p50=37.52 ms | p99=139.96 ms
+  > Sec 108 | send=    88 | ack=    83 | p50=49.38 ms | p99=188.79 ms
+  > Sec 109 | send=    88 | ack=    98 | p50=61.02 ms | p99=189.66 ms
+  > Sec 110 | send=    96 | ack=    96 | p50=20.89 ms | p99=58.51 ms
+  > Sec 111 | send=    91 | ack=    88 | p50=25.93 ms | p99=56.05 ms
+  > Sec 112 | send=    93 | ack=    96 | p50=27.06 ms | p99=83.47 ms
+  > Sec 113 | send=    92 | ack=    90 | p50=22.88 ms | p99=70.66 ms
+  > Sec 114 | send=    92 | ack=    90 | p50=18.40 ms | p99=74.05 ms
+  > Sec 115 | send=    90 | ack=    86 | p50=49.93 ms | p99=176.05 ms
+  > Sec 116 | send=    88 | ack=    96 | p50=26.42 ms | p99=174.45 ms
+  > Sec 117 | send=    89 | ack=    87 | p50=18.26 ms | p99=96.17 ms
+  > Sec 118 | send=    94 | ack=    95 | p50=18.53 ms | p99=61.17 ms
+  > Sec 119 | send=    90 | ack=    89 | p50=21.48 ms | p99=56.88 ms
+  > Sec 120 | send=    94 | ack=    92 | p50=22.43 ms | p99=59.49 ms
+  > Sec 121 | send=    91 | ack=    94 | p50=24.92 ms | p99=78.46 ms
+  > Sec 122 | send=    92 | ack=    92 | p50=14.82 ms | p99=69.51 ms
+  > Sec 123 | send=    90 | ack=    88 | p50=23.41 ms | p99=92.60 ms
+  > Sec 124 | send=    93 | ack=    92 | p50=26.89 ms | p99=72.01 ms
+  > Sec 125 | send=    89 | ack=    91 | p50=25.93 ms | p99=105.67 ms
+  > Sec 126 | send=    94 | ack=    94 | p50=25.65 ms | p99=112.22 ms
+  > Sec 127 | send=    89 | ack=    87 | p50=58.29 ms | p99=176.05 ms
+  > Sec 128 | send=    94 | ack=    85 | p50=53.76 ms | p99=145.27 ms
+  > Sec 129 | send=    89 | ack=    99 | p50=42.08 ms | p99=174.00 ms
+  > Sec 130 | send=    88 | ack=    87 | p50=19.19 ms | p99=66.32 ms
+  > Sec 131 | send=    92 | ack=    92 | p50=22.36 ms | p99=73.25 ms
+  > Sec 132 | send=    93 | ack=    95 | p50=23.58 ms | p99=99.82 ms
+  > Sec 133 | send=    90 | ack=    91 | p50=20.16 ms | p99=95.73 ms
+  > Sec 134 | send=    95 | ack=    86 | p50=23.78 ms | p99=117.96 ms
+  > Sec 135 | send=    89 | ack=    96 | p50=34.77 ms | p99=117.55 ms
+  > Sec 136 | send=    93 | ack=    95 | p50=24.57 ms | p99=78.45 ms
+  > Sec 137 | send=    92 | ack=    88 | p50=19.37 ms | p99=62.53 ms
+  > Sec 138 | send=    94 | ack=    96 | p50=20.43 ms | p99=62.11 ms
+  > Sec 139 | send=    90 | ack=    93 | p50=20.45 ms | p99=65.86 ms
+  > Sec 140 | send=    95 | ack=    92 | p50=23.08 ms | p99=82.08 ms
+  > Sec 141 | send=    90 | ack=    92 | p50=26.71 ms | p99=94.19 ms
+  > Sec 142 | send=    92 | ack=    92 | p50=23.86 ms | p99=97.56 ms
+  > Sec 143 | send=    89 | ack=    90 | p50=25.11 ms | p99=77.61 ms
+  > Sec 144 | send=    94 | ack=    92 | p50=29.90 ms | p99=113.48 ms
+  > Sec 145 | send=    91 | ack=    91 | p50=25.37 ms | p99=124.93 ms
+  > Sec 146 | send=    92 | ack=    86 | p50=32.95 ms | p99=129.83 ms
+  > Sec 147 | send=    90 | ack=    92 | p50=54.16 ms | p99=130.99 ms
+  > Sec 148 | send=    85 | ack=    84 | p50=50.54 ms | p99=109.68 ms
+  > Sec 149 | send=    96 | ack=    99 | p50=27.16 ms | p99=277.09 ms
+  > Sec 150 | send=    88 | ack=    92 | p50=26.03 ms | p99=48.98 ms
+  > Sec 151 | send=    95 | ack=    92 | p50=21.08 ms | p99=71.80 ms
+  > Sec 152 | send=    91 | ack=    91 | p50=27.44 ms | p99=71.31 ms
+  > Sec 153 | send=    91 | ack=    91 | p50=24.68 ms | p99=61.37 ms
+  > Sec 154 | send=    92 | ack=    90 | p50=30.34 ms | p99=144.88 ms
+  > Sec 155 | send=    87 | ack=    90 | p50=49.65 ms | p99=220.75 ms
+  > Sec 156 | send=    93 | ack=    94 | p50=22.01 ms | p99=68.92 ms
+  > Sec 157 | send=    91 | ack=    89 | p50=23.42 ms | p99=59.34 ms
+  > Sec 158 | send=    93 | ack=    95 | p50=21.53 ms | p99=70.75 ms
+  > Sec 159 | send=    92 | ack=    89 | p50=20.55 ms | p99=51.78 ms
+  > Sec 160 | send=    92 | ack=    95 | p50=21.59 ms | p99=85.24 ms
+  > Sec 161 | send=    94 | ack=    93 | p50=22.24 ms | p99=61.52 ms
+  > Sec 162 | send=    90 | ack=    88 | p50=22.37 ms | p99=78.00 ms
+  > Sec 163 | send=    93 | ack=    94 | p50=24.51 ms | p99=134.65 ms
+  > Sec 164 | send=    91 | ack=    94 | p50=31.06 ms | p99=71.82 ms
+  > Sec 165 | send=    92 | ack=    88 | p50=27.28 ms | p99=81.33 ms
+  > Sec 166 | send=    91 | ack=    90 | p50=31.41 ms | p99=101.96 ms
+  > Sec 167 | send=    88 | ack=    85 | p50=45.99 ms | p99=218.38 ms
+  > Sec 168 | send=    92 | ack=    95 | p50=52.46 ms | p99=165.25 ms
+  > Sec 169 | send=    85 | ack=    88 | p50=37.36 ms | p99=184.55 ms
+  > Sec 170 | send=    90 | ack=    91 | p50=19.64 ms | p99=61.23 ms
+  > Sec 171 | send=    94 | ack=    91 | p50=20.24 ms | p99=58.43 ms
+  > Sec 172 | send=    92 | ack=    94 | p50=30.90 ms | p99=76.38 ms
+  > Sec 173 | send=    92 | ack=    94 | p50=19.42 ms | p99=67.62 ms
+  > Sec 174 | send=    90 | ack=    89 | p50=20.64 ms | p99=58.52 ms
+  > Sec 175 | send=    93 | ack=    86 | p50=50.48 ms | p99=112.95 ms
+  > Sec 176 | send=    90 | ack=    96 | p50=27.86 ms | p99=129.48 ms
+  > Sec 177 | send=    90 | ack=    86 | p50=22.13 ms | p99=75.14 ms
+  > Sec 178 | send=    93 | ack=    94 | p50=28.74 ms | p99=100.84 ms
+  > Sec 179 | send=    91 | ack=    95 | p50=26.42 ms | p99=62.19 ms
+  > ------------------------------------------
+  > Req=13710 | Achieved=91.3 OP/s (91.3%) | App-Avg=32.71ms | App-P99=129.48ms | DiskUtil=35.80% | Block-await=9.42ms | iowait=3.13% | Bottleneck=False
+[Success] JSON snapshot saved: results/kafka_fs_bench_20260430_123613/results_snapshot.json
+[Success] CSV saved: results/kafka_fs_bench_20260430_123613/csv/full_results.csv
+[Success] CSV saved: results/kafka_fs_bench_20260430_123613/csv/summary_by_fs_recordsize_scenario.csv
+[Success] Summary report saved: results/kafka_fs_bench_20260430_123613/summary_report.txt
+
+######################################################################
+# FILESYSTEM = F2FS
+######################################################################
+[Record Size] 1024000 Bytes
+[Fixed OP/s] F2FS / scenario_a / 1024000B -> target_ops=100
+[Service] Stopping Kafka KRaft broker ...
+
+[Setup] Formatting & Mounting as f2fs ...
+NAME MAJ:MIN RM SIZE RO TYPE MOUNTPOINTS
+sdc    8:32   0  20G  0 disk /mnt/kafka-logs
+/dev/sdc on /mnt/kafka-logs type f2fs (rw,noatime,nodiratime,lazytime,background_gc=on,nogc_merge,nodiscard,user_xattr,inline_xattr,acl,inline_data,inline_dentry,flush_merge,barrier,extent_cache,mode=adaptive,active_logs=6,alloc_mode=default,checkpoint_merge,fsync_mode=posix,memory=normal,errors=continue)
+[Service] Starting Kafka in KRaft mode ...
+[Service] Recreating benchmark topic ...
+
+--- [MEASURE] F2FS / scenario_a / 1024000B / 100 ops ---
+  > =====================================
+  >  Kafka Filesystem Benchmark (Java API)
+  > =====================================
+  >  - Record Size: 1024000 Bytes
+  >  - Target OP/s (total): 100
+  >  - Producers: 8
+  >  - Consumer Active: false
+  >  - Dynamic Topic Creation: false (rate=5/sec)
+  >  - Warmup: 30 sec / Total Duration: 180 sec
+  >  - Send mode: ASYNC (callback-based latency measurement)
+  > [Config] BUFFER_MEMORY per producer = 64 MB
+  > [Run] Producers started. warmup=30s, total=180s
+  > 
+  > --- [ Latency Results (ms) ] ---
+  >  (App-level: send() call -> broker ACK; reaches OS page cache)
+  >  Total Requests : 13870
+  >  Average        : 24.56 ms
+  >  p50 (Median)   : 18.38 ms
+  >  p90            : 48.91 ms
+  >  p99            : 82.65 ms
+  >  p999           : 123.54 ms
+  >  Max            : 159.24 ms
+  > --------------------------------
+  > --- [ Throughput / Errors ] ---
+  >  Target OP/s         : 100
+  >  Achieved OP/s       : 92.30
+  >  Achieved/Target (%) : 92.3
+  >  Total Sent (incl. warmup) : 16563
+  >  Send Errors               : 0
+  > --------------------------------
+  > 
+  > --- [ Per-second Throughput & Latency ] ---
+  > Sec   0 | send=    48 | ack=    40 | p50=176.38 ms | p99=844.86 ms
+  > Sec   1 | send=    88 | ack=    93 | p50=32.40 ms | p99=70.89 ms
+  > Sec   2 | send=    96 | ack=    92 | p50=21.35 ms | p99=71.60 ms
+  > Sec   3 | send=    85 | ack=    88 | p50=17.45 ms | p99=44.08 ms
+  > Sec   4 | send=    88 | ack=    92 | p50=16.78 ms | p99=41.76 ms
+  > Sec   5 | send=    96 | ack=    96 | p50=16.83 ms | p99=39.73 ms
+  > Sec   6 | send=    88 | ack=    88 | p50=17.92 ms | p99=82.09 ms
+  > Sec   7 | send=    96 | ack=    94 | p50=18.18 ms | p99=55.12 ms
+  > Sec   8 | send=    93 | ack=    90 | p50=18.36 ms | p99=65.35 ms
+  > Sec   9 | send=    92 | ack=    93 | p50=19.11 ms | p99=87.35 ms
+  > Sec  10 | send=    92 | ack=    92 | p50=17.45 ms | p99=97.27 ms
+  > Sec  11 | send=    93 | ack=    94 | p50=24.41 ms | p99=112.24 ms
+  > Sec  12 | send=    92 | ack=    94 | p50=22.58 ms | p99=80.48 ms
+  > Sec  13 | send=    91 | ack=    86 | p50=29.68 ms | p99=85.86 ms
+  > Sec  14 | send=    91 | ack=    94 | p50=36.96 ms | p99=122.06 ms
+  > Sec  15 | send=    88 | ack=    88 | p50=33.53 ms | p99=112.56 ms
+  > Sec  16 | send=    85 | ack=    85 | p50=45.78 ms | p99=150.18 ms
+  > Sec  17 | send=    93 | ack=    93 | p50=28.99 ms | p99=125.69 ms
+  > Sec  18 | send=    93 | ack=    95 | p50=18.46 ms | p99=58.96 ms
+  > Sec  19 | send=    92 | ack=    92 | p50=17.21 ms | p99=65.08 ms
+  > Sec  20 | send=    94 | ack=    92 | p50=19.42 ms | p99=71.95 ms
+  > Sec  21 | send=    92 | ack=    91 | p50=20.24 ms | p99=50.17 ms
+  > Sec  22 | send=    90 | ack=    88 | p50=14.69 ms | p99=76.24 ms
+  > Sec  23 | send=    88 | ack=    81 | p50=28.20 ms | p99=89.01 ms
+  > Sec  24 | send=    88 | ack=   101 | p50=26.38 ms | p99=140.87 ms
+  > Sec  25 | send=    92 | ack=    90 | p50=21.22 ms | p99=79.91 ms
+  > Sec  26 | send=    94 | ack=    96 | p50=18.11 ms | p99=76.37 ms
+  > Sec  27 | send=    94 | ack=    91 | p50=13.97 ms | p99=34.10 ms
+  > Sec  28 | send=    94 | ack=    96 | p50=13.68 ms | p99=68.04 ms
+  > Sec  29 | send=    92 | ack=    88 | p50=25.52 ms | p99=65.87 ms
+  > Sec  30 | send=    92 | ack=    96 | p50=23.04 ms | p99=102.46 ms
+  > Sec  31 | send=    88 | ack=    89 | p50=24.22 ms | p99=140.28 ms
+  > Sec  32 | send=    96 | ack=    96 | p50=22.14 ms | p99=95.66 ms
+  > Sec  33 | send=    91 | ack=    88 | p50=20.92 ms | p99=71.56 ms
+  > Sec  34 | send=    93 | ack=    90 | p50=16.78 ms | p99=71.59 ms
+  > Sec  35 | send=    91 | ack=    94 | p50=38.47 ms | p99=79.95 ms
+  > Sec  36 | send=    93 | ack=    93 | p50=30.57 ms | p99=94.38 ms
+  > Sec  37 | send=    93 | ack=    94 | p50=12.19 ms | p99=40.83 ms
+  > Sec  38 | send=    93 | ack=    94 | p50=15.16 ms | p99=73.94 ms
+  > Sec  39 | send=    94 | ack=    92 | p50=13.87 ms | p99=55.35 ms
+  > Sec  40 | send=    90 | ack=    87 | p50=15.88 ms | p99=64.39 ms
+  > Sec  41 | send=    95 | ack=   100 | p50=23.94 ms | p99=94.69 ms
+  > Sec  42 | send=    92 | ack=    89 | p50=20.04 ms | p99=68.81 ms
+  > Sec  43 | send=    92 | ack=    95 | p50=17.83 ms | p99=81.00 ms
+  > Sec  44 | send=    93 | ack=    91 | p50=14.51 ms | p99=72.81 ms
+  > Sec  45 | send=    90 | ack=    93 | p50=15.55 ms | p99=85.86 ms
+  > Sec  46 | send=    91 | ack=    85 | p50=31.26 ms | p99=108.05 ms
+  > Sec  47 | send=    90 | ack=    96 | p50=45.07 ms | p99=117.46 ms
+  > Sec  48 | send=    92 | ack=    87 | p50=37.41 ms | p99=126.53 ms
+  > Sec  49 | send=    92 | ack=    94 | p50=21.31 ms | p99=102.47 ms
+  > Sec  50 | send=    89 | ack=    92 | p50=16.21 ms | p99=42.81 ms
+  > Sec  51 | send=    96 | ack=    94 | p50=20.75 ms | p99=58.98 ms
+  > Sec  52 | send=    93 | ack=    92 | p50=13.72 ms | p99=62.95 ms
+  > Sec  53 | send=    94 | ack=    94 | p50=13.57 ms | p99=41.07 ms
+  > Sec  54 | send=    92 | ack=    92 | p50=15.54 ms | p99=47.74 ms
+  > Sec  55 | send=    93 | ack=    92 | p50=21.51 ms | p99=78.33 ms
+  > Sec  56 | send=    93 | ack=    95 | p50=11.86 ms | p99=44.85 ms
+  > Sec  57 | send=    94 | ack=    95 | p50=13.85 ms | p99=61.34 ms
+  > Sec  58 | send=    93 | ack=    93 | p50=14.36 ms | p99=44.35 ms
+  > Sec  59 | send=    91 | ack=    92 | p50=20.88 ms | p99=72.37 ms
+  > Sec  60 | send=    94 | ack=    89 | p50=21.92 ms | p99=109.18 ms
+  > Sec  61 | send=    89 | ack=    93 | p50=43.66 ms | p99=137.00 ms
+  > Sec  62 | send=    93 | ack=    93 | p50=39.48 ms | p99=98.60 ms
+  > Sec  63 | send=    90 | ack=    88 | p50=34.11 ms | p99=75.15 ms
+  > Sec  64 | send=    93 | ack=    96 | p50=14.69 ms | p99=124.49 ms
+  > Sec  65 | send=    94 | ack=    90 | p50=13.31 ms | p99=52.22 ms
+  > Sec  66 | send=    92 | ack=    95 | p50=17.60 ms | p99=88.85 ms
+  > Sec  67 | send=    93 | ack=    93 | p50=13.11 ms | p99=44.39 ms
+  > Sec  68 | send=    91 | ack=    89 | p50=13.24 ms | p99=70.39 ms
+  > Sec  69 | send=    94 | ack=    97 | p50=15.76 ms | p99=60.85 ms
+  > Sec  70 | send=    93 | ack=    88 | p50=16.84 ms | p99=53.58 ms
+  > Sec  71 | send=    94 | ack=    88 | p50=15.29 ms | p99=104.34 ms
+  > Sec  72 | send=    92 | ack=    98 | p50=14.38 ms | p99=114.31 ms
+  > Sec  73 | send=    94 | ack=    91 | p50=15.42 ms | p99=78.78 ms
+  > Sec  74 | send=    91 | ack=    96 | p50=20.42 ms | p99=112.74 ms
+  > Sec  75 | send=    93 | ack=    90 | p50=32.47 ms | p99=77.11 ms
+  > Sec  76 | send=    90 | ack=    95 | p50=35.68 ms | p99=85.86 ms
+  > Sec  77 | send=    93 | ack=    92 | p50=13.54 ms | p99=70.12 ms
+  > Sec  78 | send=    93 | ack=    91 | p50=12.33 ms | p99=53.09 ms
+  > Sec  79 | send=    94 | ack=    96 | p50=23.10 ms | p99=91.32 ms
+  > Sec  80 | send=    92 | ack=    90 | p50=14.04 ms | p99=61.43 ms
+  > Sec  81 | send=    92 | ack=    93 | p50=18.24 ms | p99=84.55 ms
+  > Sec  82 | send=    92 | ack=    95 | p50=12.20 ms | p99=79.57 ms
+  > Sec  83 | send=    93 | ack=    87 | p50=13.52 ms | p99=72.30 ms
+  > Sec  84 | send=    92 | ack=    93 | p50=14.75 ms | p99=87.01 ms
+  > Sec  85 | send=    93 | ack=    95 | p50=17.36 ms | p99=81.57 ms
+  > Sec  86 | send=    92 | ack=    91 | p50=20.34 ms | p99=65.20 ms
+  > Sec  87 | send=    92 | ack=    90 | p50=29.09 ms | p99=81.00 ms
+  > Sec  88 | send=    90 | ack=    96 | p50=27.63 ms | p99=159.24 ms
+  > Sec  89 | send=    94 | ack=    92 | p50=19.04 ms | p99=96.42 ms
+  > Sec  90 | send=    92 | ack=    87 | p50=12.68 ms | p99=82.12 ms
+  > Sec  91 | send=    93 | ack=   100 | p50=12.22 ms | p99=89.74 ms
+  > Sec  92 | send=    93 | ack=    90 | p50=22.68 ms | p99=94.09 ms
+  > Sec  93 | send=    92 | ack=    92 | p50=26.69 ms | p99=86.70 ms
+  > Sec  94 | send=    94 | ack=    92 | p50=16.01 ms | p99=65.78 ms
+  > Sec  95 | send=    91 | ack=    95 | p50=19.67 ms | p99=77.03 ms
+  > Sec  96 | send=    94 | ack=    89 | p50=22.71 ms | p99=127.11 ms
+  > Sec  97 | send=    90 | ack=    96 | p50=13.95 ms | p99=94.56 ms
+  > Sec  98 | send=    95 | ack=    90 | p50=13.54 ms | p99=46.69 ms
+  > Sec  99 | send=    91 | ack=    95 | p50=13.82 ms | p99=80.85 ms
+  > Sec 100 | send=    94 | ack=    94 | p50=11.84 ms | p99=47.36 ms
+  > Sec 101 | send=    95 | ack=    95 | p50=11.43 ms | p99=37.80 ms
+  > Sec 102 | send=    91 | ack=    85 | p50=19.56 ms | p99=71.36 ms
+  > Sec 103 | send=    94 | ack=   100 | p50=11.79 ms | p99=73.02 ms
+  > Sec 104 | send=    91 | ack=    89 | p50=29.76 ms | p99=76.89 ms
+  > Sec 105 | send=    91 | ack=    91 | p50=28.96 ms | p99=78.87 ms
+  > Sec 106 | send=    93 | ack=    91 | p50=34.60 ms | p99=99.66 ms
+  > Sec 107 | send=    89 | ack=    93 | p50=25.76 ms | p99=73.30 ms
+  > Sec 108 | send=    95 | ack=    95 | p50=13.02 ms | p99=41.33 ms
+  > Sec 109 | send=    94 | ack=    93 | p50=14.65 ms | p99=73.52 ms
+  > Sec 110 | send=    90 | ack=    92 | p50=16.60 ms | p99=51.77 ms
+  > Sec 111 | send=    95 | ack=    93 | p50=18.29 ms | p99=51.09 ms
+  > Sec 112 | send=    92 | ack=    91 | p50=15.45 ms | p99=66.33 ms
+  > Sec 113 | send=    90 | ack=    92 | p50=31.52 ms | p99=101.60 ms
+  > Sec 114 | send=    93 | ack=    92 | p50=26.92 ms | p99=71.25 ms
+  > Sec 115 | send=    93 | ack=    94 | p50=11.44 ms | p99=40.19 ms
+  > Sec 116 | send=    93 | ack=    94 | p50=12.84 ms | p99=55.29 ms
+  > Sec 117 | send=    94 | ack=    93 | p50=11.19 ms | p99=46.65 ms
+  > Sec 118 | send=    93 | ack=    90 | p50=12.04 ms | p99=62.91 ms
+  > Sec 119 | send=    93 | ack=    96 | p50=11.55 ms | p99=53.75 ms
+  > Sec 120 | send=    93 | ack=    92 | p50=22.76 ms | p99=83.79 ms
+  > Sec 121 | send=    92 | ack=    93 | p50=15.30 ms | p99=100.96 ms
+  > Sec 122 | send=    93 | ack=    89 | p50=13.59 ms | p99=58.51 ms
+  > Sec 123 | send=    91 | ack=    96 | p50=13.29 ms | p99=61.60 ms
+  > Sec 124 | send=    95 | ack=    92 | p50=15.44 ms | p99=77.72 ms
+  > Sec 125 | send=    89 | ack=    92 | p50=32.06 ms | p99=86.03 ms
+  > Sec 126 | send=    92 | ack=    88 | p50=37.27 ms | p99=82.13 ms
+  > Sec 127 | send=    92 | ack=    96 | p50=17.23 ms | p99=48.92 ms
+  > Sec 128 | send=    94 | ack=    91 | p50=13.75 ms | p99=47.22 ms
+  > Sec 129 | send=    93 | ack=    94 | p50=11.04 ms | p99=47.34 ms
+  > Sec 130 | send=    93 | ack=    89 | p50=14.76 ms | p99=72.66 ms
+  > Sec 131 | send=    91 | ack=    95 | p50=40.74 ms | p99=86.75 ms
+  > Sec 132 | send=    90 | ack=    87 | p50=31.65 ms | p99=69.91 ms
+  > Sec 133 | send=    92 | ack=    88 | p50=29.75 ms | p99=92.16 ms
+  > Sec 134 | send=    91 | ack=   100 | p50=13.36 ms | p99=116.35 ms
+  > Sec 135 | send=    95 | ack=    95 | p50=12.12 ms | p99=54.91 ms
+  > Sec 136 | send=    95 | ack=    93 | p50=12.43 ms | p99=52.20 ms
+  > Sec 137 | send=    91 | ack=    91 | p50=12.96 ms | p99=67.92 ms
+  > Sec 138 | send=    93 | ack=    95 | p50=15.00 ms | p99=68.72 ms
+  > Sec 139 | send=    95 | ack=    95 | p50=14.17 ms | p99=53.89 ms
+  > Sec 140 | send=    93 | ack=    90 | p50=16.05 ms | p99=81.60 ms
+  > Sec 141 | send=    91 | ack=    92 | p50=20.19 ms | p99=81.63 ms
+  > Sec 142 | send=    93 | ack=    95 | p50=14.74 ms | p99=50.47 ms
+  > Sec 143 | send=    91 | ack=    90 | p50=19.00 ms | p99=65.77 ms
+  > Sec 144 | send=    93 | ack=    94 | p50=23.88 ms | p99=62.12 ms
+  > Sec 145 | send=    92 | ack=    89 | p50=30.99 ms | p99=75.87 ms
+  > Sec 146 | send=    92 | ack=    92 | p50=29.32 ms | p99=114.06 ms
+  > Sec 147 | send=    92 | ack=    94 | p50=16.63 ms | p99=74.61 ms
+  > Sec 148 | send=    92 | ack=    93 | p50=13.73 ms | p99=53.12 ms
+  > Sec 149 | send=    96 | ack=    96 | p50=12.64 ms | p99=43.01 ms
+  > Sec 150 | send=    91 | ack=    91 | p50=22.23 ms | p99=77.62 ms
+  > Sec 151 | send=    93 | ack=    91 | p50=20.84 ms | p99=124.60 ms
+  > Sec 152 | send=    91 | ack=    89 | p50=17.58 ms | p99=57.28 ms
+  > Sec 153 | send=    92 | ack=    93 | p50=17.49 ms | p99=90.37 ms
+  > Sec 154 | send=    94 | ack=    92 | p50=19.87 ms | p99=90.34 ms
+  > Sec 155 | send=    91 | ack=    93 | p50=21.23 ms | p99=78.33 ms
+  > Sec 156 | send=    93 | ack=    94 | p50=34.37 ms | p99=87.16 ms
+  > Sec 157 | send=    91 | ack=    91 | p50=30.99 ms | p99=94.49 ms
+  > Sec 158 | send=    92 | ack=    90 | p50=32.62 ms | p99=89.50 ms
+  > Sec 159 | send=    92 | ack=    96 | p50=12.68 ms | p99=90.27 ms
+  > Sec 160 | send=    95 | ack=    94 | p50=12.52 ms | p99=43.02 ms
+  > Sec 161 | send=    93 | ack=    91 | p50=12.42 ms | p99=56.66 ms
+  > Sec 162 | send=    92 | ack=    95 | p50=12.45 ms | p99=84.58 ms
+  > Sec 163 | send=    95 | ack=    93 | p50=16.39 ms | p99=64.57 ms
+  > Sec 164 | send=    91 | ack=    90 | p50=21.11 ms | p99=119.37 ms
+  > Sec 165 | send=    93 | ack=    96 | p50=19.10 ms | p99=55.89 ms
+  > Sec 166 | send=    93 | ack=    92 | p50=14.26 ms | p99=65.47 ms
+  > Sec 167 | send=    92 | ack=    92 | p50=17.71 ms | p99=84.83 ms
+  > Sec 168 | send=    92 | ack=    92 | p50=23.06 ms | p99=68.85 ms
+  > Sec 169 | send=    91 | ack=    89 | p50=15.03 ms | p99=76.07 ms
+  > Sec 170 | send=    91 | ack=    91 | p50=33.51 ms | p99=87.72 ms
+  > Sec 171 | send=    93 | ack=    92 | p50=26.87 ms | p99=85.76 ms
+  > Sec 172 | send=    92 | ack=    90 | p50=37.02 ms | p99=81.12 ms
+  > Sec 173 | send=    91 | ack=    97 | p50=20.22 ms | p99=87.99 ms
+  > Sec 174 | send=    93 | ack=    93 | p50=13.21 ms | p99=73.45 ms
+  > Sec 175 | send=    95 | ack=    92 | p50=11.76 ms | p99=42.08 ms
+  > Sec 176 | send=    92 | ack=    92 | p50=14.96 ms | p99=50.67 ms
+  > Sec 177 | send=    92 | ack=    87 | p50=29.92 ms | p99=70.96 ms
+  > Sec 178 | send=    92 | ack=    99 | p50=12.92 ms | p99=75.01 ms
+  > Sec 179 | send=    93 | ack=    87 | p50=26.88 ms | p99=81.11 ms
+  > ------------------------------------------
+  > Req=13870 | Achieved=92.3 OP/s (92.3%) | App-Avg=24.56ms | App-P99=82.65ms | DiskUtil=30.67% | Block-await=9.18ms | iowait=0.78% | Bottleneck=False
+[Success] JSON snapshot saved: results/kafka_fs_bench_20260430_123613/results_snapshot.json
+[Success] CSV saved: results/kafka_fs_bench_20260430_123613/csv/full_results.csv
+[Success] CSV saved: results/kafka_fs_bench_20260430_123613/csv/summary_by_fs_recordsize_scenario.csv
+[Success] Summary report saved: results/kafka_fs_bench_20260430_123613/summary_report.txt
+[Fixed OP/s] F2FS / scenario_b / 1024000B -> target_ops=100
+[Service] Stopping Kafka KRaft broker ...
+
+[Setup] Formatting & Mounting as f2fs ...
+NAME MAJ:MIN RM SIZE RO TYPE MOUNTPOINTS
+sdc    8:32   0  20G  0 disk /mnt/kafka-logs
+/dev/sdc on /mnt/kafka-logs type f2fs (rw,noatime,nodiratime,lazytime,background_gc=on,nogc_merge,nodiscard,user_xattr,inline_xattr,acl,inline_data,inline_dentry,flush_merge,barrier,extent_cache,mode=adaptive,active_logs=6,alloc_mode=default,checkpoint_merge,fsync_mode=posix,memory=normal,errors=continue)
+[Service] Starting Kafka in KRaft mode ...
+[Service] Recreating benchmark topic ...
+
+--- [MEASURE] F2FS / scenario_b / 1024000B / 100 ops ---
+  > =====================================
+  >  Kafka Filesystem Benchmark (Java API)
+  > =====================================
+  >  - Record Size: 1024000 Bytes
+  >  - Target OP/s (total): 100
+  >  - Producers: 8
+  >  - Consumer Active: true
+  >  - Dynamic Topic Creation: true (rate=5/sec)
+  >  - Warmup: 30 sec / Total Duration: 180 sec
+  >  - Send mode: ASYNC (callback-based latency measurement)
+  > [Config] BUFFER_MEMORY per producer = 64 MB
+  > [Run] Producers started. warmup=30s, total=180s
+  > [Consumer] consumed 16289 records
+  > [TopicCreator] created=695 failed=0 (rate=5/sec)
+  > [Consumer] error: org.apache.kafka.common.errors.InterruptException: java.lang.InterruptedException
+  > 
+  > --- [ Latency Results (ms) ] ---
+  >  (App-level: send() call -> broker ACK; reaches OS page cache)
+  >  Total Requests : 13634
+  >  Average        : 31.67 ms
+  >  p50 (Median)   : 26.64 ms
+  >  p90            : 58.19 ms
+  >  p99            : 96.80 ms
+  >  p999           : 138.91 ms
+  >  Max            : 538.23 ms
+  > --------------------------------
+  > --- [ Throughput / Errors ] ---
+  >  Target OP/s         : 100
+  >  Achieved OP/s       : 90.75
+  >  Achieved/Target (%) : 90.7
+  >  Total Sent (incl. warmup) : 16295
+  >  Send Errors               : 0
+  > --------------------------------
+  > 
+  > --- [ Per-second Throughput & Latency ] ---
+  > Sec   0 | send=    31 | ack=     0 | no data
+  > Sec   1 | send=    89 | ack=   120 | p50=164.71 ms | p99=1209.32 ms
+  > Sec   2 | send=    93 | ack=    89 | p50=27.21 ms | p99=76.15 ms
+  > Sec   3 | send=    91 | ack=    95 | p50=22.35 ms | p99=57.62 ms
+  > Sec   4 | send=    88 | ack=    87 | p50=21.98 ms | p99=48.91 ms
+  > Sec   5 | send=    95 | ack=    96 | p50=16.81 ms | p99=46.63 ms
+  > Sec   6 | send=    89 | ack=    89 | p50=22.69 ms | p99=121.80 ms
+  > Sec   7 | send=    90 | ack=    86 | p50=23.07 ms | p99=72.52 ms
+  > Sec   8 | send=    91 | ack=    90 | p50=35.37 ms | p99=107.86 ms
+  > Sec   9 | send=    91 | ack=    96 | p50=28.21 ms | p99=95.88 ms
+  > Sec  10 | send=    88 | ack=    87 | p50=24.26 ms | p99=146.73 ms
+  > Sec  11 | send=    92 | ack=    89 | p50=35.69 ms | p99=94.09 ms
+  > Sec  12 | send=    91 | ack=    91 | p50=34.77 ms | p99=74.40 ms
+  > Sec  13 | send=    89 | ack=    90 | p50=34.60 ms | p99=134.18 ms
+  > Sec  14 | send=    92 | ack=    91 | p50=32.28 ms | p99=84.21 ms
+  > Sec  15 | send=    91 | ack=    91 | p50=32.38 ms | p99=79.15 ms
+  > Sec  16 | send=    89 | ack=    92 | p50=28.72 ms | p99=203.82 ms
+  > Sec  17 | send=    92 | ack=    91 | p50=30.76 ms | p99=134.32 ms
+  > Sec  18 | send=    89 | ack=    90 | p50=34.51 ms | p99=102.71 ms
+  > Sec  19 | send=    94 | ack=    94 | p50=34.12 ms | p99=104.85 ms
+  > Sec  20 | send=    90 | ack=    88 | p50=29.59 ms | p99=121.38 ms
+  > Sec  21 | send=    89 | ack=    90 | p50=28.12 ms | p99=94.79 ms
+  > Sec  22 | send=    93 | ack=    87 | p50=28.35 ms | p99=94.23 ms
+  > Sec  23 | send=    89 | ack=    97 | p50=40.30 ms | p99=114.36 ms
+  > Sec  24 | send=    94 | ack=    88 | p50=25.27 ms | p99=82.77 ms
+  > Sec  25 | send=    90 | ack=    93 | p50=37.18 ms | p99=179.07 ms
+  > Sec  26 | send=    88 | ack=    90 | p50=29.63 ms | p99=114.17 ms
+  > Sec  27 | send=    90 | ack=    89 | p50=35.18 ms | p99=89.35 ms
+  > Sec  28 | send=    92 | ack=    86 | p50=27.83 ms | p99=89.02 ms
+  > Sec  29 | send=    91 | ack=    99 | p50=27.67 ms | p99=104.73 ms
+  > Sec  30 | send=    94 | ack=    91 | p50=26.85 ms | p99=83.62 ms
+  > Sec  31 | send=    86 | ack=    86 | p50=31.16 ms | p99=196.97 ms
+  > Sec  32 | send=    91 | ack=    93 | p50=24.93 ms | p99=66.89 ms
+  > Sec  33 | send=    94 | ack=    91 | p50=26.32 ms | p99=81.42 ms
+  > Sec  34 | send=    90 | ack=    94 | p50=24.48 ms | p99=92.21 ms
+  > Sec  35 | send=    93 | ack=    93 | p50=21.22 ms | p99=77.90 ms
+  > Sec  36 | send=    90 | ack=    90 | p50=19.26 ms | p99=60.52 ms
+  > Sec  37 | send=    93 | ack=    88 | p50=24.34 ms | p99=127.07 ms
+  > Sec  38 | send=    91 | ack=    93 | p50=26.33 ms | p99=70.24 ms
+  > Sec  39 | send=    91 | ack=    94 | p50=28.73 ms | p99=138.41 ms
+  > Sec  40 | send=    92 | ack=    87 | p50=22.07 ms | p99=86.98 ms
+  > Sec  41 | send=    89 | ack=    93 | p50=21.37 ms | p99=89.35 ms
+  > Sec  42 | send=    56 | ack=    53 | p50=31.90 ms | p99=538.23 ms
+  > Sec  43 | send=    88 | ack=    92 | p50=23.69 ms | p99=130.53 ms
+  > Sec  44 | send=    92 | ack=    88 | p50=20.38 ms | p99=68.62 ms
+  > Sec  45 | send=    87 | ack=    91 | p50=22.13 ms | p99=114.58 ms
+  > Sec  46 | send=    91 | ack=    91 | p50=24.97 ms | p99=99.67 ms
+  > Sec  47 | send=    93 | ack=    91 | p50=21.29 ms | p99=109.01 ms
+  > Sec  48 | send=    93 | ack=    90 | p50=26.78 ms | p99=138.91 ms
+  > Sec  49 | send=    90 | ack=    89 | p50=31.48 ms | p99=118.72 ms
+  > Sec  50 | send=    90 | ack=    94 | p50=30.36 ms | p99=101.07 ms
+  > Sec  51 | send=    93 | ack=    93 | p50=33.42 ms | p99=93.85 ms
+  > Sec  52 | send=    92 | ack=    91 | p50=22.38 ms | p99=74.05 ms
+  > Sec  53 | send=    92 | ack=    94 | p50=24.09 ms | p99=65.67 ms
+  > Sec  54 | send=    91 | ack=    89 | p50=22.51 ms | p99=99.05 ms
+  > Sec  55 | send=    92 | ack=    92 | p50=32.57 ms | p99=95.59 ms
+  > Sec  56 | send=    91 | ack=    91 | p50=24.39 ms | p99=80.22 ms
+  > Sec  57 | send=    92 | ack=    92 | p50=24.29 ms | p99=77.05 ms
+  > Sec  58 | send=    87 | ack=    82 | p50=19.21 ms | p99=126.11 ms
+  > Sec  59 | send=    88 | ack=    92 | p50=25.47 ms | p99=89.85 ms
+  > Sec  60 | send=    92 | ack=    94 | p50=26.41 ms | p99=74.28 ms
+  > Sec  61 | send=    91 | ack=    90 | p50=18.58 ms | p99=70.41 ms
+  > Sec  62 | send=    91 | ack=    92 | p50=19.87 ms | p99=83.08 ms
+  > Sec  63 | send=    89 | ack=    87 | p50=40.81 ms | p99=201.29 ms
+  > Sec  64 | send=    91 | ack=    90 | p50=37.01 ms | p99=140.45 ms
+  > Sec  65 | send=    92 | ack=    94 | p50=22.04 ms | p99=92.99 ms
+  > Sec  66 | send=    93 | ack=    93 | p50=22.90 ms | p99=100.92 ms
+  > Sec  67 | send=    89 | ack=    91 | p50=23.93 ms | p99=86.14 ms
+  > Sec  68 | send=    94 | ack=    89 | p50=25.12 ms | p99=59.58 ms
+  > Sec  69 | send=    89 | ack=    94 | p50=32.68 ms | p99=82.48 ms
+  > Sec  70 | send=    93 | ack=    90 | p50=24.03 ms | p99=83.20 ms
+  > Sec  71 | send=    90 | ack=    90 | p50=24.48 ms | p99=86.87 ms
+  > Sec  72 | send=    94 | ack=    94 | p50=27.77 ms | p99=111.29 ms
+  > Sec  73 | send=    91 | ack=    92 | p50=28.02 ms | p99=98.13 ms
+  > Sec  74 | send=    90 | ack=    93 | p50=20.49 ms | p99=96.99 ms
+  > Sec  75 | send=    92 | ack=    89 | p50=23.68 ms | p99=83.27 ms
+  > Sec  76 | send=    92 | ack=    91 | p50=30.77 ms | p99=82.52 ms
+  > Sec  77 | send=    91 | ack=    94 | p50=26.05 ms | p99=78.75 ms
+  > Sec  78 | send=    92 | ack=    85 | p50=28.13 ms | p99=87.57 ms
+  > Sec  79 | send=    92 | ack=    95 | p50=31.03 ms | p99=114.79 ms
+  > Sec  80 | send=    89 | ack=    87 | p50=36.04 ms | p99=109.86 ms
+  > Sec  81 | send=    92 | ack=    97 | p50=27.57 ms | p99=94.67 ms
+  > Sec  82 | send=    92 | ack=    88 | p50=23.17 ms | p99=94.24 ms
+  > Sec  83 | send=    90 | ack=    89 | p50=28.30 ms | p99=144.52 ms
+  > Sec  84 | send=    80 | ack=    79 | p50=24.24 ms | p99=81.50 ms
+  > Sec  85 | send=    93 | ack=    98 | p50=21.04 ms | p99=58.04 ms
+  > Sec  86 | send=    91 | ack=    93 | p50=25.87 ms | p99=82.19 ms
+  > Sec  87 | send=    92 | ack=    89 | p50=29.06 ms | p99=87.72 ms
+  > Sec  88 | send=    90 | ack=    91 | p50=28.74 ms | p99=85.55 ms
+  > Sec  89 | send=    90 | ack=    92 | p50=27.39 ms | p99=81.59 ms
+  > Sec  90 | send=    92 | ack=    88 | p50=35.32 ms | p99=99.54 ms
+  > Sec  91 | send=    91 | ack=    91 | p50=32.30 ms | p99=88.49 ms
+  > Sec  92 | send=    92 | ack=    93 | p50=21.08 ms | p99=143.75 ms
+  > Sec  93 | send=    91 | ack=    92 | p50=24.17 ms | p99=85.65 ms
+  > Sec  94 | send=    90 | ack=    89 | p50=26.20 ms | p99=88.52 ms
+  > Sec  95 | send=    91 | ack=    88 | p50=36.95 ms | p99=110.39 ms
+  > Sec  96 | send=    88 | ack=    92 | p50=34.21 ms | p99=124.19 ms
+  > Sec  97 | send=    92 | ack=    91 | p50=32.70 ms | p99=88.53 ms
+  > Sec  98 | send=    88 | ack=    92 | p50=19.91 ms | p99=69.17 ms
+  > Sec  99 | send=    95 | ack=    90 | p50=22.40 ms | p99=84.25 ms
+  > Sec 100 | send=    90 | ack=    91 | p50=21.34 ms | p99=56.14 ms
+  > Sec 101 | send=    94 | ack=    97 | p50=23.49 ms | p99=95.06 ms
+  > Sec 102 | send=    94 | ack=    92 | p50=19.36 ms | p99=56.29 ms
+  > Sec 103 | send=    90 | ack=    91 | p50=20.66 ms | p99=69.37 ms
+  > Sec 104 | send=    93 | ack=    93 | p50=29.64 ms | p99=71.96 ms
+  > Sec 105 | send=    90 | ack=    84 | p50=30.38 ms | p99=109.81 ms
+  > Sec 106 | send=    89 | ack=    89 | p50=30.53 ms | p99=91.32 ms
+  > Sec 107 | send=    94 | ack=    98 | p50=24.64 ms | p99=105.15 ms
+  > Sec 108 | send=    90 | ack=    94 | p50=29.79 ms | p99=87.19 ms
+  > Sec 109 | send=    92 | ack=    87 | p50=29.83 ms | p99=91.78 ms
+  > Sec 110 | send=    92 | ack=    93 | p50=28.01 ms | p99=70.83 ms
+  > Sec 111 | send=    91 | ack=    95 | p50=28.31 ms | p99=79.26 ms
+  > Sec 112 | send=    92 | ack=    88 | p50=30.21 ms | p99=139.98 ms
+  > Sec 113 | send=    89 | ack=    87 | p50=27.66 ms | p99=75.76 ms
+  > Sec 114 | send=    93 | ack=    96 | p50=28.60 ms | p99=88.92 ms
+  > Sec 115 | send=    89 | ack=    87 | p50=29.34 ms | p99=100.59 ms
+  > Sec 116 | send=    95 | ack=   100 | p50=23.71 ms | p99=94.91 ms
+  > Sec 117 | send=    88 | ack=    88 | p50=19.25 ms | p99=75.29 ms
+  > Sec 118 | send=    96 | ack=    96 | p50=25.64 ms | p99=62.59 ms
+  > Sec 119 | send=    89 | ack=    87 | p50=31.52 ms | p99=115.22 ms
+  > Sec 120 | send=    91 | ack=    91 | p50=22.92 ms | p99=70.15 ms
+  > Sec 121 | send=    92 | ack=    89 | p50=29.67 ms | p99=88.10 ms
+  > Sec 122 | send=    91 | ack=    95 | p50=26.31 ms | p99=86.05 ms
+  > Sec 123 | send=    89 | ack=    89 | p50=20.61 ms | p99=105.25 ms
+  > Sec 124 | send=    94 | ack=    95 | p50=25.01 ms | p99=79.87 ms
+  > Sec 125 | send=    92 | ack=    88 | p50=21.99 ms | p99=74.85 ms
+  > Sec 126 | send=    91 | ack=    95 | p50=26.07 ms | p99=86.71 ms
+  > Sec 127 | send=    91 | ack=    89 | p50=22.19 ms | p99=63.85 ms
+  > Sec 128 | send=    93 | ack=    91 | p50=31.39 ms | p99=82.00 ms
+  > Sec 129 | send=    91 | ack=    93 | p50=25.12 ms | p99=66.22 ms
+  > Sec 130 | send=    91 | ack=    91 | p50=32.87 ms | p99=97.04 ms
+  > Sec 131 | send=    91 | ack=    90 | p50=28.87 ms | p99=75.62 ms
+  > Sec 132 | send=    93 | ack=    93 | p50=31.36 ms | p99=123.26 ms
+  > Sec 133 | send=    89 | ack=    92 | p50=24.69 ms | p99=76.40 ms
+  > Sec 134 | send=    95 | ack=    88 | p50=29.53 ms | p99=101.27 ms
+  > Sec 135 | send=    89 | ack=    95 | p50=28.63 ms | p99=67.38 ms
+  > Sec 136 | send=    92 | ack=    89 | p50=30.66 ms | p99=105.67 ms
+  > Sec 137 | send=    91 | ack=    92 | p50=30.74 ms | p99=77.72 ms
+  > Sec 138 | send=    92 | ack=    92 | p50=24.01 ms | p99=79.37 ms
+  > Sec 139 | send=    92 | ack=    92 | p50=22.46 ms | p99=100.15 ms
+  > Sec 140 | send=    91 | ack=    89 | p50=23.01 ms | p99=70.10 ms
+  > Sec 141 | send=    88 | ack=    93 | p50=30.10 ms | p99=122.95 ms
+  > Sec 142 | send=    96 | ack=    95 | p50=21.86 ms | p99=76.49 ms
+  > Sec 143 | send=    90 | ack=    90 | p50=24.38 ms | p99=85.86 ms
+  > Sec 144 | send=    93 | ack=    92 | p50=27.26 ms | p99=63.12 ms
+  > Sec 145 | send=    91 | ack=    90 | p50=31.68 ms | p99=91.51 ms
+  > Sec 146 | send=    91 | ack=    91 | p50=33.95 ms | p99=83.84 ms
+  > Sec 147 | send=    92 | ack=    94 | p50=27.33 ms | p99=93.82 ms
+  > Sec 148 | send=    91 | ack=    88 | p50=29.01 ms | p99=84.92 ms
+  > Sec 149 | send=    93 | ack=    96 | p50=25.47 ms | p99=78.88 ms
+  > Sec 150 | send=    90 | ack=    90 | p50=25.78 ms | p99=64.97 ms
+  > Sec 151 | send=    92 | ack=    90 | p50=23.36 ms | p99=67.94 ms
+  > Sec 152 | send=    92 | ack=    91 | p50=29.05 ms | p99=67.11 ms
+  > Sec 153 | send=    90 | ack=    94 | p50=22.28 ms | p99=82.70 ms
+  > Sec 154 | send=    91 | ack=    89 | p50=24.24 ms | p99=92.83 ms
+  > Sec 155 | send=    91 | ack=    90 | p50=26.77 ms | p99=126.58 ms
+  > Sec 156 | send=    91 | ack=    94 | p50=25.71 ms | p99=91.19 ms
+  > Sec 157 | send=    93 | ack=    88 | p50=29.77 ms | p99=128.07 ms
+  > Sec 158 | send=    91 | ack=    96 | p50=29.73 ms | p99=63.22 ms
+  > Sec 159 | send=    91 | ack=    89 | p50=29.18 ms | p99=102.03 ms
+  > Sec 160 | send=    88 | ack=    90 | p50=26.86 ms | p99=63.54 ms
+  > Sec 161 | send=    94 | ack=    89 | p50=25.56 ms | p99=125.38 ms
+  > Sec 162 | send=    90 | ack=    91 | p50=30.77 ms | p99=75.01 ms
+  > Sec 163 | send=    93 | ack=    91 | p50=33.73 ms | p99=72.32 ms
+  > Sec 164 | send=    91 | ack=    93 | p50=20.50 ms | p99=71.59 ms
+  > Sec 165 | send=    92 | ack=    89 | p50=29.46 ms | p99=88.61 ms
+  > Sec 166 | send=    89 | ack=    95 | p50=20.18 ms | p99=90.49 ms
+  > Sec 167 | send=    88 | ack=    87 | p50=33.61 ms | p99=148.48 ms
+  > Sec 168 | send=    88 | ack=    90 | p50=37.46 ms | p99=153.84 ms
+  > Sec 169 | send=    94 | ack=    90 | p50=26.59 ms | p99=73.20 ms
+  > Sec 170 | send=    90 | ack=    91 | p50=33.47 ms | p99=101.26 ms
+  > Sec 171 | send=    92 | ack=    93 | p50=32.30 ms | p99=73.08 ms
+  > Sec 172 | send=    86 | ack=    85 | p50=35.81 ms | p99=131.25 ms
+  > Sec 173 | send=    96 | ack=    91 | p50=29.84 ms | p99=95.52 ms
+  > Sec 174 | send=    88 | ack=    96 | p50=24.09 ms | p99=51.94 ms
+  > Sec 175 | send=    95 | ack=    89 | p50=25.98 ms | p99=88.23 ms
+  > Sec 176 | send=    88 | ack=    94 | p50=24.05 ms | p99=132.06 ms
+  > Sec 177 | send=    93 | ack=    87 | p50=30.48 ms | p99=129.23 ms
+  > Sec 178 | send=    89 | ack=    87 | p50=30.79 ms | p99=87.29 ms
+  > Sec 179 | send=    93 | ack=    96 | p50=26.54 ms | p99=120.17 ms
+  > ------------------------------------------
+  > Req=13634 | Achieved=90.8 OP/s (90.7%) | App-Avg=31.67ms | App-P99=96.80ms | DiskUtil=50.17% | Block-await=10.48ms | iowait=3.28% | Bottleneck=False
+[Success] JSON snapshot saved: results/kafka_fs_bench_20260430_123613/results_snapshot.json
+[Success] CSV saved: results/kafka_fs_bench_20260430_123613/csv/full_results.csv
+[Success] CSV saved: results/kafka_fs_bench_20260430_123613/csv/summary_by_fs_recordsize_scenario.csv
+[Success] Summary report saved: results/kafka_fs_bench_20260430_123613/summary_report.txt

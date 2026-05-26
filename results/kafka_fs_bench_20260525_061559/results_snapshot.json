@@ -1,0 +1,2063 @@
+{
+  "ext4": {
+    "1024": {
+      "scenario_a": {
+        "rounds": [
+          {
+            "config": {
+              "record_size": 1024,
+              "target_ops": 100000,
+              "producers": 8,
+              "use_consumer": false,
+              "dynamic_topics": false,
+              "dynamic_topic_rate": 5,
+              "warmup_sec": 30,
+              "duration": 180
+            },
+            "metrics": {
+              "total_requests": 374159,
+              "avg_ms": 12.43,
+              "p50_ms": 9.87,
+              "p90_ms": 25.99,
+              "p99_ms": 48.74,
+              "p999_ms": 101.84,
+              "max_ms": 221.35,
+              "achieved_ops": 2492.1,
+              "achieved_pct": 2.5,
+              "total_sent": 449796,
+              "send_errors": 0,
+              "samples": 152,
+              "util_avg": 4.074078947368421,
+              "util_max": 91.0,
+              "await_avg": 4.4838157894736845,
+              "await_max": 47.25,
+              "r_await_avg": 0.0,
+              "w_await_avg": 4.4838157894736845,
+              "rkB_s_avg": 0.0,
+              "wkB_s_avg": 2703.2926315789473,
+              "rrqm_avg": 0.0,
+              "wrqm_avg": 17.670394736842105,
+              "cpu_us_avg": 7.151315789473684,
+              "cpu_sy_avg": 56.31578947368421,
+              "cpu_id_avg": 35.973684210526315,
+              "cpu_wa_avg": 0.4144736842105263,
+              "cpu_st_avg": 0.0,
+              "bi_avg": 0.07894736842105263,
+              "bo_avg": 2773.1315789473683,
+              "cs_avg": 15526.46052631579
+            },
+            "bottleneck": {
+              "is_bottleneck": false,
+              "reasons": []
+            },
+            "raw_output_path": "results/kafka_fs_bench_20260525_061559/raw/r1_ext4_scenario_a_1024B_100000ops_measure.txt.gz",
+            "monitor_files": {
+              "iostat": "results/kafka_fs_bench_20260525_061559/monitor/r1_ext4_scenario_a_1024B_100000ops_measure_iostat.txt.gz",
+              "vmstat": "results/kafka_fs_bench_20260525_061559/monitor/r1_ext4_scenario_a_1024B_100000ops_measure_vmstat.txt.gz"
+            },
+            "round": 1,
+            "calibration_reference": {
+              "mode": "fixed",
+              "chosen_ops": 100000
+            }
+          }
+        ]
+      },
+      "scenario_b": {
+        "rounds": [
+          {
+            "config": {
+              "record_size": 1024,
+              "target_ops": 100000,
+              "producers": 8,
+              "use_consumer": true,
+              "dynamic_topics": false,
+              "dynamic_topic_rate": 5,
+              "warmup_sec": 30,
+              "duration": 180
+            },
+            "metrics": {
+              "total_requests": 351702,
+              "avg_ms": 14.44,
+              "p50_ms": 10.76,
+              "p90_ms": 30.44,
+              "p99_ms": 67.19,
+              "p999_ms": 161.77,
+              "max_ms": 330.59,
+              "achieved_ops": 2341.11,
+              "achieved_pct": 2.3,
+              "total_sent": 421770,
+              "send_errors": 0,
+              "samples": 152,
+              "util_avg": 4.212763157894737,
+              "util_max": 78.82,
+              "await_avg": 4.962302631578948,
+              "await_max": 49.50000000000001,
+              "r_await_avg": 0.0,
+              "w_await_avg": 4.962302631578948,
+              "rkB_s_avg": 0.0,
+              "wkB_s_avg": 2633.835789473684,
+              "rrqm_avg": 0.0,
+              "wrqm_avg": 20.658092105263158,
+              "cpu_us_avg": 9.085526315789474,
+              "cpu_sy_avg": 54.13157894736842,
+              "cpu_id_avg": 36.23684210526316,
+              "cpu_wa_avg": 0.47368421052631576,
+              "cpu_st_avg": 0.0,
+              "bi_avg": 0.21052631578947367,
+              "bo_avg": 2697.0,
+              "cs_avg": 15049.440789473685
+            },
+            "bottleneck": {
+              "is_bottleneck": false,
+              "reasons": []
+            },
+            "raw_output_path": "results/kafka_fs_bench_20260525_061559/raw/r1_ext4_scenario_b_1024B_100000ops_measure.txt.gz",
+            "monitor_files": {
+              "iostat": "results/kafka_fs_bench_20260525_061559/monitor/r1_ext4_scenario_b_1024B_100000ops_measure_iostat.txt.gz",
+              "vmstat": "results/kafka_fs_bench_20260525_061559/monitor/r1_ext4_scenario_b_1024B_100000ops_measure_vmstat.txt.gz"
+            },
+            "round": 1,
+            "calibration_reference": {
+              "mode": "fixed",
+              "chosen_ops": 100000
+            }
+          }
+        ]
+      },
+      "scenario_a_dynamic": {
+        "rounds": [
+          {
+            "config": {
+              "record_size": 1024,
+              "target_ops": 100000,
+              "producers": 8,
+              "use_consumer": false,
+              "dynamic_topics": true,
+              "dynamic_topic_rate": 5,
+              "warmup_sec": 30,
+              "duration": 180
+            },
+            "metrics": {
+              "total_requests": 327770,
+              "avg_ms": 23.69,
+              "p50_ms": 18.49,
+              "p90_ms": 47.65,
+              "p99_ms": 105.53,
+              "p999_ms": 229.84,
+              "max_ms": 360.92,
+              "achieved_ops": 2182.14,
+              "achieved_pct": 2.2,
+              "total_sent": 400241,
+              "send_errors": 0,
+              "samples": 152,
+              "util_avg": 33.25881578947369,
+              "util_max": 98.7,
+              "await_avg": 11.369605263157895,
+              "await_max": 47.85,
+              "r_await_avg": 0.0,
+              "w_await_avg": 11.369605263157895,
+              "rkB_s_avg": 0.0,
+              "wkB_s_avg": 3243.9915789473685,
+              "rrqm_avg": 0.0,
+              "wrqm_avg": 82.89486842105264,
+              "cpu_us_avg": 9.269736842105264,
+              "cpu_sy_avg": 59.63815789473684,
+              "cpu_id_avg": 22.388157894736842,
+              "cpu_wa_avg": 8.763157894736842,
+              "cpu_st_avg": 0.0,
+              "bi_avg": 664.8684210526316,
+              "bo_avg": 6007.105263157895,
+              "cs_avg": 14262.881578947368
+            },
+            "bottleneck": {
+              "is_bottleneck": false,
+              "reasons": [
+                "cpu iowait avg 8.76% >= 5.00%",
+                "disk await avg 11.37 ms >= 5.00 ms"
+              ]
+            },
+            "raw_output_path": "results/kafka_fs_bench_20260525_061559/raw/r1_ext4_scenario_a_dynamic_1024B_100000ops_measure.txt.gz",
+            "monitor_files": {
+              "iostat": "results/kafka_fs_bench_20260525_061559/monitor/r1_ext4_scenario_a_dynamic_1024B_100000ops_measure_iostat.txt.gz",
+              "vmstat": "results/kafka_fs_bench_20260525_061559/monitor/r1_ext4_scenario_a_dynamic_1024B_100000ops_measure_vmstat.txt.gz"
+            },
+            "round": 1,
+            "calibration_reference": {
+              "mode": "fixed",
+              "chosen_ops": 100000
+            }
+          }
+        ]
+      },
+      "scenario_b_dynamic": {
+        "rounds": [
+          {
+            "config": {
+              "record_size": 1024,
+              "target_ops": 100000,
+              "producers": 8,
+              "use_consumer": true,
+              "dynamic_topics": true,
+              "dynamic_topic_rate": 5,
+              "warmup_sec": 30,
+              "duration": 180
+            },
+            "metrics": {
+              "total_requests": 364029,
+              "avg_ms": 15.55,
+              "p50_ms": 9.17,
+              "p90_ms": 37.41,
+              "p99_ms": 91.84,
+              "p999_ms": 171.04,
+              "max_ms": 349.82,
+              "achieved_ops": 2421.69,
+              "achieved_pct": 2.4,
+              "total_sent": 441439,
+              "send_errors": 0,
+              "samples": 152,
+              "util_avg": 25.06058823529412,
+              "util_max": 99.9,
+              "await_avg": 8.375798319327732,
+              "await_max": 42.91,
+              "r_await_avg": 0.029411764705882353,
+              "w_await_avg": 8.37607843137255,
+              "rkB_s_avg": 0.1338562091503268,
+              "wkB_s_avg": 3577.374117647059,
+              "rrqm_avg": 0.0,
+              "wrqm_avg": 82.50104575163398,
+              "cpu_us_avg": 16.43421052631579,
+              "cpu_sy_avg": 53.05921052631579,
+              "cpu_id_avg": 25.585526315789473,
+              "cpu_wa_avg": 4.894736842105263,
+              "cpu_st_avg": 0.0,
+              "bi_avg": 802.2763157894736,
+              "bo_avg": 7315.605263157895,
+              "cs_avg": 16920.375
+            },
+            "bottleneck": {
+              "is_bottleneck": false,
+              "reasons": [
+                "disk await avg 8.38 ms >= 5.00 ms"
+              ]
+            },
+            "raw_output_path": "results/kafka_fs_bench_20260525_061559/raw/r1_ext4_scenario_b_dynamic_1024B_100000ops_measure.txt.gz",
+            "monitor_files": {
+              "iostat": "results/kafka_fs_bench_20260525_061559/monitor/r1_ext4_scenario_b_dynamic_1024B_100000ops_measure_iostat.txt.gz",
+              "vmstat": "results/kafka_fs_bench_20260525_061559/monitor/r1_ext4_scenario_b_dynamic_1024B_100000ops_measure_vmstat.txt.gz"
+            },
+            "round": 1,
+            "calibration_reference": {
+              "mode": "fixed",
+              "chosen_ops": 100000
+            }
+          }
+        ]
+      }
+    },
+    "10240": {
+      "scenario_a": {
+        "rounds": [
+          {
+            "config": {
+              "record_size": 10240,
+              "target_ops": 10000,
+              "producers": 8,
+              "use_consumer": false,
+              "dynamic_topics": false,
+              "dynamic_topic_rate": 5,
+              "warmup_sec": 30,
+              "duration": 180
+            },
+            "metrics": {
+              "total_requests": 359218,
+              "avg_ms": 14.38,
+              "p50_ms": 10.07,
+              "p90_ms": 30.75,
+              "p99_ms": 79.56,
+              "p999_ms": 132.75,
+              "max_ms": 284.14,
+              "achieved_ops": 2391.77,
+              "achieved_pct": 23.9,
+              "total_sent": 432476,
+              "send_errors": 0,
+              "samples": 151,
+              "util_avg": 13.251986754966888,
+              "util_max": 99.9,
+              "await_avg": 7.909933774834437,
+              "await_max": 112.06,
+              "r_await_avg": 0.0,
+              "w_await_avg": 7.909933774834437,
+              "rkB_s_avg": 0.0,
+              "wkB_s_avg": 25397.844768211922,
+              "rrqm_avg": 0.0,
+              "wrqm_avg": 18.44728476821192,
+              "cpu_us_avg": 8.172185430463577,
+              "cpu_sy_avg": 56.87417218543046,
+              "cpu_id_avg": 34.205298013245034,
+              "cpu_wa_avg": 0.6622516556291391,
+              "cpu_st_avg": 0.0,
+              "bi_avg": 0.052980132450331126,
+              "bo_avg": 25600.158940397352,
+              "cs_avg": 15377.066225165563
+            },
+            "bottleneck": {
+              "is_bottleneck": false,
+              "reasons": [
+                "disk await avg 7.91 ms >= 5.00 ms"
+              ]
+            },
+            "raw_output_path": "results/kafka_fs_bench_20260525_061559/raw/r1_ext4_scenario_a_10240B_10000ops_measure.txt.gz",
+            "monitor_files": {
+              "iostat": "results/kafka_fs_bench_20260525_061559/monitor/r1_ext4_scenario_a_10240B_10000ops_measure_iostat.txt.gz",
+              "vmstat": "results/kafka_fs_bench_20260525_061559/monitor/r1_ext4_scenario_a_10240B_10000ops_measure_vmstat.txt.gz"
+            },
+            "round": 1,
+            "calibration_reference": {
+              "mode": "fixed",
+              "chosen_ops": 10000
+            }
+          }
+        ]
+      },
+      "scenario_b": {
+        "rounds": [
+          {
+            "config": {
+              "record_size": 10240,
+              "target_ops": 10000,
+              "producers": 8,
+              "use_consumer": true,
+              "dynamic_topics": false,
+              "dynamic_topic_rate": 5,
+              "warmup_sec": 30,
+              "duration": 180
+            },
+            "metrics": {
+              "total_requests": 362773,
+              "avg_ms": 14.5,
+              "p50_ms": 9.19,
+              "p90_ms": 30.9,
+              "p99_ms": 97.59,
+              "p999_ms": 167.98,
+              "max_ms": 312.68,
+              "achieved_ops": 2415.67,
+              "achieved_pct": 24.2,
+              "total_sent": 436124,
+              "send_errors": 0,
+              "samples": 151,
+              "util_avg": 12.149139072847682,
+              "util_max": 100.4,
+              "await_avg": 5.950662251655629,
+              "await_max": 103.94000000000001,
+              "r_await_avg": 0.0,
+              "w_await_avg": 5.950662251655629,
+              "rkB_s_avg": 0.0,
+              "wkB_s_avg": 22547.869668874173,
+              "rrqm_avg": 0.0,
+              "wrqm_avg": 17.10086092715232,
+              "cpu_us_avg": 11.19205298013245,
+              "cpu_sy_avg": 54.158940397350996,
+              "cpu_id_avg": 34.019867549668874,
+              "cpu_wa_avg": 0.5033112582781457,
+              "cpu_st_avg": 0.0,
+              "bi_avg": 0.18543046357615894,
+              "bo_avg": 22703.443708609273,
+              "cs_avg": 16202.192052980132
+            },
+            "bottleneck": {
+              "is_bottleneck": false,
+              "reasons": [
+                "disk await avg 5.95 ms >= 5.00 ms"
+              ]
+            },
+            "raw_output_path": "results/kafka_fs_bench_20260525_061559/raw/r1_ext4_scenario_b_10240B_10000ops_measure.txt.gz",
+            "monitor_files": {
+              "iostat": "results/kafka_fs_bench_20260525_061559/monitor/r1_ext4_scenario_b_10240B_10000ops_measure_iostat.txt.gz",
+              "vmstat": "results/kafka_fs_bench_20260525_061559/monitor/r1_ext4_scenario_b_10240B_10000ops_measure_vmstat.txt.gz"
+            },
+            "round": 1,
+            "calibration_reference": {
+              "mode": "fixed",
+              "chosen_ops": 10000
+            }
+          }
+        ]
+      },
+      "scenario_a_dynamic": {
+        "rounds": [
+          {
+            "config": {
+              "record_size": 10240,
+              "target_ops": 10000,
+              "producers": 8,
+              "use_consumer": false,
+              "dynamic_topics": true,
+              "dynamic_topic_rate": 5,
+              "warmup_sec": 30,
+              "duration": 180
+            },
+            "metrics": {
+              "total_requests": 346924,
+              "avg_ms": 20.82,
+              "p50_ms": 12.81,
+              "p90_ms": 42.67,
+              "p99_ms": 148.07,
+              "p999_ms": 290.91,
+              "max_ms": 533.84,
+              "achieved_ops": 2310.35,
+              "achieved_pct": 23.1,
+              "total_sent": 416592,
+              "send_errors": 0,
+              "samples": 151,
+              "util_avg": 31.95565789473684,
+              "util_max": 100.0,
+              "await_avg": 10.510328947368421,
+              "await_max": 35.14,
+              "r_await_avg": 0.0,
+              "w_await_avg": 10.510328947368421,
+              "rkB_s_avg": 0.0,
+              "wkB_s_avg": 22932.547368421052,
+              "rrqm_avg": 0.0,
+              "wrqm_avg": 79.14223684210526,
+              "cpu_us_avg": 9.42384105960265,
+              "cpu_sy_avg": 56.437086092715234,
+              "cpu_id_avg": 30.172185430463575,
+              "cpu_wa_avg": 3.993377483443709,
+              "cpu_st_avg": 0.0,
+              "bi_avg": 6.198675496688741,
+              "bo_avg": 23396.1059602649,
+              "cs_avg": 14920.933774834437
+            },
+            "bottleneck": {
+              "is_bottleneck": false,
+              "reasons": [
+                "disk await avg 10.51 ms >= 5.00 ms"
+              ]
+            },
+            "raw_output_path": "results/kafka_fs_bench_20260525_061559/raw/r1_ext4_scenario_a_dynamic_10240B_10000ops_measure.txt.gz",
+            "monitor_files": {
+              "iostat": "results/kafka_fs_bench_20260525_061559/monitor/r1_ext4_scenario_a_dynamic_10240B_10000ops_measure_iostat.txt.gz",
+              "vmstat": "results/kafka_fs_bench_20260525_061559/monitor/r1_ext4_scenario_a_dynamic_10240B_10000ops_measure_vmstat.txt.gz"
+            },
+            "round": 1,
+            "calibration_reference": {
+              "mode": "fixed",
+              "chosen_ops": 10000
+            }
+          }
+        ]
+      },
+      "scenario_b_dynamic": {
+        "rounds": [
+          {
+            "config": {
+              "record_size": 10240,
+              "target_ops": 10000,
+              "producers": 8,
+              "use_consumer": true,
+              "dynamic_topics": true,
+              "dynamic_topic_rate": 5,
+              "warmup_sec": 30,
+              "duration": 180
+            },
+            "metrics": {
+              "total_requests": 353261,
+              "avg_ms": 22.71,
+              "p50_ms": 12.5,
+              "p90_ms": 44.77,
+              "p99_ms": 203.17,
+              "p999_ms": 358.37,
+              "max_ms": 589.12,
+              "achieved_ops": 2352.78,
+              "achieved_pct": 23.5,
+              "total_sent": 423221,
+              "send_errors": 0,
+              "samples": 151,
+              "util_avg": 31.29907894736842,
+              "util_max": 100.1,
+              "await_avg": 10.51328947368421,
+              "await_max": 34.58,
+              "r_await_avg": 0.0,
+              "w_await_avg": 10.51328947368421,
+              "rkB_s_avg": 0.0,
+              "wkB_s_avg": 23560.555789473685,
+              "rrqm_avg": 0.0,
+              "wrqm_avg": 78.84111842105263,
+              "cpu_us_avg": 11.304635761589404,
+              "cpu_sy_avg": 55.735099337748345,
+              "cpu_id_avg": 29.350993377483444,
+              "cpu_wa_avg": 3.6490066225165565,
+              "cpu_st_avg": 0.0,
+              "bi_avg": 16.079470198675498,
+              "bo_avg": 24037.509933774836,
+              "cs_avg": 15629.278145695363
+            },
+            "bottleneck": {
+              "is_bottleneck": false,
+              "reasons": [
+                "disk await avg 10.51 ms >= 5.00 ms"
+              ]
+            },
+            "raw_output_path": "results/kafka_fs_bench_20260525_061559/raw/r1_ext4_scenario_b_dynamic_10240B_10000ops_measure.txt.gz",
+            "monitor_files": {
+              "iostat": "results/kafka_fs_bench_20260525_061559/monitor/r1_ext4_scenario_b_dynamic_10240B_10000ops_measure_iostat.txt.gz",
+              "vmstat": "results/kafka_fs_bench_20260525_061559/monitor/r1_ext4_scenario_b_dynamic_10240B_10000ops_measure_vmstat.txt.gz"
+            },
+            "round": 1,
+            "calibration_reference": {
+              "mode": "fixed",
+              "chosen_ops": 10000
+            }
+          }
+        ]
+      }
+    },
+    "102400": {
+      "scenario_a": {
+        "rounds": [
+          {
+            "config": {
+              "record_size": 102400,
+              "target_ops": 1000,
+              "producers": 8,
+              "use_consumer": false,
+              "dynamic_topics": false,
+              "dynamic_topic_rate": 5,
+              "warmup_sec": 30,
+              "duration": 180
+            },
+            "metrics": {
+              "total_requests": 113938,
+              "avg_ms": 8.92,
+              "p50_ms": 6.41,
+              "p90_ms": 18.68,
+              "p99_ms": 49.51,
+              "p999_ms": 96.86,
+              "max_ms": 211.0,
+              "achieved_ops": 758.99,
+              "achieved_pct": 75.9,
+              "total_sent": 136153,
+              "send_errors": 0,
+              "samples": 151,
+              "util_avg": 19.657814569536423,
+              "util_max": 99.9,
+              "await_avg": 5.9555629139072845,
+              "await_max": 21.55,
+              "r_await_avg": 0.0,
+              "w_await_avg": 5.9555629139072845,
+              "rkB_s_avg": 0.0,
+              "wkB_s_avg": 76552.81589403974,
+              "rrqm_avg": 0.0,
+              "wrqm_avg": 15.327483443708608,
+              "cpu_us_avg": 6.695364238410596,
+              "cpu_sy_avg": 43.49006622516556,
+              "cpu_id_avg": 49.17218543046358,
+              "cpu_wa_avg": 0.6158940397350994,
+              "cpu_st_avg": 0.0,
+              "bi_avg": 5.6158940397351,
+              "bo_avg": 76865.53642384105,
+              "cs_avg": 9236.397350993377
+            },
+            "bottleneck": {
+              "is_bottleneck": false,
+              "reasons": [
+                "disk await avg 5.96 ms >= 5.00 ms"
+              ]
+            },
+            "raw_output_path": "results/kafka_fs_bench_20260525_061559/raw/r1_ext4_scenario_a_102400B_1000ops_measure.txt.gz",
+            "monitor_files": {
+              "iostat": "results/kafka_fs_bench_20260525_061559/monitor/r1_ext4_scenario_a_102400B_1000ops_measure_iostat.txt.gz",
+              "vmstat": "results/kafka_fs_bench_20260525_061559/monitor/r1_ext4_scenario_a_102400B_1000ops_measure_vmstat.txt.gz"
+            },
+            "round": 1,
+            "calibration_reference": {
+              "mode": "fixed",
+              "chosen_ops": 1000
+            }
+          }
+        ]
+      },
+      "scenario_b": {
+        "rounds": [
+          {
+            "config": {
+              "record_size": 102400,
+              "target_ops": 1000,
+              "producers": 8,
+              "use_consumer": true,
+              "dynamic_topics": false,
+              "dynamic_topic_rate": 5,
+              "warmup_sec": 30,
+              "duration": 180
+            },
+            "metrics": {
+              "total_requests": 111432,
+              "avg_ms": 8.85,
+              "p50_ms": 5.83,
+              "p90_ms": 18.76,
+              "p99_ms": 56.83,
+              "p999_ms": 99.15,
+              "max_ms": 160.02,
+              "achieved_ops": 742.42,
+              "achieved_pct": 74.2,
+              "total_sent": 132956,
+              "send_errors": 0,
+              "samples": 151,
+              "util_avg": 18.75973509933775,
+              "util_max": 100.5,
+              "await_avg": 5.837086092715232,
+              "await_max": 23.75,
+              "r_await_avg": 0.0,
+              "w_await_avg": 5.837086092715232,
+              "rkB_s_avg": 0.0,
+              "wkB_s_avg": 77850.44768211921,
+              "rrqm_avg": 0.0,
+              "wrqm_avg": 16.699072847682118,
+              "cpu_us_avg": 10.271523178807946,
+              "cpu_sy_avg": 43.89403973509934,
+              "cpu_id_avg": 45.324503311258276,
+              "cpu_wa_avg": 0.4966887417218543,
+              "cpu_st_avg": 0.0,
+              "bi_avg": 1.218543046357616,
+              "bo_avg": 78130.25165562914,
+              "cs_avg": 10617.635761589405
+            },
+            "bottleneck": {
+              "is_bottleneck": false,
+              "reasons": [
+                "disk await avg 5.84 ms >= 5.00 ms"
+              ]
+            },
+            "raw_output_path": "results/kafka_fs_bench_20260525_061559/raw/r1_ext4_scenario_b_102400B_1000ops_measure.txt.gz",
+            "monitor_files": {
+              "iostat": "results/kafka_fs_bench_20260525_061559/monitor/r1_ext4_scenario_b_102400B_1000ops_measure_iostat.txt.gz",
+              "vmstat": "results/kafka_fs_bench_20260525_061559/monitor/r1_ext4_scenario_b_102400B_1000ops_measure_vmstat.txt.gz"
+            },
+            "round": 1,
+            "calibration_reference": {
+              "mode": "fixed",
+              "chosen_ops": 1000
+            }
+          }
+        ]
+      },
+      "scenario_a_dynamic": {
+        "rounds": [
+          {
+            "config": {
+              "record_size": 102400,
+              "target_ops": 1000,
+              "producers": 8,
+              "use_consumer": false,
+              "dynamic_topics": true,
+              "dynamic_topic_rate": 5,
+              "warmup_sec": 30,
+              "duration": 180
+            },
+            "metrics": {
+              "total_requests": 111824,
+              "avg_ms": 12.25,
+              "p50_ms": 7.33,
+              "p90_ms": 25.74,
+              "p99_ms": 96.14,
+              "p999_ms": 159.88,
+              "max_ms": 258.29,
+              "achieved_ops": 744.83,
+              "achieved_pct": 74.5,
+              "total_sent": 133931,
+              "send_errors": 0,
+              "samples": 151,
+              "util_avg": 35.29615894039735,
+              "util_max": 100.7,
+              "await_avg": 9.641390728476821,
+              "await_max": 23.24,
+              "r_await_avg": 0.0,
+              "w_await_avg": 9.641390728476821,
+              "rkB_s_avg": 0.0,
+              "wkB_s_avg": 76272.5382781457,
+              "rrqm_avg": 0.0,
+              "wrqm_avg": 71.44225165562914,
+              "cpu_us_avg": 8.139072847682119,
+              "cpu_sy_avg": 46.35761589403973,
+              "cpu_id_avg": 41.93377483443709,
+              "cpu_wa_avg": 3.5033112582781456,
+              "cpu_st_avg": 0.0,
+              "bi_avg": 6.966887417218543,
+              "bo_avg": 76675.44370860927,
+              "cs_avg": 9366.19867549669
+            },
+            "bottleneck": {
+              "is_bottleneck": false,
+              "reasons": [
+                "disk await avg 9.64 ms >= 5.00 ms"
+              ]
+            },
+            "raw_output_path": "results/kafka_fs_bench_20260525_061559/raw/r1_ext4_scenario_a_dynamic_102400B_1000ops_measure.txt.gz",
+            "monitor_files": {
+              "iostat": "results/kafka_fs_bench_20260525_061559/monitor/r1_ext4_scenario_a_dynamic_102400B_1000ops_measure_iostat.txt.gz",
+              "vmstat": "results/kafka_fs_bench_20260525_061559/monitor/r1_ext4_scenario_a_dynamic_102400B_1000ops_measure_vmstat.txt.gz"
+            },
+            "round": 1,
+            "calibration_reference": {
+              "mode": "fixed",
+              "chosen_ops": 1000
+            }
+          }
+        ]
+      },
+      "scenario_b_dynamic": {
+        "rounds": [
+          {
+            "config": {
+              "record_size": 102400,
+              "target_ops": 1000,
+              "producers": 8,
+              "use_consumer": true,
+              "dynamic_topics": true,
+              "dynamic_topic_rate": 5,
+              "warmup_sec": 30,
+              "duration": 180
+            },
+            "metrics": {
+              "total_requests": 110789,
+              "avg_ms": 12.42,
+              "p50_ms": 7.18,
+              "p90_ms": 27.38,
+              "p99_ms": 91.16,
+              "p999_ms": 165.71,
+              "max_ms": 261.28,
+              "achieved_ops": 738.15,
+              "achieved_pct": 73.8,
+              "total_sent": 132407,
+              "send_errors": 0,
+              "samples": 151,
+              "util_avg": 33.58671052631579,
+              "util_max": 100.4,
+              "await_avg": 8.965131578947368,
+              "await_max": 20.75,
+              "r_await_avg": 0.006578947368421052,
+              "w_await_avg": 8.965131578947368,
+              "rkB_s_avg": 0.0,
+              "wkB_s_avg": 75991.44421052632,
+              "rrqm_avg": 0.0,
+              "wrqm_avg": 71.59289473684211,
+              "cpu_us_avg": 11.33774834437086,
+              "cpu_sy_avg": 47.609271523178805,
+              "cpu_id_avg": 37.675496688741724,
+              "cpu_wa_avg": 3.370860927152318,
+              "cpu_st_avg": 0.0,
+              "bi_avg": 284.26490066225165,
+              "bo_avg": 76992.8476821192,
+              "cs_avg": 10731.887417218542
+            },
+            "bottleneck": {
+              "is_bottleneck": false,
+              "reasons": [
+                "disk await avg 8.97 ms >= 5.00 ms"
+              ]
+            },
+            "raw_output_path": "results/kafka_fs_bench_20260525_061559/raw/r1_ext4_scenario_b_dynamic_102400B_1000ops_measure.txt.gz",
+            "monitor_files": {
+              "iostat": "results/kafka_fs_bench_20260525_061559/monitor/r1_ext4_scenario_b_dynamic_102400B_1000ops_measure_iostat.txt.gz",
+              "vmstat": "results/kafka_fs_bench_20260525_061559/monitor/r1_ext4_scenario_b_dynamic_102400B_1000ops_measure_vmstat.txt.gz"
+            },
+            "round": 1,
+            "calibration_reference": {
+              "mode": "fixed",
+              "chosen_ops": 1000
+            }
+          }
+        ]
+      }
+    },
+    "1024000": {
+      "scenario_a": {
+        "rounds": [
+          {
+            "config": {
+              "record_size": 1024000,
+              "target_ops": 100,
+              "producers": 8,
+              "use_consumer": false,
+              "dynamic_topics": false,
+              "dynamic_topic_rate": 5,
+              "warmup_sec": 30,
+              "duration": 180
+            },
+            "metrics": {
+              "total_requests": 13992,
+              "avg_ms": 14.33,
+              "p50_ms": 6.96,
+              "p90_ms": 36.02,
+              "p99_ms": 76.21,
+              "p999_ms": 142.72,
+              "max_ms": 190.48,
+              "achieved_ops": 93.21,
+              "achieved_pct": 93.2,
+              "total_sent": 16751,
+              "send_errors": 0,
+              "samples": 151,
+              "util_avg": 21.384276315789474,
+              "util_max": 100.2,
+              "await_avg": 5.4311184210526315,
+              "await_max": 17.65,
+              "r_await_avg": 0.0,
+              "w_await_avg": 5.4311184210526315,
+              "rkB_s_avg": 0.0,
+              "wkB_s_avg": 95548.42947368421,
+              "rrqm_avg": 0.0,
+              "wrqm_avg": 13.9175,
+              "cpu_us_avg": 4.874172185430464,
+              "cpu_sy_avg": 17.655629139072847,
+              "cpu_id_avg": 76.90728476821192,
+              "cpu_wa_avg": 0.4304635761589404,
+              "cpu_st_avg": 0.0,
+              "bi_avg": 74.72847682119205,
+              "bo_avg": 96088.8476821192,
+              "cs_avg": 6148.701986754967
+            },
+            "bottleneck": {
+              "is_bottleneck": false,
+              "reasons": [
+                "disk await avg 5.43 ms >= 5.00 ms"
+              ]
+            },
+            "raw_output_path": "results/kafka_fs_bench_20260525_061559/raw/r1_ext4_scenario_a_1024000B_100ops_measure.txt.gz",
+            "monitor_files": {
+              "iostat": "results/kafka_fs_bench_20260525_061559/monitor/r1_ext4_scenario_a_1024000B_100ops_measure_iostat.txt.gz",
+              "vmstat": "results/kafka_fs_bench_20260525_061559/monitor/r1_ext4_scenario_a_1024000B_100ops_measure_vmstat.txt.gz"
+            },
+            "round": 1,
+            "calibration_reference": {
+              "mode": "fixed",
+              "chosen_ops": 100
+            }
+          }
+        ]
+      },
+      "scenario_b": {
+        "rounds": [
+          {
+            "config": {
+              "record_size": 1024000,
+              "target_ops": 100,
+              "producers": 8,
+              "use_consumer": true,
+              "dynamic_topics": false,
+              "dynamic_topic_rate": 5,
+              "warmup_sec": 30,
+              "duration": 180
+            },
+            "metrics": {
+              "total_requests": 13917,
+              "avg_ms": 15.33,
+              "p50_ms": 9.4,
+              "p90_ms": 33.84,
+              "p99_ms": 81.43,
+              "p999_ms": 141.53,
+              "max_ms": 210.53,
+              "achieved_ops": 92.7,
+              "achieved_pct": 92.7,
+              "total_sent": 16648,
+              "send_errors": 0,
+              "samples": 152,
+              "util_avg": 19.77059210526316,
+              "util_max": 101.1,
+              "await_avg": 5.371776315789473,
+              "await_max": 23.0,
+              "r_await_avg": 0.006578947368421052,
+              "w_await_avg": 5.365197368421053,
+              "rkB_s_avg": 0.0,
+              "wkB_s_avg": 90502.80421052632,
+              "rrqm_avg": 0.0,
+              "wrqm_avg": 16.084605263157894,
+              "cpu_us_avg": 8.388157894736842,
+              "cpu_sy_avg": 21.69736842105263,
+              "cpu_id_avg": 69.45394736842105,
+              "cpu_wa_avg": 0.3092105263157895,
+              "cpu_st_avg": 0.0,
+              "bi_avg": 1.736842105263158,
+              "bo_avg": 90865.5,
+              "cs_avg": 7815.138157894737
+            },
+            "bottleneck": {
+              "is_bottleneck": false,
+              "reasons": [
+                "disk await avg 5.37 ms >= 5.00 ms"
+              ]
+            },
+            "raw_output_path": "results/kafka_fs_bench_20260525_061559/raw/r1_ext4_scenario_b_1024000B_100ops_measure.txt.gz",
+            "monitor_files": {
+              "iostat": "results/kafka_fs_bench_20260525_061559/monitor/r1_ext4_scenario_b_1024000B_100ops_measure_iostat.txt.gz",
+              "vmstat": "results/kafka_fs_bench_20260525_061559/monitor/r1_ext4_scenario_b_1024000B_100ops_measure_vmstat.txt.gz"
+            },
+            "round": 1,
+            "calibration_reference": {
+              "mode": "fixed",
+              "chosen_ops": 100
+            }
+          }
+        ]
+      },
+      "scenario_a_dynamic": {
+        "rounds": [
+          {
+            "config": {
+              "record_size": 1024000,
+              "target_ops": 100,
+              "producers": 8,
+              "use_consumer": false,
+              "dynamic_topics": true,
+              "dynamic_topic_rate": 5,
+              "warmup_sec": 30,
+              "duration": 180
+            },
+            "metrics": {
+              "total_requests": 13935,
+              "avg_ms": 15.96,
+              "p50_ms": 9.1,
+              "p90_ms": 38.12,
+              "p99_ms": 78.41,
+              "p999_ms": 125.7,
+              "max_ms": 182.52,
+              "achieved_ops": 92.68,
+              "achieved_pct": 92.7,
+              "total_sent": 16686,
+              "send_errors": 0,
+              "samples": 152,
+              "util_avg": 29.777434210526316,
+              "util_max": 99.9,
+              "await_avg": 7.967828947368421,
+              "await_max": 22.51,
+              "r_await_avg": 0.0,
+              "w_await_avg": 7.967828947368421,
+              "rkB_s_avg": 0.0,
+              "wkB_s_avg": 91776.06736842105,
+              "rrqm_avg": 0.0,
+              "wrqm_avg": 63.775197368421054,
+              "cpu_us_avg": 6.309210526315789,
+              "cpu_sy_avg": 21.019736842105264,
+              "cpu_id_avg": 70.03947368421052,
+              "cpu_wa_avg": 2.6447368421052633,
+              "cpu_st_avg": 0.0,
+              "bi_avg": 5.0,
+              "bo_avg": 92785.6052631579,
+              "cs_avg": 6457.243421052632
+            },
+            "bottleneck": {
+              "is_bottleneck": false,
+              "reasons": [
+                "disk await avg 7.97 ms >= 5.00 ms"
+              ]
+            },
+            "raw_output_path": "results/kafka_fs_bench_20260525_061559/raw/r1_ext4_scenario_a_dynamic_1024000B_100ops_measure.txt.gz",
+            "monitor_files": {
+              "iostat": "results/kafka_fs_bench_20260525_061559/monitor/r1_ext4_scenario_a_dynamic_1024000B_100ops_measure_iostat.txt.gz",
+              "vmstat": "results/kafka_fs_bench_20260525_061559/monitor/r1_ext4_scenario_a_dynamic_1024000B_100ops_measure_vmstat.txt.gz"
+            },
+            "round": 1,
+            "calibration_reference": {
+              "mode": "fixed",
+              "chosen_ops": 100
+            }
+          }
+        ]
+      },
+      "scenario_b_dynamic": {
+        "rounds": [
+          {
+            "config": {
+              "record_size": 1024000,
+              "target_ops": 100,
+              "producers": 8,
+              "use_consumer": true,
+              "dynamic_topics": true,
+              "dynamic_topic_rate": 5,
+              "warmup_sec": 30,
+              "duration": 180
+            },
+            "metrics": {
+              "total_requests": 13859,
+              "avg_ms": 17.69,
+              "p50_ms": 11.43,
+              "p90_ms": 38.54,
+              "p99_ms": 91.16,
+              "p999_ms": 159.34,
+              "max_ms": 193.44,
+              "achieved_ops": 92.32,
+              "achieved_pct": 92.3,
+              "total_sent": 16574,
+              "send_errors": 0,
+              "samples": 151,
+              "util_avg": 30.00390728476821,
+              "util_max": 99.5,
+              "await_avg": 7.891920529801324,
+              "await_max": 20.1,
+              "r_await_avg": 0.0,
+              "w_await_avg": 7.891920529801324,
+              "rkB_s_avg": 0.0,
+              "wkB_s_avg": 92487.74781456953,
+              "rrqm_avg": 0.0,
+              "wrqm_avg": 64.00953642384106,
+              "cpu_us_avg": 10.04635761589404,
+              "cpu_sy_avg": 25.94039735099338,
+              "cpu_id_avg": 61.4635761589404,
+              "cpu_wa_avg": 2.562913907284768,
+              "cpu_st_avg": 0.0,
+              "bi_avg": 10.357615894039736,
+              "bo_avg": 93545.66887417219,
+              "cs_avg": 8112.2913907284765
+            },
+            "bottleneck": {
+              "is_bottleneck": false,
+              "reasons": [
+                "disk await avg 7.89 ms >= 5.00 ms"
+              ]
+            },
+            "raw_output_path": "results/kafka_fs_bench_20260525_061559/raw/r1_ext4_scenario_b_dynamic_1024000B_100ops_measure.txt.gz",
+            "monitor_files": {
+              "iostat": "results/kafka_fs_bench_20260525_061559/monitor/r1_ext4_scenario_b_dynamic_1024000B_100ops_measure_iostat.txt.gz",
+              "vmstat": "results/kafka_fs_bench_20260525_061559/monitor/r1_ext4_scenario_b_dynamic_1024000B_100ops_measure_vmstat.txt.gz"
+            },
+            "round": 1,
+            "calibration_reference": {
+              "mode": "fixed",
+              "chosen_ops": 100
+            }
+          }
+        ]
+      }
+    }
+  },
+  "f2fs": {
+    "1024": {
+      "scenario_a": {
+        "rounds": [
+          {
+            "config": {
+              "record_size": 1024,
+              "target_ops": 100000,
+              "producers": 8,
+              "use_consumer": false,
+              "dynamic_topics": false,
+              "dynamic_topic_rate": 5,
+              "warmup_sec": 30,
+              "duration": 180
+            },
+            "metrics": {
+              "total_requests": 328315,
+              "avg_ms": 16.22,
+              "p50_ms": 11.68,
+              "p90_ms": 35.68,
+              "p99_ms": 78.04,
+              "p999_ms": 123.25,
+              "max_ms": 180.5,
+              "achieved_ops": 2186.68,
+              "achieved_pct": 2.2,
+              "total_sent": 403746,
+              "send_errors": 0,
+              "samples": 151,
+              "util_avg": 0.90875,
+              "util_max": 14.04,
+              "await_avg": 2.186513157894737,
+              "await_max": 33.0,
+              "r_await_avg": 0.0,
+              "w_await_avg": 2.186513157894737,
+              "rkB_s_avg": 0.0,
+              "wkB_s_avg": 35.43578947368421,
+              "rrqm_avg": 0.0,
+              "wrqm_avg": 0.0,
+              "cpu_us_avg": 7.437086092715232,
+              "cpu_sy_avg": 53.98675496688742,
+              "cpu_id_avg": 38.026490066225165,
+              "cpu_wa_avg": 0.4105960264900662,
+              "cpu_st_avg": 0.0,
+              "bi_avg": 18.43708609271523,
+              "bo_avg": 99.04635761589404,
+              "cs_avg": 13765.006622516556
+            },
+            "bottleneck": {
+              "is_bottleneck": false,
+              "reasons": []
+            },
+            "raw_output_path": "results/kafka_fs_bench_20260525_061559/raw/r1_f2fs_scenario_a_1024B_100000ops_measure.txt.gz",
+            "monitor_files": {
+              "iostat": "results/kafka_fs_bench_20260525_061559/monitor/r1_f2fs_scenario_a_1024B_100000ops_measure_iostat.txt.gz",
+              "vmstat": "results/kafka_fs_bench_20260525_061559/monitor/r1_f2fs_scenario_a_1024B_100000ops_measure_vmstat.txt.gz"
+            },
+            "round": 1,
+            "calibration_reference": {
+              "mode": "fixed",
+              "chosen_ops": 100000
+            }
+          }
+        ]
+      },
+      "scenario_b": {
+        "rounds": [
+          {
+            "config": {
+              "record_size": 1024,
+              "target_ops": 100000,
+              "producers": 8,
+              "use_consumer": true,
+              "dynamic_topics": false,
+              "dynamic_topic_rate": 5,
+              "warmup_sec": 30,
+              "duration": 180
+            },
+            "metrics": {
+              "total_requests": 362121,
+              "avg_ms": 12.91,
+              "p50_ms": 10.17,
+              "p90_ms": 27.7,
+              "p99_ms": 51.18,
+              "p999_ms": 80.57,
+              "max_ms": 152.87,
+              "achieved_ops": 2411.18,
+              "achieved_pct": 2.4,
+              "total_sent": 431079,
+              "send_errors": 0,
+              "samples": 152,
+              "util_avg": 0.9663157894736842,
+              "util_max": 28.71,
+              "await_avg": 1.4267763157894737,
+              "await_max": 22.76,
+              "r_await_avg": 0.06578947368421052,
+              "w_await_avg": 1.4267763157894737,
+              "rkB_s_avg": 0.0,
+              "wkB_s_avg": 221.9115789473684,
+              "rrqm_avg": 0.0,
+              "wrqm_avg": 0.019934210526315787,
+              "cpu_us_avg": 9.31578947368421,
+              "cpu_sy_avg": 53.89473684210526,
+              "cpu_id_avg": 36.44736842105263,
+              "cpu_wa_avg": 0.2236842105263158,
+              "cpu_st_avg": 0.0,
+              "bi_avg": 5.684210526315789,
+              "bo_avg": 294.3421052631579,
+              "cs_avg": 15405.269736842105
+            },
+            "bottleneck": {
+              "is_bottleneck": false,
+              "reasons": []
+            },
+            "raw_output_path": "results/kafka_fs_bench_20260525_061559/raw/r1_f2fs_scenario_b_1024B_100000ops_measure.txt.gz",
+            "monitor_files": {
+              "iostat": "results/kafka_fs_bench_20260525_061559/monitor/r1_f2fs_scenario_b_1024B_100000ops_measure_iostat.txt.gz",
+              "vmstat": "results/kafka_fs_bench_20260525_061559/monitor/r1_f2fs_scenario_b_1024B_100000ops_measure_vmstat.txt.gz"
+            },
+            "round": 1,
+            "calibration_reference": {
+              "mode": "fixed",
+              "chosen_ops": 100000
+            }
+          }
+        ]
+      },
+      "scenario_a_dynamic": {
+        "rounds": [
+          {
+            "config": {
+              "record_size": 1024,
+              "target_ops": 100000,
+              "producers": 8,
+              "use_consumer": false,
+              "dynamic_topics": true,
+              "dynamic_topic_rate": 5,
+              "warmup_sec": 30,
+              "duration": 180
+            },
+            "metrics": {
+              "total_requests": 356695,
+              "avg_ms": 15.48,
+              "p50_ms": 12.37,
+              "p90_ms": 32.93,
+              "p99_ms": 57.3,
+              "p999_ms": 79.41,
+              "max_ms": 137.92,
+              "achieved_ops": 2376.14,
+              "achieved_pct": 2.4,
+              "total_sent": 432091,
+              "send_errors": 0,
+              "samples": 151,
+              "util_avg": 26.341315789473683,
+              "util_max": 35.7,
+              "await_avg": 7.4653289473684215,
+              "await_max": 10.84,
+              "r_await_avg": 0.4276315789473684,
+              "w_await_avg": 7.4653289473684215,
+              "rkB_s_avg": 0.0,
+              "wkB_s_avg": 1171.7389473684211,
+              "rrqm_avg": 0.0,
+              "wrqm_avg": 0.0,
+              "cpu_us_avg": 9.178807947019868,
+              "cpu_sy_avg": 56.06622516556291,
+              "cpu_id_avg": 31.867549668874172,
+              "cpu_wa_avg": 2.980132450331126,
+              "cpu_st_avg": 0.0,
+              "bi_avg": 12.42384105960265,
+              "bo_avg": 1362.5430463576158,
+              "cs_avg": 14996.1059602649
+            },
+            "bottleneck": {
+              "is_bottleneck": false,
+              "reasons": [
+                "disk await avg 7.47 ms >= 5.00 ms"
+              ]
+            },
+            "raw_output_path": "results/kafka_fs_bench_20260525_061559/raw/r1_f2fs_scenario_a_dynamic_1024B_100000ops_measure.txt.gz",
+            "monitor_files": {
+              "iostat": "results/kafka_fs_bench_20260525_061559/monitor/r1_f2fs_scenario_a_dynamic_1024B_100000ops_measure_iostat.txt.gz",
+              "vmstat": "results/kafka_fs_bench_20260525_061559/monitor/r1_f2fs_scenario_a_dynamic_1024B_100000ops_measure_vmstat.txt.gz"
+            },
+            "round": 1,
+            "calibration_reference": {
+              "mode": "fixed",
+              "chosen_ops": 100000
+            }
+          }
+        ]
+      },
+      "scenario_b_dynamic": {
+        "rounds": [
+          {
+            "config": {
+              "record_size": 1024,
+              "target_ops": 100000,
+              "producers": 8,
+              "use_consumer": true,
+              "dynamic_topics": true,
+              "dynamic_topic_rate": 5,
+              "warmup_sec": 30,
+              "duration": 180
+            },
+            "metrics": {
+              "total_requests": 348802,
+              "avg_ms": 16.06,
+              "p50_ms": 12.46,
+              "p90_ms": 34.68,
+              "p99_ms": 63.65,
+              "p999_ms": 92.86,
+              "max_ms": 139.73,
+              "achieved_ops": 2322.92,
+              "achieved_pct": 2.3,
+              "total_sent": 417615,
+              "send_errors": 0,
+              "samples": 152,
+              "util_avg": 25.883026315789472,
+              "util_max": 35.5,
+              "await_avg": 7.342894736842105,
+              "await_max": 11.08,
+              "r_await_avg": 0.20394736842105263,
+              "w_await_avg": 7.342894736842105,
+              "rkB_s_avg": 0.0,
+              "wkB_s_avg": 1161.701052631579,
+              "rrqm_avg": 0.0,
+              "wrqm_avg": 0.0,
+              "cpu_us_avg": 10.368421052631579,
+              "cpu_sy_avg": 54.71052631578947,
+              "cpu_id_avg": 32.046052631578945,
+              "cpu_wa_avg": 2.9539473684210527,
+              "cpu_st_avg": 0.0,
+              "bi_avg": 4.447368421052632,
+              "bo_avg": 1349.5,
+              "cs_avg": 14976.078947368422
+            },
+            "bottleneck": {
+              "is_bottleneck": false,
+              "reasons": [
+                "disk await avg 7.34 ms >= 5.00 ms"
+              ]
+            },
+            "raw_output_path": "results/kafka_fs_bench_20260525_061559/raw/r1_f2fs_scenario_b_dynamic_1024B_100000ops_measure.txt.gz",
+            "monitor_files": {
+              "iostat": "results/kafka_fs_bench_20260525_061559/monitor/r1_f2fs_scenario_b_dynamic_1024B_100000ops_measure_iostat.txt.gz",
+              "vmstat": "results/kafka_fs_bench_20260525_061559/monitor/r1_f2fs_scenario_b_dynamic_1024B_100000ops_measure_vmstat.txt.gz"
+            },
+            "round": 1,
+            "calibration_reference": {
+              "mode": "fixed",
+              "chosen_ops": 100000
+            }
+          }
+        ]
+      }
+    },
+    "10240": {
+      "scenario_a": {
+        "rounds": [
+          {
+            "config": {
+              "record_size": 10240,
+              "target_ops": 10000,
+              "producers": 8,
+              "use_consumer": false,
+              "dynamic_topics": false,
+              "dynamic_topic_rate": 5,
+              "warmup_sec": 30,
+              "duration": 180
+            },
+            "metrics": {
+              "total_requests": 355959,
+              "avg_ms": 14.76,
+              "p50_ms": 10.91,
+              "p90_ms": 31.83,
+              "p99_ms": 68.18,
+              "p999_ms": 111.23,
+              "max_ms": 218.2,
+              "achieved_ops": 2370.88,
+              "achieved_pct": 23.7,
+              "total_sent": 429739,
+              "send_errors": 0,
+              "samples": 151,
+              "util_avg": 16.86309210526316,
+              "util_max": 103.7,
+              "await_avg": 5.311447368421053,
+              "await_max": 22.45,
+              "r_await_avg": 0.05921052631578947,
+              "w_await_avg": 5.311447368421053,
+              "rkB_s_avg": 0.0,
+              "wkB_s_avg": 27053.81052631579,
+              "rrqm_avg": 0.0,
+              "wrqm_avg": 0.4074342105263158,
+              "cpu_us_avg": 7.774834437086093,
+              "cpu_sy_avg": 57.503311258278146,
+              "cpu_id_avg": 34.0,
+              "cpu_wa_avg": 0.5827814569536424,
+              "cpu_st_avg": 0.0,
+              "bi_avg": 0.2119205298013245,
+              "bo_avg": 27398.19867549669,
+              "cs_avg": 15147.48344370861
+            },
+            "bottleneck": {
+              "is_bottleneck": false,
+              "reasons": [
+                "disk await avg 5.31 ms >= 5.00 ms"
+              ]
+            },
+            "raw_output_path": "results/kafka_fs_bench_20260525_061559/raw/r1_f2fs_scenario_a_10240B_10000ops_measure.txt.gz",
+            "monitor_files": {
+              "iostat": "results/kafka_fs_bench_20260525_061559/monitor/r1_f2fs_scenario_a_10240B_10000ops_measure_iostat.txt.gz",
+              "vmstat": "results/kafka_fs_bench_20260525_061559/monitor/r1_f2fs_scenario_a_10240B_10000ops_measure_vmstat.txt.gz"
+            },
+            "round": 1,
+            "calibration_reference": {
+              "mode": "fixed",
+              "chosen_ops": 10000
+            }
+          }
+        ]
+      },
+      "scenario_b": {
+        "rounds": [
+          {
+            "config": {
+              "record_size": 10240,
+              "target_ops": 10000,
+              "producers": 8,
+              "use_consumer": true,
+              "dynamic_topics": false,
+              "dynamic_topic_rate": 5,
+              "warmup_sec": 30,
+              "duration": 180
+            },
+            "metrics": {
+              "total_requests": 355143,
+              "avg_ms": 14.07,
+              "p50_ms": 10.13,
+              "p90_ms": 30.91,
+              "p99_ms": 68.01,
+              "p999_ms": 106.1,
+              "max_ms": 170.35,
+              "achieved_ops": 2365.43,
+              "achieved_pct": 23.7,
+              "total_sent": 430640,
+              "send_errors": 0,
+              "samples": 151,
+              "util_avg": 14.026315789473685,
+              "util_max": 100.5,
+              "await_avg": 5.687763157894737,
+              "await_max": 27.0,
+              "r_await_avg": 0.125,
+              "w_await_avg": 5.687763157894737,
+              "rkB_s_avg": 0.0,
+              "wkB_s_avg": 22497.212631578946,
+              "rrqm_avg": 0.0,
+              "wrqm_avg": 0.4774342105263158,
+              "cpu_us_avg": 10.178807947019868,
+              "cpu_sy_avg": 55.556291390728475,
+              "cpu_id_avg": 33.80132450331126,
+              "cpu_wa_avg": 0.423841059602649,
+              "cpu_st_avg": 0.0,
+              "bi_avg": 1.1655629139072847,
+              "bo_avg": 22805.90728476821,
+              "cs_avg": 15921.58940397351
+            },
+            "bottleneck": {
+              "is_bottleneck": false,
+              "reasons": [
+                "disk await avg 5.69 ms >= 5.00 ms"
+              ]
+            },
+            "raw_output_path": "results/kafka_fs_bench_20260525_061559/raw/r1_f2fs_scenario_b_10240B_10000ops_measure.txt.gz",
+            "monitor_files": {
+              "iostat": "results/kafka_fs_bench_20260525_061559/monitor/r1_f2fs_scenario_b_10240B_10000ops_measure_iostat.txt.gz",
+              "vmstat": "results/kafka_fs_bench_20260525_061559/monitor/r1_f2fs_scenario_b_10240B_10000ops_measure_vmstat.txt.gz"
+            },
+            "round": 1,
+            "calibration_reference": {
+              "mode": "fixed",
+              "chosen_ops": 10000
+            }
+          }
+        ]
+      },
+      "scenario_a_dynamic": {
+        "rounds": [
+          {
+            "config": {
+              "record_size": 10240,
+              "target_ops": 10000,
+              "producers": 8,
+              "use_consumer": false,
+              "dynamic_topics": true,
+              "dynamic_topic_rate": 5,
+              "warmup_sec": 30,
+              "duration": 180
+            },
+            "metrics": {
+              "total_requests": 336712,
+              "avg_ms": 20.92,
+              "p50_ms": 16.59,
+              "p90_ms": 44.57,
+              "p99_ms": 75.99,
+              "p999_ms": 105.37,
+              "max_ms": 212.53,
+              "achieved_ops": 2241.77,
+              "achieved_pct": 22.4,
+              "total_sent": 406772,
+              "send_errors": 0,
+              "samples": 151,
+              "util_avg": 39.40384105960265,
+              "util_max": 84.5,
+              "await_avg": 9.74112582781457,
+              "await_max": 14.31,
+              "r_await_avg": 0.5562913907284768,
+              "w_await_avg": 9.74112582781457,
+              "rkB_s_avg": 0.0,
+              "wkB_s_avg": 22264.879470198677,
+              "rrqm_avg": 0.0,
+              "wrqm_avg": 2.244503311258278,
+              "cpu_us_avg": 8.973509933774835,
+              "cpu_sy_avg": 57.01324503311258,
+              "cpu_id_avg": 30.258278145695364,
+              "cpu_wa_avg": 3.774834437086093,
+              "cpu_st_avg": 0.0,
+              "bi_avg": 12.47682119205298,
+              "bo_avg": 22553.218543046358,
+              "cs_avg": 14135.225165562913
+            },
+            "bottleneck": {
+              "is_bottleneck": false,
+              "reasons": [
+                "disk await avg 9.74 ms >= 5.00 ms"
+              ]
+            },
+            "raw_output_path": "results/kafka_fs_bench_20260525_061559/raw/r1_f2fs_scenario_a_dynamic_10240B_10000ops_measure.txt.gz",
+            "monitor_files": {
+              "iostat": "results/kafka_fs_bench_20260525_061559/monitor/r1_f2fs_scenario_a_dynamic_10240B_10000ops_measure_iostat.txt.gz",
+              "vmstat": "results/kafka_fs_bench_20260525_061559/monitor/r1_f2fs_scenario_a_dynamic_10240B_10000ops_measure_vmstat.txt.gz"
+            },
+            "round": 1,
+            "calibration_reference": {
+              "mode": "fixed",
+              "chosen_ops": 10000
+            }
+          }
+        ]
+      },
+      "scenario_b_dynamic": {
+        "rounds": [
+          {
+            "config": {
+              "record_size": 10240,
+              "target_ops": 10000,
+              "producers": 8,
+              "use_consumer": true,
+              "dynamic_topics": true,
+              "dynamic_topic_rate": 5,
+              "warmup_sec": 30,
+              "duration": 180
+            },
+            "metrics": {
+              "total_requests": 339855,
+              "avg_ms": 20.53,
+              "p50_ms": 15.5,
+              "p90_ms": 44.87,
+              "p99_ms": 83.69,
+              "p999_ms": 121.07,
+              "max_ms": 209.95,
+              "achieved_ops": 2262.7,
+              "achieved_pct": 22.6,
+              "total_sent": 408734,
+              "send_errors": 0,
+              "samples": 152,
+              "util_avg": 37.16776315789474,
+              "util_max": 72.4,
+              "await_avg": 9.454013157894737,
+              "await_max": 13.839999999999998,
+              "r_await_avg": 0.3881578947368421,
+              "w_await_avg": 9.454013157894737,
+              "rkB_s_avg": 0.0,
+              "wkB_s_avg": 22315.115789473683,
+              "rrqm_avg": 0.0,
+              "wrqm_avg": 2.3451973684210525,
+              "cpu_us_avg": 11.052631578947368,
+              "cpu_sy_avg": 56.01315789473684,
+              "cpu_id_avg": 29.480263157894736,
+              "cpu_wa_avg": 3.4671052631578947,
+              "cpu_st_avg": 0.0,
+              "bi_avg": 4.5,
+              "bo_avg": 22552.57894736842,
+              "cs_avg": 14916.269736842105
+            },
+            "bottleneck": {
+              "is_bottleneck": false,
+              "reasons": [
+                "disk await avg 9.45 ms >= 5.00 ms"
+              ]
+            },
+            "raw_output_path": "results/kafka_fs_bench_20260525_061559/raw/r1_f2fs_scenario_b_dynamic_10240B_10000ops_measure.txt.gz",
+            "monitor_files": {
+              "iostat": "results/kafka_fs_bench_20260525_061559/monitor/r1_f2fs_scenario_b_dynamic_10240B_10000ops_measure_iostat.txt.gz",
+              "vmstat": "results/kafka_fs_bench_20260525_061559/monitor/r1_f2fs_scenario_b_dynamic_10240B_10000ops_measure_vmstat.txt.gz"
+            },
+            "round": 1,
+            "calibration_reference": {
+              "mode": "fixed",
+              "chosen_ops": 10000
+            }
+          }
+        ]
+      }
+    },
+    "102400": {
+      "scenario_a": {
+        "rounds": [
+          {
+            "config": {
+              "record_size": 102400,
+              "target_ops": 1000,
+              "producers": 8,
+              "use_consumer": false,
+              "dynamic_topics": false,
+              "dynamic_topic_rate": 5,
+              "warmup_sec": 30,
+              "duration": 180
+            },
+            "metrics": {
+              "total_requests": 113442,
+              "avg_ms": 7.73,
+              "p50_ms": 6.0,
+              "p90_ms": 16.67,
+              "p99_ms": 31.5,
+              "p999_ms": 50.79,
+              "max_ms": 110.57,
+              "achieved_ops": 755.71,
+              "achieved_pct": 75.6,
+              "total_sent": 135927,
+              "send_errors": 0,
+              "samples": 151,
+              "util_avg": 24.418211920529803,
+              "util_max": 96.3,
+              "await_avg": 7.064039735099338,
+              "await_max": 19.47,
+              "r_await_avg": 0.36423841059602646,
+              "w_await_avg": 7.064039735099338,
+              "rkB_s_avg": 0.0,
+              "wkB_s_avg": 74125.93589403974,
+              "rrqm_avg": 0.0,
+              "wrqm_avg": 0.348476821192053,
+              "cpu_us_avg": 6.556291390728477,
+              "cpu_sy_avg": 42.98675496688742,
+              "cpu_id_avg": 49.75496688741722,
+              "cpu_wa_avg": 0.6887417218543046,
+              "cpu_st_avg": 0.0,
+              "bi_avg": 1.4304635761589404,
+              "bo_avg": 74683.81456953642,
+              "cs_avg": 9227.298013245034
+            },
+            "bottleneck": {
+              "is_bottleneck": false,
+              "reasons": [
+                "disk await avg 7.06 ms >= 5.00 ms"
+              ]
+            },
+            "raw_output_path": "results/kafka_fs_bench_20260525_061559/raw/r1_f2fs_scenario_a_102400B_1000ops_measure.txt.gz",
+            "monitor_files": {
+              "iostat": "results/kafka_fs_bench_20260525_061559/monitor/r1_f2fs_scenario_a_102400B_1000ops_measure_iostat.txt.gz",
+              "vmstat": "results/kafka_fs_bench_20260525_061559/monitor/r1_f2fs_scenario_a_102400B_1000ops_measure_vmstat.txt.gz"
+            },
+            "round": 1,
+            "calibration_reference": {
+              "mode": "fixed",
+              "chosen_ops": 1000
+            }
+          }
+        ]
+      },
+      "scenario_b": {
+        "rounds": [
+          {
+            "config": {
+              "record_size": 102400,
+              "target_ops": 1000,
+              "producers": 8,
+              "use_consumer": true,
+              "dynamic_topics": false,
+              "dynamic_topic_rate": 5,
+              "warmup_sec": 30,
+              "duration": 180
+            },
+            "metrics": {
+              "total_requests": 112698,
+              "avg_ms": 7.55,
+              "p50_ms": 5.59,
+              "p90_ms": 16.69,
+              "p99_ms": 31.76,
+              "p999_ms": 49.96,
+              "max_ms": 70.68,
+              "achieved_ops": 750.44,
+              "achieved_pct": 75.0,
+              "total_sent": 133973,
+              "send_errors": 0,
+              "samples": 152,
+              "util_avg": 23.45486842105263,
+              "util_max": 97.92,
+              "await_avg": 7.078223684210526,
+              "await_max": 21.02,
+              "r_await_avg": 0.3026315789473684,
+              "w_await_avg": 7.078223684210526,
+              "rkB_s_avg": 0.0,
+              "wkB_s_avg": 73931.92421052631,
+              "rrqm_avg": 0.0,
+              "wrqm_avg": 0.4957236842105263,
+              "cpu_us_avg": 10.217105263157896,
+              "cpu_sy_avg": 44.26973684210526,
+              "cpu_id_avg": 44.94736842105263,
+              "cpu_wa_avg": 0.6447368421052632,
+              "cpu_st_avg": 0.0,
+              "bi_avg": 2.6315789473684212,
+              "bo_avg": 74761.71052631579,
+              "cs_avg": 10622.592105263158
+            },
+            "bottleneck": {
+              "is_bottleneck": false,
+              "reasons": [
+                "disk await avg 7.08 ms >= 5.00 ms"
+              ]
+            },
+            "raw_output_path": "results/kafka_fs_bench_20260525_061559/raw/r1_f2fs_scenario_b_102400B_1000ops_measure.txt.gz",
+            "monitor_files": {
+              "iostat": "results/kafka_fs_bench_20260525_061559/monitor/r1_f2fs_scenario_b_102400B_1000ops_measure_iostat.txt.gz",
+              "vmstat": "results/kafka_fs_bench_20260525_061559/monitor/r1_f2fs_scenario_b_102400B_1000ops_measure_vmstat.txt.gz"
+            },
+            "round": 1,
+            "calibration_reference": {
+              "mode": "fixed",
+              "chosen_ops": 1000
+            }
+          }
+        ]
+      },
+      "scenario_a_dynamic": {
+        "rounds": [
+          {
+            "config": {
+              "record_size": 102400,
+              "target_ops": 1000,
+              "producers": 8,
+              "use_consumer": false,
+              "dynamic_topics": true,
+              "dynamic_topic_rate": 5,
+              "warmup_sec": 30,
+              "duration": 180
+            },
+            "metrics": {
+              "total_requests": 110695,
+              "avg_ms": 9.92,
+              "p50_ms": 7.43,
+              "p90_ms": 21.93,
+              "p99_ms": 42.3,
+              "p999_ms": 67.96,
+              "max_ms": 173.26,
+              "achieved_ops": 737.29,
+              "achieved_pct": 73.7,
+              "total_sent": 132830,
+              "send_errors": 0,
+              "samples": 151,
+              "util_avg": 46.5817880794702,
+              "util_max": 86.1,
+              "await_avg": 9.617743665471162,
+              "await_max": 18.14,
+              "r_await_avg": 0.5596026490066225,
+              "w_await_avg": 9.617748344370861,
+              "rkB_s_avg": 0.06781456953642384,
+              "wkB_s_avg": 75530.0365562914,
+              "rrqm_avg": 0.0,
+              "wrqm_avg": 2.337615894039735,
+              "cpu_us_avg": 8.218543046357615,
+              "cpu_sy_avg": 47.75496688741722,
+              "cpu_id_avg": 40.397350993377486,
+              "cpu_wa_avg": 3.6357615894039736,
+              "cpu_st_avg": 0.0,
+              "bi_avg": 13.006622516556291,
+              "bo_avg": 76066.35761589404,
+              "cs_avg": 9348.496688741721
+            },
+            "bottleneck": {
+              "is_bottleneck": false,
+              "reasons": [
+                "disk await avg 9.62 ms >= 5.00 ms"
+              ]
+            },
+            "raw_output_path": "results/kafka_fs_bench_20260525_061559/raw/r1_f2fs_scenario_a_dynamic_102400B_1000ops_measure.txt.gz",
+            "monitor_files": {
+              "iostat": "results/kafka_fs_bench_20260525_061559/monitor/r1_f2fs_scenario_a_dynamic_102400B_1000ops_measure_iostat.txt.gz",
+              "vmstat": "results/kafka_fs_bench_20260525_061559/monitor/r1_f2fs_scenario_a_dynamic_102400B_1000ops_measure_vmstat.txt.gz"
+            },
+            "round": 1,
+            "calibration_reference": {
+              "mode": "fixed",
+              "chosen_ops": 1000
+            }
+          }
+        ]
+      },
+      "scenario_b_dynamic": {
+        "rounds": [
+          {
+            "config": {
+              "record_size": 102400,
+              "target_ops": 1000,
+              "producers": 8,
+              "use_consumer": true,
+              "dynamic_topics": true,
+              "dynamic_topic_rate": 5,
+              "warmup_sec": 30,
+              "duration": 180
+            },
+            "metrics": {
+              "total_requests": 109106,
+              "avg_ms": 9.84,
+              "p50_ms": 6.96,
+              "p90_ms": 22.16,
+              "p99_ms": 45.65,
+              "p999_ms": 76.67,
+              "max_ms": 129.58,
+              "achieved_ops": 726.91,
+              "achieved_pct": 72.7,
+              "total_sent": 130546,
+              "send_errors": 0,
+              "samples": 151,
+              "util_avg": 45.166291390728475,
+              "util_max": 96.1,
+              "await_avg": 9.08317880794702,
+              "await_max": 17.91,
+              "r_await_avg": 0.6688741721854304,
+              "w_await_avg": 9.08317880794702,
+              "rkB_s_avg": 0.0,
+              "wkB_s_avg": 74548.01377483444,
+              "rrqm_avg": 0.0,
+              "wrqm_avg": 2.1031125827814567,
+              "cpu_us_avg": 11.556291390728477,
+              "cpu_sy_avg": 47.81456953642384,
+              "cpu_id_avg": 37.384105960264904,
+              "cpu_wa_avg": 3.2781456953642385,
+              "cpu_st_avg": 0.0,
+              "bi_avg": 5.695364238410596,
+              "bo_avg": 75050.59602649006,
+              "cs_avg": 10699.364238410595
+            },
+            "bottleneck": {
+              "is_bottleneck": false,
+              "reasons": [
+                "disk await avg 9.08 ms >= 5.00 ms"
+              ]
+            },
+            "raw_output_path": "results/kafka_fs_bench_20260525_061559/raw/r1_f2fs_scenario_b_dynamic_102400B_1000ops_measure.txt.gz",
+            "monitor_files": {
+              "iostat": "results/kafka_fs_bench_20260525_061559/monitor/r1_f2fs_scenario_b_dynamic_102400B_1000ops_measure_iostat.txt.gz",
+              "vmstat": "results/kafka_fs_bench_20260525_061559/monitor/r1_f2fs_scenario_b_dynamic_102400B_1000ops_measure_vmstat.txt.gz"
+            },
+            "round": 1,
+            "calibration_reference": {
+              "mode": "fixed",
+              "chosen_ops": 1000
+            }
+          }
+        ]
+      }
+    },
+    "1024000": {
+      "scenario_a": {
+        "rounds": [
+          {
+            "config": {
+              "record_size": 1024000,
+              "target_ops": 100,
+              "producers": 8,
+              "use_consumer": false,
+              "dynamic_topics": false,
+              "dynamic_topic_rate": 5,
+              "warmup_sec": 30,
+              "duration": 180
+            },
+            "metrics": {
+              "total_requests": 13978,
+              "avg_ms": 12.43,
+              "p50_ms": 7.0,
+              "p90_ms": 29.79,
+              "p99_ms": 56.51,
+              "p999_ms": 91.82,
+              "max_ms": 148.56,
+              "achieved_ops": 93.12,
+              "achieved_pct": 93.1,
+              "total_sent": 16736,
+              "send_errors": 0,
+              "samples": 151,
+              "util_avg": 25.21625,
+              "util_max": 96.9,
+              "await_avg": 6.390855263157895,
+              "await_max": 18.930000000000003,
+              "r_await_avg": 0.5263157894736842,
+              "w_await_avg": 6.390855263157895,
+              "rkB_s_avg": 0.0,
+              "wkB_s_avg": 96447.86526315789,
+              "rrqm_avg": 0.0,
+              "wrqm_avg": 1.1860526315789475,
+              "cpu_us_avg": 4.622516556291391,
+              "cpu_sy_avg": 16.748344370860927,
+              "cpu_id_avg": 78.00662251655629,
+              "cpu_wa_avg": 0.543046357615894,
+              "cpu_st_avg": 0.0,
+              "bi_avg": 2.0927152317880795,
+              "bo_avg": 96255.17880794701,
+              "cs_avg": 6135.311258278146
+            },
+            "bottleneck": {
+              "is_bottleneck": false,
+              "reasons": [
+                "disk await avg 6.39 ms >= 5.00 ms"
+              ]
+            },
+            "raw_output_path": "results/kafka_fs_bench_20260525_061559/raw/r1_f2fs_scenario_a_1024000B_100ops_measure.txt.gz",
+            "monitor_files": {
+              "iostat": "results/kafka_fs_bench_20260525_061559/monitor/r1_f2fs_scenario_a_1024000B_100ops_measure_iostat.txt.gz",
+              "vmstat": "results/kafka_fs_bench_20260525_061559/monitor/r1_f2fs_scenario_a_1024000B_100ops_measure_vmstat.txt.gz"
+            },
+            "round": 1,
+            "calibration_reference": {
+              "mode": "fixed",
+              "chosen_ops": 100
+            }
+          }
+        ]
+      },
+      "scenario_b": {
+        "rounds": [
+          {
+            "config": {
+              "record_size": 1024000,
+              "target_ops": 100,
+              "producers": 8,
+              "use_consumer": true,
+              "dynamic_topics": false,
+              "dynamic_topic_rate": 5,
+              "warmup_sec": 30,
+              "duration": 180
+            },
+            "metrics": {
+              "total_requests": 13908,
+              "avg_ms": 14.11,
+              "p50_ms": 9.4,
+              "p90_ms": 32.01,
+              "p99_ms": 58.27,
+              "p999_ms": 81.92,
+              "max_ms": 118.19,
+              "achieved_ops": 92.66,
+              "achieved_pct": 92.7,
+              "total_sent": 16634,
+              "send_errors": 0,
+              "samples": 151,
+              "util_avg": 26.61638157894737,
+              "util_max": 97.62,
+              "await_avg": 6.835918597642684,
+              "await_max": 22.0,
+              "r_await_avg": 0.4967105263157895,
+              "w_await_avg": 6.835921052631579,
+              "rkB_s_avg": 0.13473684210526315,
+              "wkB_s_avg": 94289.92,
+              "rrqm_avg": 0.0,
+              "wrqm_avg": 1.6519736842105264,
+              "cpu_us_avg": 8.311258278145695,
+              "cpu_sy_avg": 22.880794701986755,
+              "cpu_id_avg": 68.29801324503312,
+              "cpu_wa_avg": 0.5099337748344371,
+              "cpu_st_avg": 0.0,
+              "bi_avg": 1.5894039735099337,
+              "bo_avg": 95333.29801324503,
+              "cs_avg": 7749.9668874172185
+            },
+            "bottleneck": {
+              "is_bottleneck": false,
+              "reasons": [
+                "disk await avg 6.84 ms >= 5.00 ms"
+              ]
+            },
+            "raw_output_path": "results/kafka_fs_bench_20260525_061559/raw/r1_f2fs_scenario_b_1024000B_100ops_measure.txt.gz",
+            "monitor_files": {
+              "iostat": "results/kafka_fs_bench_20260525_061559/monitor/r1_f2fs_scenario_b_1024000B_100ops_measure_iostat.txt.gz",
+              "vmstat": "results/kafka_fs_bench_20260525_061559/monitor/r1_f2fs_scenario_b_1024000B_100ops_measure_vmstat.txt.gz"
+            },
+            "round": 1,
+            "calibration_reference": {
+              "mode": "fixed",
+              "chosen_ops": 100
+            }
+          }
+        ]
+      },
+      "scenario_a_dynamic": {
+        "rounds": [
+          {
+            "config": {
+              "record_size": 1024000,
+              "target_ops": 100,
+              "producers": 8,
+              "use_consumer": false,
+              "dynamic_topics": true,
+              "dynamic_topic_rate": 5,
+              "warmup_sec": 30,
+              "duration": 180
+            },
+            "metrics": {
+              "total_requests": 13867,
+              "avg_ms": 15.53,
+              "p50_ms": 10.09,
+              "p90_ms": 35.25,
+              "p99_ms": 62.84,
+              "p999_ms": 90.37,
+              "max_ms": 159.95,
+              "achieved_ops": 92.38,
+              "achieved_pct": 92.4,
+              "total_sent": 16609,
+              "send_errors": 0,
+              "samples": 151,
+              "util_avg": 38.588940397350996,
+              "util_max": 86.14,
+              "await_avg": 8.160927457254992,
+              "await_max": 18.96,
+              "r_await_avg": 0.9503311258278145,
+              "w_await_avg": 8.16092715231788,
+              "rkB_s_avg": 0.06781456953642384,
+              "wkB_s_avg": 96167.23072847682,
+              "rrqm_avg": 0.0,
+              "wrqm_avg": 1.9047682119205298,
+              "cpu_us_avg": 6.185430463576159,
+              "cpu_sy_avg": 22.04635761589404,
+              "cpu_id_avg": 69.11258278145695,
+              "cpu_wa_avg": 2.6357615894039736,
+              "cpu_st_avg": 0.0,
+              "bi_avg": 13.112582781456954,
+              "bo_avg": 96856.55629139073,
+              "cs_avg": 6355.0331125827815
+            },
+            "bottleneck": {
+              "is_bottleneck": false,
+              "reasons": [
+                "disk await avg 8.16 ms >= 5.00 ms"
+              ]
+            },
+            "raw_output_path": "results/kafka_fs_bench_20260525_061559/raw/r1_f2fs_scenario_a_dynamic_1024000B_100ops_measure.txt.gz",
+            "monitor_files": {
+              "iostat": "results/kafka_fs_bench_20260525_061559/monitor/r1_f2fs_scenario_a_dynamic_1024000B_100ops_measure_iostat.txt.gz",
+              "vmstat": "results/kafka_fs_bench_20260525_061559/monitor/r1_f2fs_scenario_a_dynamic_1024000B_100ops_measure_vmstat.txt.gz"
+            },
+            "round": 1,
+            "calibration_reference": {
+              "mode": "fixed",
+              "chosen_ops": 100
+            }
+          }
+        ]
+      },
+      "scenario_b_dynamic": {
+        "rounds": [
+          {
+            "config": {
+              "record_size": 1024000,
+              "target_ops": 100,
+              "producers": 8,
+              "use_consumer": true,
+              "dynamic_topics": true,
+              "dynamic_topic_rate": 5,
+              "warmup_sec": 30,
+              "duration": 180
+            },
+            "metrics": {
+              "total_requests": 13853,
+              "avg_ms": 17.03,
+              "p50_ms": 12.72,
+              "p90_ms": 35.77,
+              "p99_ms": 65.3,
+              "p999_ms": 88.61,
+              "max_ms": 131.81,
+              "achieved_ops": 92.25,
+              "achieved_pct": 92.2,
+              "total_sent": 16556,
+              "send_errors": 0,
+              "samples": 151,
+              "util_avg": 41.8525,
+              "util_max": 80.2,
+              "await_avg": 8.359276315789474,
+              "await_max": 17.35,
+              "r_await_avg": 0.48026315789473684,
+              "w_await_avg": 8.359276315789474,
+              "rkB_s_avg": 0.0,
+              "wkB_s_avg": 94790.2652631579,
+              "rrqm_avg": 0.0,
+              "wrqm_avg": 2.0538815789473683,
+              "cpu_us_avg": 10.317880794701987,
+              "cpu_sy_avg": 29.066225165562916,
+              "cpu_id_avg": 58.04635761589404,
+              "cpu_wa_avg": 2.5231788079470197,
+              "cpu_st_avg": 0.0,
+              "bi_avg": 5.827814569536423,
+              "bo_avg": 94923.54966887417,
+              "cs_avg": 7887.549668874172
+            },
+            "bottleneck": {
+              "is_bottleneck": false,
+              "reasons": [
+                "disk await avg 8.36 ms >= 5.00 ms"
+              ]
+            },
+            "raw_output_path": "results/kafka_fs_bench_20260525_061559/raw/r1_f2fs_scenario_b_dynamic_1024000B_100ops_measure.txt.gz",
+            "monitor_files": {
+              "iostat": "results/kafka_fs_bench_20260525_061559/monitor/r1_f2fs_scenario_b_dynamic_1024000B_100ops_measure_iostat.txt.gz",
+              "vmstat": "results/kafka_fs_bench_20260525_061559/monitor/r1_f2fs_scenario_b_dynamic_1024000B_100ops_measure_vmstat.txt.gz"
+            },
+            "round": 1,
+            "calibration_reference": {
+              "mode": "fixed",
+              "chosen_ops": 100
+            }
+          }
+        ]
+      }
+    }
+  }
+}

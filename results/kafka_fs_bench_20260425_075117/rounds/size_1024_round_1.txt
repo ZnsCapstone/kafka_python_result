@@ -1,0 +1,30 @@
+
+================================================================================
+ RECORD SIZE 1024 / ROUND 1/3 START 
+================================================================================
+
+######################################################################
+# FILESYSTEM = EXT4
+######################################################################
+[Record Size] 1024 Bytes
+
+[Calibration] Searching target OP/s for EXT4 / scenario_a / 1024B
+  > Trying candidate target_ops=50000
+[Service] Stopping Kafka KRaft broker ...
+
+[Setup] Formatting & Mounting as ext4 ...
+NAME MAJ:MIN RM SIZE RO TYPE MOUNTPOINTS
+sdc    8:32   0  20G  0 disk /mnt/kafka-logs
+/dev/sdc on /mnt/kafka-logs type ext4 (rw,noatime,nodiratime)
+[Service] Starting Kafka in KRaft mode ...
+[CRITICAL ERROR] KRaft storage format failed
+
+Exception in thread "main" java.lang.RuntimeException: Invalid cluster.id in: /var/lib/kafka-meta/meta.properties. Expected ZBHZHVKMSTuxymnaCh7dzA, but read XP4QyAYhS126jDxltZJjnQ
+	at org.apache.kafka.metadata.properties.MetaPropertiesEnsemble.verify(MetaPropertiesEnsemble.java:503)
+	at org.apache.kafka.metadata.storage.Formatter.doFormat(Formatter.java:398)
+	at org.apache.kafka.metadata.storage.Formatter.run(Formatter.java:259)
+	at kafka.tools.StorageTool$.runFormatCommand(StorageTool.scala:173)
+	at kafka.tools.StorageTool$.execute(StorageTool.scala:86)
+	at kafka.tools.StorageTool$.main(StorageTool.scala:46)
+	at kafka.tools.StorageTool.main(StorageTool.scala)
+

@@ -1,0 +1,19 @@
+
+================================================================================
+ FIXED RUN START | scenario=scenario_a | record_size=102400B | target_ops=15000 | round=1/1 
+================================================================================
+
+######################################################################
+# FILESYSTEM = EXT4
+######################################################################
+[Service] Stopping Kafka KRaft broker ...
+
+[Setup] Formatting & Mounting as ext4 ...
+NAME MAJ:MIN RM SIZE RO TYPE MOUNTPOINTS
+sdc    8:32   0  20G  0 disk /mnt/kafka-logs
+[Service] Starting Kafka in KRaft mode ...
+[Service] Recreating benchmark topic ...
+
+--- [MEASURE] EXT4 / scenario_a / 102400B / 15000 ops ---
+  > Error: Unable to access jarfile /home/jw/zns-project/kafka-benchmark/build/libs/kafka-benchmark.jar
+[CRITICAL ERROR] Java benchmark failed with exit code 1

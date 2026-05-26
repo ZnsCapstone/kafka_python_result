@@ -1,0 +1,169 @@
+### Date
+2026-04-24T16:21:32.646509
+
+### uname -a
+Linux jeongwoo 6.8.0-107-generic #107-Ubuntu SMP PREEMPT_DYNAMIC Fri Mar 13 19:51:50 UTC 2026 x86_64 x86_64 x86_64 GNU/Linux
+
+### /etc/os-release
+PRETTY_NAME="Ubuntu 24.04.4 LTS"
+NAME="Ubuntu"
+VERSION_ID="24.04"
+VERSION="24.04.4 LTS (Noble Numbat)"
+VERSION_CODENAME=noble
+ID=ubuntu
+ID_LIKE=debian
+HOME_URL="https://www.ubuntu.com/"
+SUPPORT_URL="https://help.ubuntu.com/"
+BUG_REPORT_URL="https://bugs.launchpad.net/ubuntu/"
+PRIVACY_POLICY_URL="https://www.ubuntu.com/legal/terms-and-policies/privacy-policy"
+UBUNTU_CODENAME=noble
+LOGO=ubuntu-logo
+
+### CPU info (lscpu)
+Architecture:                            x86_64
+CPU op-mode(s):                          32-bit, 64-bit
+Address sizes:                           48 bits physical, 48 bits virtual
+Byte Order:                              Little Endian
+CPU(s):                                  6
+On-line CPU(s) list:                     0-5
+Vendor ID:                               AuthenticAMD
+Model name:                              AMD Ryzen 5 7500F 6-Core Processor
+CPU family:                              25
+Model:                                   97
+Thread(s) per core:                      1
+Core(s) per socket:                      6
+Socket(s):                               1
+Stepping:                                2
+BogoMIPS:                                7385.95
+Flags:                                   fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush mmx fxsr sse sse2 ht syscall nx fxsr_opt rdtscp lm constant_tsc rep_good nopl nonstop_tsc cpuid extd_apicid tsc_known_freq pni ssse3 cx16 sse4_1 sse4_2 popcnt hypervisor lahf_lm cmp_legacy cr8_legacy 3dnowprefetch vmmcall fsgsbase invpcid arat
+Hypervisor vendor:                       KVM
+Virtualization type:                     full
+L1d cache:                               192 KiB (6 instances)
+L1i cache:                               192 KiB (6 instances)
+L2 cache:                                6 MiB (6 instances)
+L3 cache:                                192 MiB (6 instances)
+NUMA node(s):                            1
+NUMA node0 CPU(s):                       0-5
+Vulnerability Gather data sampling:      Not affected
+Vulnerability Indirect target selection: Not affected
+Vulnerability Itlb multihit:             Not affected
+Vulnerability L1tf:                      Not affected
+Vulnerability Mds:                       Not affected
+Vulnerability Meltdown:                  Not affected
+Vulnerability Mmio stale data:           Not affected
+Vulnerability Reg file data sampling:    Not affected
+Vulnerability Retbleed:                  Not affected
+Vulnerability Spec rstack overflow:      Vulnerable: Safe RET, no microcode
+Vulnerability Spec store bypass:         Not affected
+Vulnerability Spectre v1:                Mitigation; usercopy/swapgs barriers and __user pointer sanitization
+Vulnerability Spectre v2:                Mitigation; Retpolines; STIBP disabled; RSB filling; PBRSB-eIBRS Not affected; BHI Not affected
+Vulnerability Srbds:                     Not affected
+Vulnerability Tsa:                       Vulnerable: Clear CPU buffers attempted, no microcode
+Vulnerability Tsx async abort:           Not affected
+Vulnerability Vmscape:                   Not affected
+
+### Memory (free -h)
+total        used        free      shared  buff/cache   available
+Mem:            11Gi       1.3Gi       2.1Gi       560Ki       8.6Gi        10Gi
+Swap:          4.0Gi       1.3Mi       4.0Gi
+
+### Disk (lsblk)
+NAME   MAJ:MIN RM  SIZE RO TYPE MOUNTPOINTS
+sda      8:0    0   50G  0 disk 
+├─sda1   8:1    0    1M  0 part 
+└─sda2   8:2    0   50G  0 part /
+sdb      8:16   0   10G  0 disk 
+sdc      8:32   0   20G  0 disk /mnt/kafka-logs
+sr0     11:0    1 1024M  0 rom
+
+### Disk (df -h)
+Filesystem      Size  Used Avail Use% Mounted on
+tmpfs           1.2G  1.1M  1.2G   1% /run
+/dev/sda2        49G   12G   35G  26% /
+tmpfs           5.9G     0  5.9G   0% /dev/shm
+tmpfs           5.0M     0  5.0M   0% /run/lock
+tmpfs           1.2G   16K  1.2G   1% /run/user/1000
+/dev/sdc         20G   20G     0 100% /mnt/kafka-logs
+
+### Kernel cmdline
+BOOT_IMAGE=/boot/vmlinuz-6.8.0-107-generic root=UUID=3ee04608-2e5a-429a-9ffb-82d846260178 ro
+
+### vm.dirty_ratio
+vm.dirty_ratio = 20
+
+### vm.dirty_background_ratio
+vm.dirty_background_ratio = 10
+
+### vm.swappiness
+vm.swappiness = 60
+
+### iostat version
+sysstat version 12.6.1
+
+### vmstat version
+vmstat from procps-ng 4.0.4
+
+### mkfs.ext4 version
+mke2fs 1.47.0 (5-Feb-2023)
+
+### mkfs.f2fs version
+mkfs.f2fs 1.16.0 (2023-04-11)
+
+### Java version
+openjdk version "17.0.18" 2026-01-20
+OpenJDK Runtime Environment (build 17.0.18+8-Ubuntu-124.04.1)
+OpenJDK 64-Bit Server VM (build 17.0.18+8-Ubuntu-124.04.1, mixed mode, sharing)
+
+### Kafka path
+/opt/kafka-4.2.0
+
+### Kafka config
+# Licensed to the Apache Software Foundation (ASF) under one or more
+# contributor license agreements.  See the NOTICE file distributed with
+# this work for additional information regarding copyright ownership.
+# The ASF licenses this file to You under the Apache License, Version 2.0
+# (the "License"); you may not use this file except in compliance with
+# the License.  You may obtain a copy of the License at
+#
+#    http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+############################# Server Basics #############################
+
+# The role of this server. Setting this puts us in KRaft mode
+process.roles=broker,controller
+
+# The node id associated with this instance's roles
+node.id=1
+
+# List of controller endpoints used connect to the controller cluster
+controller.quorum.bootstrap.servers=localhost:9093
+
+############################# Socket Server Settings #############################
+
+# The address the socket server listens on.
+# Combined nodes (i.e. those with `process.roles=broker,controller`) must list the controller listener here at a minimum.
+# If the broker listener is not defined, the default listener will use a host name that is equal to the value of java.net.InetAddress.getCanonicalHostName(),
+# with PLAINTEXT listener name, and port 9092.
+#   FORMAT:
+#     listeners = listener_name://host_name:port
+#   EXAMPLE:
+#     listeners = PLAINTEXT://your.host.name:9092
+listeners=PLAINTEXT://:9092,CONTROLLER://:9093
+
+# Name of listener used for communication between brokers.
+inter.broker.listener.name=PLAINTEXT
+
+# Listener name, hostname and port the broker or the controller will advertise to clients.
+# If not set, it uses the value for "listeners".
+advertised.listeners=PLAINTEXT://localhost:9092,CONTROLLER://localhost:9093
+
+# A comma-separated list of the names of the listeners used by the controller.
+# If no explicit mapping set in `listener.security.protocol.map`, default will be using PLAINTEXT protocol
+# This is required if running in KRaft mode.
+controller.listener.names=CONTROLLER

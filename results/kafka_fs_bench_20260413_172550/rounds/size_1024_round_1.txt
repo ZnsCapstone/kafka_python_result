@@ -1,0 +1,22 @@
+
+================================================================================
+ RECORD SIZE 1024 / ROUND 1/1 START 
+================================================================================
+
+######################################################################
+# FILESYSTEM = EXT4
+######################################################################
+[Record Size] 1024 Bytes
+
+[Calibration] Finding target OP/s for EXT4 / scenario_a / 1024B
+  > Trying candidate target_ops=5000
+[Service] Stopping Kafka KRaft broker ...
+
+[Setup] Formatting & Mounting as ext4 ...
+NAME MAJ:MIN RM SIZE RO TYPE MOUNTPOINTS
+sdc    8:32   0  20G  0 disk /mnt/kafka-logs
+[Service] Starting Kafka in KRaft mode ...
+[CRITICAL ERROR] KRaft storage format failed
+
+Because controller.quorum.voters is not set on this controller, you must specify one of the following: --standalone, --initial-controllers, or --no-initial-controllers.
+

@@ -1,0 +1,190 @@
+
+================================================================================
+ RECORD SIZE 102400 / ROUND 2/5 START 
+================================================================================
+
+######################################################################
+# FILESYSTEM = EXT4
+######################################################################
+[Record Size] 102400 Bytes
+[Fixed OP/s] EXT4 / scenario_a / 102400B -> target_ops=2000
+[Service] Stopping Kafka KRaft broker ...
+
+[Setup] Formatting & Mounting as ext4 ...
+NAME MAJ:MIN RM SIZE RO TYPE MOUNTPOINTS
+sdc    8:32   0  20G  0 disk /mnt/kafka-logs
+/dev/sdc on /mnt/kafka-logs type ext4 (rw,noatime,nodiratime)
+[Service] Starting Kafka in KRaft mode ...
+[Service] Recreating benchmark topic ...
+
+--- [MEASURE] EXT4 / scenario_a / 102400B / 2000 ops ---
+  > =====================================
+  >  Kafka Filesystem Benchmark (Java API)
+  > =====================================
+  >  - Record Size: 102400 Bytes
+  >  - Target OP/s (total): 2000
+  >  - Producers: 16
+  >  - Consumer Active: false
+  >  - Dynamic Topic Creation: false (rate=5/sec)
+  >  - Warmup: 30 sec / Total Duration: 120 sec
+  > [Run] Producers started. warmup=30s, total=120s
+  > 
+  > --- [ Latency Results (ms) ] ---
+  >  Total Requests : 66498
+  >  Average        : 11.65 ms
+  >  p50 (Median)   : 0.02 ms
+  >  p90            : 35.94 ms
+  >  p99            : 167.72 ms
+  >  p999           : 247.36 ms
+  >  Max            : 347.30 ms
+  > --------------------------------
+  > --- [ Throughput / Errors ] ---
+  >  Target OP/s         : 2000
+  >  Achieved OP/s       : 656.21
+  >  Achieved/Target (%) : 32.8
+  >  Total Sent (incl. warmup) : 97663
+  >  Send Errors               : 0
+  > --------------------------------
+  > Req=66498 | Achieved=656.2 OP/s (32.8%) | Avg=11.65ms | P99=167.72ms | DiskUtil=84.51% | iowait=14.25% | await=0.00ms | Bottleneck=True
+[Success] JSON snapshot saved: results/kafka_fs_bench_20260427_193431/results_snapshot.json
+[Success] CSV saved: results/kafka_fs_bench_20260427_193431/csv/full_results.csv
+[Success] CSV saved: results/kafka_fs_bench_20260427_193431/csv/summary_by_fs_recordsize_scenario.csv
+[Success] Summary report saved: results/kafka_fs_bench_20260427_193431/summary_report.txt
+[Fixed OP/s] EXT4 / scenario_b / 102400B -> target_ops=2000
+[Service] Stopping Kafka KRaft broker ...
+
+[Setup] Formatting & Mounting as ext4 ...
+NAME MAJ:MIN RM SIZE RO TYPE MOUNTPOINTS
+sdc    8:32   0  20G  0 disk /mnt/kafka-logs
+/dev/sdc on /mnt/kafka-logs type ext4 (rw,noatime,nodiratime)
+[Service] Starting Kafka in KRaft mode ...
+[Service] Recreating benchmark topic ...
+
+--- [MEASURE] EXT4 / scenario_b / 102400B / 2000 ops ---
+  > =====================================
+  >  Kafka Filesystem Benchmark (Java API)
+  > =====================================
+  >  - Record Size: 102400 Bytes
+  >  - Target OP/s (total): 2000
+  >  - Producers: 16
+  >  - Consumer Active: true
+  >  - Dynamic Topic Creation: true (rate=5/sec)
+  >  - Warmup: 30 sec / Total Duration: 120 sec
+  > [Run] Producers started. warmup=30s, total=120s
+  > [TopicCreator] created=333 failed=0 (rate=5/sec)
+  > [Consumer] consumed 40240 records
+  > 
+  > --- [ Latency Results (ms) ] ---
+  >  Total Requests : 63683
+  >  Average        : 12.38 ms
+  >  p50 (Median)   : 0.02 ms
+  >  p90            : 35.95 ms
+  >  p99            : 187.71 ms
+  >  p999           : 297.34 ms
+  >  Max            : 462.11 ms
+  > --------------------------------
+  > --- [ Throughput / Errors ] ---
+  >  Target OP/s         : 2000
+  >  Achieved OP/s       : 626.57
+  >  Achieved/Target (%) : 31.3
+  >  Total Sent (incl. warmup) : 95113
+  >  Send Errors               : 0
+  > --------------------------------
+  > Req=63683 | Achieved=626.6 OP/s (31.3%) | Avg=12.38ms | P99=187.71ms | DiskUtil=86.39% | iowait=14.59% | await=0.00ms | Bottleneck=True
+[Success] JSON snapshot saved: results/kafka_fs_bench_20260427_193431/results_snapshot.json
+[Success] CSV saved: results/kafka_fs_bench_20260427_193431/csv/full_results.csv
+[Success] CSV saved: results/kafka_fs_bench_20260427_193431/csv/summary_by_fs_recordsize_scenario.csv
+[Success] Summary report saved: results/kafka_fs_bench_20260427_193431/summary_report.txt
+
+######################################################################
+# FILESYSTEM = F2FS
+######################################################################
+[Record Size] 102400 Bytes
+[Fixed OP/s] F2FS / scenario_a / 102400B -> target_ops=2000
+[Service] Stopping Kafka KRaft broker ...
+
+[Setup] Formatting & Mounting as f2fs ...
+NAME MAJ:MIN RM SIZE RO TYPE MOUNTPOINTS
+sdc    8:32   0  20G  0 disk /mnt/kafka-logs
+/dev/sdc on /mnt/kafka-logs type f2fs (rw,noatime,nodiratime,lazytime,background_gc=on,nogc_merge,nodiscard,user_xattr,inline_xattr,acl,inline_data,inline_dentry,flush_merge,barrier,extent_cache,mode=adaptive,active_logs=6,alloc_mode=default,checkpoint_merge,fsync_mode=posix,memory=normal,errors=continue)
+[Service] Starting Kafka in KRaft mode ...
+[Service] Recreating benchmark topic ...
+
+--- [MEASURE] F2FS / scenario_a / 102400B / 2000 ops ---
+  > =====================================
+  >  Kafka Filesystem Benchmark (Java API)
+  > =====================================
+  >  - Record Size: 102400 Bytes
+  >  - Target OP/s (total): 2000
+  >  - Producers: 16
+  >  - Consumer Active: false
+  >  - Dynamic Topic Creation: false (rate=5/sec)
+  >  - Warmup: 30 sec / Total Duration: 120 sec
+  > [Run] Producers started. warmup=30s, total=120s
+  > 
+  > --- [ Latency Results (ms) ] ---
+  >  Total Requests : 67549
+  >  Average        : 10.98 ms
+  >  p50 (Median)   : 0.02 ms
+  >  p90            : 24.66 ms
+  >  p99            : 163.52 ms
+  >  p999           : 226.47 ms
+  >  Max            : 389.48 ms
+  > --------------------------------
+  > --- [ Throughput / Errors ] ---
+  >  Target OP/s         : 2000
+  >  Achieved OP/s       : 671.19
+  >  Achieved/Target (%) : 33.6
+  >  Total Sent (incl. warmup) : 99308
+  >  Send Errors               : 0
+  > --------------------------------
+  > Req=67549 | Achieved=671.2 OP/s (33.6%) | Avg=10.98ms | P99=163.52ms | DiskUtil=82.87% | iowait=14.30% | await=0.00ms | Bottleneck=True
+[Success] JSON snapshot saved: results/kafka_fs_bench_20260427_193431/results_snapshot.json
+[Success] CSV saved: results/kafka_fs_bench_20260427_193431/csv/full_results.csv
+[Success] CSV saved: results/kafka_fs_bench_20260427_193431/csv/summary_by_fs_recordsize_scenario.csv
+[Success] Summary report saved: results/kafka_fs_bench_20260427_193431/summary_report.txt
+[Fixed OP/s] F2FS / scenario_b / 102400B -> target_ops=2000
+[Service] Stopping Kafka KRaft broker ...
+
+[Setup] Formatting & Mounting as f2fs ...
+NAME MAJ:MIN RM SIZE RO TYPE MOUNTPOINTS
+sdc    8:32   0  20G  0 disk /mnt/kafka-logs
+/dev/sdc on /mnt/kafka-logs type f2fs (rw,noatime,nodiratime,lazytime,background_gc=on,nogc_merge,nodiscard,user_xattr,inline_xattr,acl,inline_data,inline_dentry,flush_merge,barrier,extent_cache,mode=adaptive,active_logs=6,alloc_mode=default,checkpoint_merge,fsync_mode=posix,memory=normal,errors=continue)
+[Service] Starting Kafka in KRaft mode ...
+[Service] Recreating benchmark topic ...
+
+--- [MEASURE] F2FS / scenario_b / 102400B / 2000 ops ---
+  > =====================================
+  >  Kafka Filesystem Benchmark (Java API)
+  > =====================================
+  >  - Record Size: 102400 Bytes
+  >  - Target OP/s (total): 2000
+  >  - Producers: 16
+  >  - Consumer Active: true
+  >  - Dynamic Topic Creation: true (rate=5/sec)
+  >  - Warmup: 30 sec / Total Duration: 120 sec
+  > [Run] Producers started. warmup=30s, total=120s
+  > [Consumer] consumed 38000 records
+  > [TopicCreator] created=342 failed=0 (rate=5/sec)
+  > 
+  > --- [ Latency Results (ms) ] ---
+  >  Total Requests : 53061
+  >  Average        : 17.04 ms
+  >  p50 (Median)   : 0.02 ms
+  >  p90            : 56.67 ms
+  >  p99            : 254.76 ms
+  >  p999           : 363.87 ms
+  >  Max            : 544.54 ms
+  > --------------------------------
+  > --- [ Throughput / Errors ] ---
+  >  Target OP/s         : 2000
+  >  Achieved OP/s       : 520.35
+  >  Achieved/Target (%) : 26.0
+  >  Total Sent (incl. warmup) : 79106
+  >  Send Errors               : 0
+  > --------------------------------
+  > Req=53061 | Achieved=520.4 OP/s (26.0%) | Avg=17.04ms | P99=254.76ms | DiskUtil=81.94% | iowait=15.06% | await=0.00ms | Bottleneck=True
+[Success] JSON snapshot saved: results/kafka_fs_bench_20260427_193431/results_snapshot.json
+[Success] CSV saved: results/kafka_fs_bench_20260427_193431/csv/full_results.csv
+[Success] CSV saved: results/kafka_fs_bench_20260427_193431/csv/summary_by_fs_recordsize_scenario.csv
+[Success] Summary report saved: results/kafka_fs_bench_20260427_193431/summary_report.txt

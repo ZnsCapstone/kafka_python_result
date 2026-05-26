@@ -1,0 +1,418 @@
+============================================================
+  KAFKA FILESYSTEM PERFORMANCE EXPERIMENT REPORT (M1-#1)
+============================================================
+Start Time : 2026-04-30 09:01:07
+Current Round Completed : 1
+End Time   : 2026-04-30 10:00:46
+
+Latency Layers (이 보고서가 측정/구분하는 두 가지 latency)
+  - App-level   : producer.send → broker ACK = 'broker 의 페이지 캐시 도달까지'
+                  (Kafka client 가 인지하는 latency)
+  - Block-level : iostat 의 await = 'I/O 가 block layer 큐에 들어간 후 완료까지'
+                  (실제 디스크에 도달한 I/O 의 평균 처리 시간)
+  두 값의 차이가 OS 페이지 캐시 + Kafka 큐잉의 latency 흡수 효과를 보여줌.
+  fs 의 차이가 어느 layer 에서 나타나는지에 따라 ZNS 도입 motivation 이 달라짐.
+
+Experiment Scope
+- Kafka 4.2 (KRaft single broker, replication=1)
+- metadata.log.dir separated: True
+- Filesystems: ext4, f2fs (vanilla mkfs, mount: noatime,nodiratime)
+- Record sizes: [1024, 10240, 102400, 1024000]
+- Scenarios: A (Producer only), B (Producer + Consumer + Dynamic Topics)
+- Dynamic topic rate (/sec): 5
+- Measure    : 180s (warmup 30s)
+- Send mode  : ASYNC (callback-based latency measurement)
+- OPS mode   : fixed (no calibration)
+- FIXED_OPS_BY_RECORD_SIZE: {1024: 100000, 10240: 10000, 102400: 1000, 1024000: 100}
+
+######################### FILESYSTEM: EXT4 #########################
+
+[Record Size: 1024 Bytes]
+  [scenario_a]
+    rounds                : 1
+    target_ops mean       : 100000.00
+    achieved_ops mean     : 1961.98
+    achieved/target mean  : 2.00 %
+    total_requests mean   : 294564.00
+    send_errors mean      : 0.00
+    -- App-level latency (send -> ACK = page cache 도달) --
+    app avg / stdev       : 14.28 / 0.00 ms  (CV=0.0%)
+    app p50               : 13.06 ms
+    app p90               : 24.61 ms
+    app p99 / stdev       : 42.18 / 0.00 ms  (CV=0.0%)
+    app max               : 171.49 ms
+    -- Block-level (iostat: 실제 디스크 I/O) --
+    block disk util       : 3.79 %
+    block await mean      : 4.36 ms  (CV=0.0%)
+    block write throughput: 2161.11 kB/s
+    cpu iowait mean       : 0.75 %
+    bottleneck rounds     : 0/1
+  [scenario_b]
+    rounds                : 1
+    target_ops mean       : 100000.00
+    achieved_ops mean     : 1891.08
+    achieved/target mean  : 1.90 %
+    total_requests mean   : 283984.00
+    send_errors mean      : 0.00
+    -- App-level latency (send -> ACK = page cache 도달) --
+    app avg / stdev       : 16.57 / 0.00 ms  (CV=0.0%)
+    app p50               : 14.03 ms
+    app p90               : 29.32 ms
+    app p99 / stdev       : 65.05 / 0.00 ms  (CV=0.0%)
+    app max               : 316.94 ms
+    -- Block-level (iostat: 실제 디스크 I/O) --
+    block disk util       : 31.53 %
+    block await mean      : 11.55 ms  (CV=0.0%)
+    block write throughput: 2891.12 kB/s
+    cpu iowait mean       : 4.64 %
+    bottleneck rounds     : 0/1
+
+[Record Size: 10240 Bytes]
+  [scenario_a]
+    rounds                : 1
+    target_ops mean       : 10000.00
+    achieved_ops mean     : 1988.29
+    achieved/target mean  : 19.90 %
+    total_requests mean   : 298625.00
+    send_errors mean      : 0.00
+    -- App-level latency (send -> ACK = page cache 도달) --
+    app avg / stdev       : 17.29 / 0.00 ms  (CV=0.0%)
+    app p50               : 12.80 ms
+    app p90               : 34.50 ms
+    app p99 / stdev       : 92.75 / 0.00 ms  (CV=0.0%)
+    app max               : 261.07 ms
+    -- Block-level (iostat: 실제 디스크 I/O) --
+    block disk util       : 13.53 %
+    block await mean      : 8.96 ms  (CV=0.0%)
+    block write throughput: 22149.19 kB/s
+    cpu iowait mean       : 0.93 %
+    bottleneck rounds     : 0/1
+  [scenario_b]
+    rounds                : 1
+    target_ops mean       : 10000.00
+    achieved_ops mean     : 1890.96
+    achieved/target mean  : 18.90 %
+    total_requests mean   : 284002.00
+    send_errors mean      : 0.00
+    -- App-level latency (send -> ACK = page cache 도달) --
+    app avg / stdev       : 31.23 / 0.00 ms  (CV=0.0%)
+    app p50               : 16.29 ms
+    app p90               : 61.86 ms
+    app p99 / stdev       : 279.11 / 0.00 ms  (CV=0.0%)
+    app max               : 661.81 ms
+    -- Block-level (iostat: 실제 디스크 I/O) --
+    block disk util       : 34.99 %
+    block await mean      : 12.37 ms  (CV=0.0%)
+    block write throughput: 18802.67 kB/s
+    cpu iowait mean       : 4.51 %
+    bottleneck rounds     : 0/1
+
+[Record Size: 102400 Bytes]
+  [scenario_a]
+    rounds                : 1
+    target_ops mean       : 1000.00
+    achieved_ops mean     : 710.45
+    achieved/target mean  : 71.00 %
+    total_requests mean   : 106667.00
+    send_errors mean      : 0.00
+    -- App-level latency (send -> ACK = page cache 도달) --
+    app avg / stdev       : 18.71 / 0.00 ms  (CV=0.0%)
+    app p50               : 15.45 ms
+    app p90               : 31.69 ms
+    app p99 / stdev       : 79.68 / 0.00 ms  (CV=0.0%)
+    app max               : 345.75 ms
+    -- Block-level (iostat: 실제 디스크 I/O) --
+    block disk util       : 22.10 %
+    block await mean      : 8.85 ms  (CV=0.0%)
+    block write throughput: 73906.59 kB/s
+    cpu iowait mean       : 0.89 %
+    bottleneck rounds     : 0/1
+  [scenario_b]
+    rounds                : 1
+    target_ops mean       : 1000.00
+    achieved_ops mean     : 694.94
+    achieved/target mean  : 69.50 %
+    total_requests mean   : 104328.00
+    send_errors mean      : 0.00
+    -- App-level latency (send -> ACK = page cache 도달) --
+    app avg / stdev       : 25.07 / 0.00 ms  (CV=0.0%)
+    app p50               : 16.95 ms
+    app p90               : 50.06 ms
+    app p99 / stdev       : 145.59 / 0.00 ms  (CV=0.0%)
+    app max               : 538.27 ms
+    -- Block-level (iostat: 실제 디스크 I/O) --
+    block disk util       : 38.25 %
+    block await mean      : 11.04 ms  (CV=0.0%)
+    block write throughput: 69806.35 kB/s
+    cpu iowait mean       : 3.97 %
+    bottleneck rounds     : 0/1
+
+[Record Size: 1024000 Bytes]
+  [scenario_a]
+    rounds                : 1
+    target_ops mean       : 100.00
+    achieved_ops mean     : 92.35
+    achieved/target mean  : 92.30 %
+    total_requests mean   : 13864.00
+    send_errors mean      : 0.00
+    -- App-level latency (send -> ACK = page cache 도달) --
+    app avg / stdev       : 25.47 / 0.00 ms  (CV=0.0%)
+    app p50               : 17.66 ms
+    app p90               : 51.68 ms
+    app p99 / stdev       : 103.43 / 0.00 ms  (CV=0.0%)
+    app max               : 202.48 ms
+    -- Block-level (iostat: 실제 디스크 I/O) --
+    block disk util       : 24.59 %
+    block await mean      : 7.26 ms  (CV=0.0%)
+    block write throughput: 91937.48 kB/s
+    cpu iowait mean       : 0.44 %
+    bottleneck rounds     : 0/1
+  [scenario_b]
+    rounds                : 1
+    target_ops mean       : 100.00
+    achieved_ops mean     : 91.08
+    achieved/target mean  : 91.10 %
+    total_requests mean   : 13711.00
+    send_errors mean      : 0.00
+    -- App-level latency (send -> ACK = page cache 도달) --
+    app avg / stdev       : 33.84 / 0.00 ms  (CV=0.0%)
+    app p50               : 26.41 ms
+    app p90               : 64.48 ms
+    app p99 / stdev       : 136.23 / 0.00 ms  (CV=0.0%)
+    app max               : 277.47 ms
+    -- Block-level (iostat: 실제 디스크 I/O) --
+    block disk util       : 36.18 %
+    block await mean      : 10.11 ms  (CV=0.0%)
+    block write throughput: 91045.73 kB/s
+    cpu iowait mean       : 3.36 %
+    bottleneck rounds     : 0/1
+
+
+######################### FILESYSTEM: F2FS #########################
+
+[Record Size: 1024 Bytes]
+  [scenario_a]
+    rounds                : 1
+    target_ops mean       : 100000.00
+    achieved_ops mean     : 1985.23
+    achieved/target mean  : 2.00 %
+    total_requests mean   : 298169.00
+    send_errors mean      : 0.00
+    -- App-level latency (send -> ACK = page cache 도달) --
+    app avg / stdev       : 13.85 / 0.00 ms  (CV=0.0%)
+    app p50               : 12.81 ms
+    app p90               : 23.96 ms
+    app p99 / stdev       : 38.84 / 0.00 ms  (CV=0.0%)
+    app max               : 93.99 ms
+    -- Block-level (iostat: 실제 디스크 I/O) --
+    block disk util       : 1.68 %
+    block await mean      : 2.05 ms  (CV=0.0%)
+    block write throughput: 646.00 kB/s
+    cpu iowait mean       : 0.64 %
+    bottleneck rounds     : 0/1
+  [scenario_b]
+    rounds                : 1
+    target_ops mean       : 100000.00
+    achieved_ops mean     : 1799.19
+    achieved/target mean  : 1.80 %
+    total_requests mean   : 270267.00
+    send_errors mean      : 0.00
+    -- App-level latency (send -> ACK = page cache 도달) --
+    app avg / stdev       : 16.96 / 0.00 ms  (CV=0.0%)
+    app p50               : 14.52 ms
+    app p90               : 31.02 ms
+    app p99 / stdev       : 61.40 / 0.00 ms  (CV=0.0%)
+    app max               : 125.09 ms
+    -- Block-level (iostat: 실제 디스크 I/O) --
+    block disk util       : 32.42 %
+    block await mean      : 9.40 ms  (CV=0.0%)
+    block write throughput: 995.84 kB/s
+    cpu iowait mean       : 4.23 %
+    bottleneck rounds     : 0/1
+
+[Record Size: 10240 Bytes]
+  [scenario_a]
+    rounds                : 1
+    target_ops mean       : 10000.00
+    achieved_ops mean     : 1972.15
+    achieved/target mean  : 19.70 %
+    total_requests mean   : 296178.00
+    send_errors mean      : 0.00
+    -- App-level latency (send -> ACK = page cache 도달) --
+    app avg / stdev       : 17.33 / 0.00 ms  (CV=0.0%)
+    app p50               : 13.28 ms
+    app p90               : 34.95 ms
+    app p99 / stdev       : 80.07 / 0.00 ms  (CV=0.0%)
+    app max               : 312.34 ms
+    -- Block-level (iostat: 실제 디스크 I/O) --
+    block disk util       : 16.63 %
+    block await mean      : 6.84 ms  (CV=0.0%)
+    block write throughput: 22027.05 kB/s
+    cpu iowait mean       : 0.81 %
+    bottleneck rounds     : 0/1
+  [scenario_b]
+    rounds                : 1
+    target_ops mean       : 10000.00
+    achieved_ops mean     : 1887.32
+    achieved/target mean  : 18.90 %
+    total_requests mean   : 283592.00
+    send_errors mean      : 0.00
+    -- App-level latency (send -> ACK = page cache 도달) --
+    app avg / stdev       : 25.97 / 0.00 ms  (CV=0.0%)
+    app p50               : 19.52 ms
+    app p90               : 56.19 ms
+    app p99 / stdev       : 104.58 / 0.00 ms  (CV=0.0%)
+    app max               : 277.86 ms
+    -- Block-level (iostat: 실제 디스크 I/O) --
+    block disk util       : 42.27 %
+    block await mean      : 11.23 ms  (CV=0.0%)
+    block write throughput: 18375.21 kB/s
+    cpu iowait mean       : 4.19 %
+    bottleneck rounds     : 0/1
+
+[Record Size: 102400 Bytes]
+  [scenario_a]
+    rounds                : 1
+    target_ops mean       : 1000.00
+    achieved_ops mean     : 708.97
+    achieved/target mean  : 70.90 %
+    total_requests mean   : 106457.00
+    send_errors mean      : 0.00
+    -- App-level latency (send -> ACK = page cache 도달) --
+    app avg / stdev       : 16.91 / 0.00 ms  (CV=0.0%)
+    app p50               : 14.96 ms
+    app p90               : 29.04 ms
+    app p99 / stdev       : 52.61 / 0.00 ms  (CV=0.0%)
+    app max               : 173.04 ms
+    -- Block-level (iostat: 실제 디스크 I/O) --
+    block disk util       : 28.76 %
+    block await mean      : 8.85 ms  (CV=0.0%)
+    block write throughput: 70775.01 kB/s
+    cpu iowait mean       : 1.19 %
+    bottleneck rounds     : 0/1
+  [scenario_b]
+    rounds                : 1
+    target_ops mean       : 1000.00
+    achieved_ops mean     : 693.12
+    achieved/target mean  : 69.30 %
+    total_requests mean   : 104069.00
+    send_errors mean      : 0.00
+    -- App-level latency (send -> ACK = page cache 도달) --
+    app avg / stdev       : 21.32 / 0.00 ms  (CV=0.0%)
+    app p50               : 17.55 ms
+    app p90               : 40.23 ms
+    app p99 / stdev       : 73.83 / 0.00 ms  (CV=0.0%)
+    app max               : 186.29 ms
+    -- Block-level (iostat: 실제 디스크 I/O) --
+    block disk util       : 52.71 %
+    block await mean      : 11.08 ms  (CV=0.0%)
+    block write throughput: 71144.67 kB/s
+    cpu iowait mean       : 4.13 %
+    bottleneck rounds     : 0/1
+
+[Record Size: 1024000 Bytes]
+  [scenario_a]
+    rounds                : 1
+    target_ops mean       : 100.00
+    achieved_ops mean     : 92.31
+    achieved/target mean  : 92.30 %
+    total_requests mean   : 13866.00
+    send_errors mean      : 0.00
+    -- App-level latency (send -> ACK = page cache 도달) --
+    app avg / stdev       : 24.39 / 0.00 ms  (CV=0.0%)
+    app p50               : 17.77 ms
+    app p90               : 48.82 ms
+    app p99 / stdev       : 83.58 / 0.00 ms  (CV=0.0%)
+    app max               : 172.28 ms
+    -- Block-level (iostat: 실제 디스크 I/O) --
+    block disk util       : 30.90 %
+    block await mean      : 8.50 ms  (CV=0.0%)
+    block write throughput: 94715.55 kB/s
+    cpu iowait mean       : 0.74 %
+    bottleneck rounds     : 0/1
+  [scenario_b]
+    rounds                : 1
+    target_ops mean       : 100.00
+    achieved_ops mean     : 89.02
+    achieved/target mean  : 89.00 %
+    total_requests mean   : 13371.00
+    send_errors mean      : 0.00
+    -- App-level latency (send -> ACK = page cache 도달) --
+    app avg / stdev       : 34.84 / 0.00 ms  (CV=0.0%)
+    app p50               : 29.27 ms
+    app p90               : 62.18 ms
+    app p99 / stdev       : 119.92 / 0.00 ms  (CV=0.0%)
+    app max               : 445.83 ms
+    -- Block-level (iostat: 실제 디스크 I/O) --
+    block disk util       : 50.61 %
+    block await mean      : 10.43 ms  (CV=0.0%)
+    block write throughput: 90693.10 kB/s
+    cpu iowait mean       : 3.87 %
+    bottleneck rounds     : 0/1
+
+
+######################### CROSS-FS COMPARISON (App-level vs Block-level) #########################
+
+[Record Size 1024 Bytes]
+  [scenario_a]
+    Throughput      : ext4=   1961.98 OP/s | f2fs=   1985.23 OP/s
+    App AVG         : ext4=     14.28 ms   | f2fs=     13.85 ms
+    App P99         : ext4=     42.18 ms   | f2fs=     38.84 ms
+    Block await     : ext4=      4.36 ms   | f2fs=      2.05 ms
+    Block disk util : ext4=      3.79 %    | f2fs=      1.68 %
+    Block wkB/s     : ext4=   2161.11 kB/s | f2fs=    646.00 kB/s
+  [scenario_b]
+    Throughput      : ext4=   1891.08 OP/s | f2fs=   1799.19 OP/s
+    App AVG         : ext4=     16.57 ms   | f2fs=     16.96 ms
+    App P99         : ext4=     65.05 ms   | f2fs=     61.40 ms
+    Block await     : ext4=     11.55 ms   | f2fs=      9.40 ms
+    Block disk util : ext4=     31.53 %    | f2fs=     32.42 %
+    Block wkB/s     : ext4=   2891.12 kB/s | f2fs=    995.84 kB/s
+
+[Record Size 10240 Bytes]
+  [scenario_a]
+    Throughput      : ext4=   1988.29 OP/s | f2fs=   1972.15 OP/s
+    App AVG         : ext4=     17.29 ms   | f2fs=     17.33 ms
+    App P99         : ext4=     92.75 ms   | f2fs=     80.07 ms
+    Block await     : ext4=      8.96 ms   | f2fs=      6.84 ms
+    Block disk util : ext4=     13.53 %    | f2fs=     16.63 %
+    Block wkB/s     : ext4=  22149.19 kB/s | f2fs=  22027.05 kB/s
+  [scenario_b]
+    Throughput      : ext4=   1890.96 OP/s | f2fs=   1887.32 OP/s
+    App AVG         : ext4=     31.23 ms   | f2fs=     25.97 ms
+    App P99         : ext4=    279.11 ms   | f2fs=    104.58 ms
+    Block await     : ext4=     12.37 ms   | f2fs=     11.23 ms
+    Block disk util : ext4=     34.99 %    | f2fs=     42.27 %
+    Block wkB/s     : ext4=  18802.67 kB/s | f2fs=  18375.21 kB/s
+
+[Record Size 102400 Bytes]
+  [scenario_a]
+    Throughput      : ext4=    710.45 OP/s | f2fs=    708.97 OP/s
+    App AVG         : ext4=     18.71 ms   | f2fs=     16.91 ms
+    App P99         : ext4=     79.68 ms   | f2fs=     52.61 ms
+    Block await     : ext4=      8.85 ms   | f2fs=      8.85 ms
+    Block disk util : ext4=     22.10 %    | f2fs=     28.76 %
+    Block wkB/s     : ext4=  73906.59 kB/s | f2fs=  70775.01 kB/s
+  [scenario_b]
+    Throughput      : ext4=    694.94 OP/s | f2fs=    693.12 OP/s
+    App AVG         : ext4=     25.07 ms   | f2fs=     21.32 ms
+    App P99         : ext4=    145.59 ms   | f2fs=     73.83 ms
+    Block await     : ext4=     11.04 ms   | f2fs=     11.08 ms
+    Block disk util : ext4=     38.25 %    | f2fs=     52.71 %
+    Block wkB/s     : ext4=  69806.35 kB/s | f2fs=  71144.67 kB/s
+
+[Record Size 1024000 Bytes]
+  [scenario_a]
+    Throughput      : ext4=     92.35 OP/s | f2fs=     92.31 OP/s
+    App AVG         : ext4=     25.47 ms   | f2fs=     24.39 ms
+    App P99         : ext4=    103.43 ms   | f2fs=     83.58 ms
+    Block await     : ext4=      7.26 ms   | f2fs=      8.50 ms
+    Block disk util : ext4=     24.59 %    | f2fs=     30.90 %
+    Block wkB/s     : ext4=  91937.48 kB/s | f2fs=  94715.55 kB/s
+  [scenario_b]
+    Throughput      : ext4=     91.08 OP/s | f2fs=     89.02 OP/s
+    App AVG         : ext4=     33.84 ms   | f2fs=     34.84 ms
+    App P99         : ext4=    136.23 ms   | f2fs=    119.92 ms
+    Block await     : ext4=     10.11 ms   | f2fs=     10.43 ms
+    Block disk util : ext4=     36.18 %    | f2fs=     50.61 %
+    Block wkB/s     : ext4=  91045.73 kB/s | f2fs=  90693.10 kB/s

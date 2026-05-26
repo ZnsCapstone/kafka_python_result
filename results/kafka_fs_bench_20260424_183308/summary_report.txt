@@ -1,0 +1,51 @@
+============================================================
+  KAFKA FILESYSTEM PERFORMANCE EXPERIMENT REPORT (M1-#1)
+============================================================
+Start Time : 2026-04-24 18:33:08
+Current Round Completed : 1
+
+Experiment Scope
+- Kafka 4.2 (KRaft single broker, replication=1)
+- metadata.log.dir separated: True (target=/var/lib/kafka-meta)
+- Filesystems: ext4, f2fs (vanilla mkfs, mount with noatime,nodiratime)
+- Record sizes: [1024000]
+- Scenarios: A (Producer only), B (Producer + Consumer + Dynamic Topics)
+- Dynamic topic rate (/sec): 5
+- Calibration: 90s (warmup 30s)
+- Measure    : 120s (warmup 30s)
+- OPS_CANDIDATES: {1024: [50000, 100000, 200000, 400000], 10240: [5000, 10000, 20000, 40000], 102400: [500, 1000, 2000, 4000], 1024000: [50, 100, 200, 400]}
+
+######################### FILESYSTEM: EXT4 #########################
+
+[Record Size: 1024000 Bytes]
+  [scenario_a]
+    rounds                : 1
+    target_ops mean       : 200.00
+    achieved_ops mean     : 117.02
+    achieved/target mean  : 58.50 %
+    total_requests mean   : 14069.00
+    send_errors mean      : 16.00
+    avg ms mean / stdev   : 0.86 / 0.00  (CV=0.0%)
+    p50 mean              : 0.12 ms
+    p90 mean              : 2.50 ms
+    p99 mean / stdev      : 10.62 / 0.00 ms  (CV=0.0%)
+    max mean              : 84.61 ms
+    disk util mean        : 57.06 %
+    disk await mean       : 0.00 ms
+    cpu iowait mean       : 7.08 %
+    bottleneck rounds     : 0/1
+  - scenario_b: no data
+
+
+######################### FILESYSTEM: F2FS #########################
+
+[Record Size: 1024000 Bytes]
+  - scenario_a: no data
+  - scenario_b: no data
+
+
+######################### CROSS-FS COMPARISON #########################
+
+[Record Size 1024000 Bytes]
+  [scenario_a] insufficient data
+  [scenario_b] insufficient data

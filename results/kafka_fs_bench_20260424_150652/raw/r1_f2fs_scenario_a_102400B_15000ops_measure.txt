@@ -1,0 +1,28 @@
+=====================================
+ Kafka Filesystem Benchmark (Java API) 
+=====================================
+ - Record Size: 102400 Bytes
+ - Target OP/s (total): 15000
+ - Producers: 4
+ - Consumer Active: false
+ - Dynamic Topic Creation: false (rate=5/sec)
+ - Warmup: 20 sec / Total Duration: 180 sec
+[Run] Producers started. warmup=20s, total=180s
+[Warn] Some producers did not finish in 30s. Forcing shutdown.
+
+--- [ Latency Results (ms) ] ---
+ Total Requests : 179554
+ Average        : 1.58 ms
+ p50 (Median)   : 0.02 ms
+ p90            : 0.14 ms
+ p99            : 5.00 ms
+ p999           : 13.11 ms
+ Max            : 60116.23 ms
+--------------------------------
+--- [ Throughput / Errors ] ---
+ Target OP/s         : 15000
+ Achieved OP/s       : 944.70
+ Achieved/Target (%) : 6.3
+ Total Sent (incl. warmup) : 206899
+ Send Errors               : 0
+--------------------------------

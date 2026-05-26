@@ -1,0 +1,81 @@
+{
+  "ext4": {
+    "102400": {
+      "scenario_a": {
+        "rounds": [
+          {
+            "config": {
+              "record_size": 102400,
+              "target_ops": 5000,
+              "producers": 16,
+              "use_consumer": false,
+              "dynamic_topics": false,
+              "dynamic_topic_rate": 5,
+              "warmup_sec": 30,
+              "duration": 120
+            },
+            "metrics": {
+              "total_requests": 124734,
+              "avg_ms": 7.95,
+              "p50_ms": 0.02,
+              "p90_ms": 0.07,
+              "p99_ms": 5.73,
+              "p999_ms": 23.64,
+              "max_ms": 60065.85,
+              "achieved_ops": 1037.69,
+              "achieved_pct": 20.8,
+              "total_sent": 195524,
+              "send_errors": 0,
+              "samples": 121,
+              "util_avg": 26.02825,
+              "util_max": 101.0,
+              "await_avg": 0.0,
+              "await_max": 0.0,
+              "r_await_avg": 0.0,
+              "w_await_avg": 6.073916666666666,
+              "rkB_s_avg": 0.0,
+              "wkB_s_avg": 0.0,
+              "rrqm_avg": 0.0,
+              "wrqm_avg": 9.414333333333333,
+              "cpu_us_avg": 8.396694214876034,
+              "cpu_sy_avg": 28.14876033057851,
+              "cpu_id_avg": 63.13223140495868,
+              "cpu_wa_avg": 0.24793388429752067,
+              "cpu_st_avg": 0.0,
+              "bi_avg": 48.85950413223141,
+              "bo_avg": 111711.27272727272,
+              "cs_avg": 6418.090909090909
+            },
+            "bottleneck": {
+              "is_bottleneck": false,
+              "reasons": []
+            },
+            "raw_output_path": "results/kafka_fs_bench_20260424_172115/raw/r1_ext4_scenario_a_102400B_5000ops_measure.txt.gz",
+            "monitor_files": {
+              "iostat": "results/kafka_fs_bench_20260424_172115/monitor/r1_ext4_scenario_a_102400B_5000ops_measure_iostat.txt.gz",
+              "vmstat": "results/kafka_fs_bench_20260424_172115/monitor/r1_ext4_scenario_a_102400B_5000ops_measure_vmstat.txt.gz"
+            },
+            "round": 1,
+            "calibration_reference": {
+              "mode": "fixed",
+              "chosen_ops": 5000
+            }
+          }
+        ]
+      },
+      "scenario_b": {
+        "rounds": []
+      }
+    }
+  },
+  "f2fs": {
+    "102400": {
+      "scenario_a": {
+        "rounds": []
+      },
+      "scenario_b": {
+        "rounds": []
+      }
+    }
+  }
+}

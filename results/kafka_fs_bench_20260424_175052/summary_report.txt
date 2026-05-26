@@ -1,0 +1,72 @@
+============================================================
+  KAFKA FILESYSTEM PERFORMANCE EXPERIMENT REPORT (M1-#1)
+============================================================
+Start Time : 2026-04-24 17:50:52
+Current Round Completed : 1
+End Time   : 2026-04-24 17:56:39
+
+Experiment Scope
+- Kafka 4.2 (KRaft single broker, replication=1)
+- metadata.log.dir separated: True (target=/var/lib/kafka-meta)
+- Filesystems: ext4, f2fs (vanilla mkfs, mount with noatime,nodiratime)
+- Record sizes: [102400]
+- Scenarios: A (Producer only), B (Producer + Consumer + Dynamic Topics)
+- Dynamic topic rate (/sec): 5
+- Calibration: 90s (warmup 30s)
+- Measure    : 120s (warmup 30s)
+- OPS_CANDIDATES: {1024: [50000, 100000, 200000, 400000], 10240: [5000, 10000, 20000, 40000], 102400: [500, 1000, 2000, 4000], 1024000: [50, 100, 200, 400]}
+
+######################### FILESYSTEM: EXT4 #########################
+
+[Record Size: 102400 Bytes]
+  [scenario_a]
+    rounds                : 1
+    target_ops mean       : 5000.00
+    achieved_ops mean     : 728.01
+    achieved/target mean  : 14.60 %
+    total_requests mean   : 72623.00
+    send_errors mean      : 0.00
+    avg ms mean / stdev   : 14.01 / 0.00  (CV=0.0%)
+    p50 mean              : 0.02 ms
+    p90 mean              : 63.78 ms
+    p99 mean / stdev      : 180.72 / 0.00 ms  (CV=0.0%)
+    max mean              : 366.75 ms
+    disk util mean        : 86.98 %
+    disk await mean       : 0.00 ms
+    cpu iowait mean       : 14.23 %
+    bottleneck rounds     : 1/1
+  - scenario_b: no data
+
+
+######################### FILESYSTEM: F2FS #########################
+
+[Record Size: 102400 Bytes]
+  [scenario_a]
+    rounds                : 1
+    target_ops mean       : 5000.00
+    achieved_ops mean     : 751.66
+    achieved/target mean  : 15.00 %
+    total_requests mean   : 76227.00
+    send_errors mean      : 0.00
+    avg ms mean / stdev   : 13.00 / 0.00  (CV=0.0%)
+    p50 mean              : 0.02 ms
+    p90 mean              : 35.41 ms
+    p99 mean / stdev      : 192.07 / 0.00 ms  (CV=0.0%)
+    max mean              : 597.42 ms
+    disk util mean        : 77.57 %
+    disk await mean       : 0.00 ms
+    cpu iowait mean       : 11.96 %
+    bottleneck rounds     : 0/1
+  - scenario_b: no data
+
+
+######################### CROSS-FS COMPARISON #########################
+
+[Record Size 102400 Bytes]
+  [scenario_a]
+    Achieved OP/s : ext4=728.01 | f2fs=751.66
+    AVG latency   : ext4=14.01 ms | f2fs=13.00 ms
+    P99 latency   : ext4=180.72 ms | f2fs=192.07 ms
+    Disk util     : ext4=86.98% | f2fs=77.57%
+    Disk await    : ext4=0.00 ms | f2fs=0.00 ms
+  [scenario_b] insufficient data

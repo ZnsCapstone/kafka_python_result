@@ -1,0 +1,15 @@
+cat > .gitignore <<'EOF'
+# 기본적으로 전부 무시
+*
+
+# 디렉토리 탐색은 허용
+!*/
+
+# Git 설정 파일은 추적
+!.gitignore
+
+# 올릴 파일만 허용
+!bench_final.py
+!results/
+!results/**
+EOF

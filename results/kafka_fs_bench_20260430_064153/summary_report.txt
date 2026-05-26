@@ -1,0 +1,75 @@
+============================================================
+  KAFKA FILESYSTEM PERFORMANCE EXPERIMENT REPORT (M1-#1)
+============================================================
+Start Time : 2026-04-30 06:41:53
+Current Round Completed : 1
+
+Latency Layers (이 보고서가 측정/구분하는 두 가지 latency)
+  - App-level   : producer.send → broker ACK = 'broker 의 페이지 캐시 도달까지'
+                  (Kafka client 가 인지하는 latency)
+  - Block-level : iostat 의 await = 'I/O 가 block layer 큐에 들어간 후 완료까지'
+                  (실제 디스크에 도달한 I/O 의 평균 처리 시간)
+  두 값의 차이가 OS 페이지 캐시 + Kafka 큐잉의 latency 흡수 효과를 보여줌.
+  fs 의 차이가 어느 layer 에서 나타나는지에 따라 ZNS 도입 motivation 이 달라짐.
+
+Experiment Scope
+- Kafka 4.2 (KRaft single broker, replication=1)
+- metadata.log.dir separated: False
+- Filesystems: ext4, f2fs (vanilla mkfs, mount: noatime,nodiratime)
+- Record sizes: [102400, 1024000]
+- Scenarios: A (Producer only), B (Producer + Consumer + Dynamic Topics)
+- Dynamic topic rate (/sec): 5
+- Calibration: 90s (warmup 30s)
+- Measure    : 180s (warmup 30s)
+- Send mode  : ASYNC (callback-based latency measurement)
+- OPS_CANDIDATES: {102400: [4000], 1024000: [800]}
+
+######################### FILESYSTEM: EXT4 #########################
+
+[Record Size: 102400 Bytes]
+  [scenario_a]
+    rounds                : 1
+    target_ops mean       : 4000.00
+    achieved_ops mean     : 181.99
+    achieved/target mean  : 4.50 %
+    total_requests mean   : 37551.00
+    send_errors mean      : 2640.00
+    -- App-level latency (send -> ACK = page cache 도달) --
+    app avg / stdev       : 62.26 / 0.00 ms  (CV=0.0%)
+    app p50               : 27.68 ms
+    app p90               : 156.07 ms
+    app p99 / stdev       : 421.78 / 0.00 ms  (CV=0.0%)
+    app max               : 679.44 ms
+    -- Block-level (iostat: 실제 디스크 I/O) --
+    block disk util       : 6.38 %
+    block await mean      : 1.87 ms  (CV=0.0%)
+    block write throughput: 23353.40 kB/s
+    cpu iowait mean       : 0.20 %
+    bottleneck rounds     : 0/1
+  - scenario_b: no data
+
+[Record Size: 1024000 Bytes]
+  - scenario_a: no data
+  - scenario_b: no data
+
+
+######################### FILESYSTEM: F2FS #########################
+
+[Record Size: 102400 Bytes]
+  - scenario_a: no data
+  - scenario_b: no data
+
+[Record Size: 1024000 Bytes]
+  - scenario_a: no data
+  - scenario_b: no data
+
+
+######################### CROSS-FS COMPARISON (App-level vs Block-level) #########################
+
+[Record Size 102400 Bytes]
+  [scenario_a] insufficient data
+  [scenario_b] insufficient data
+
+[Record Size 1024000 Bytes]
+  [scenario_a] insufficient data
+  [scenario_b] insufficient data

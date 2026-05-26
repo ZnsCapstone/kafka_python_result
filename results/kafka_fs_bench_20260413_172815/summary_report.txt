@@ -1,0 +1,129 @@
+============================================================
+        KAFKA FILESYSTEM PERFORMANCE EXPERIMENT REPORT
+============================================================
+Start Time : 2026-04-13 17:28:15
+Current Round Completed : 1
+
+Experiment Scope
+- Kafka version target: 4.2 (must be prebuilt outside this script)
+- Mode: KRaft single broker
+- Filesystems: ext4, f2fs
+- Record sizes: 1KB, 10KB, 100KB, 1000KB
+- Scenarios: Scenario A (Producer only), Scenario B (Producer + Consumer)
+- Dynamic topics: controlled per SCENARIO_TEMPLATES.dynamic_topics
+- Dynamic topic rate (/sec): 5
+- Calibration duration: 120s (warm-up 20s, effective 100s)
+- Measure duration: 180s (warm-up 20s, effective 160s)
+- System monitors: iostat, vmstat
+
+######################### FILESYSTEM: EXT4 #########################
+
+[Record Size: 1024 Bytes]
+  [scenario_a]
+    rounds             : 1
+    target_ops mean    : 40000.00
+    total_requests mean: 211632.00
+    avg mean/stdev     : 9.34 / 0.00 ms
+    p50 mean           : 8.39 ms
+    p90 mean           : 16.98 ms
+    p99 mean           : 26.79 ms
+    max mean           : 80.15 ms
+    disk util mean     : 7.40 %
+    disk await mean    : 0.00 ms
+    cpu iowait mean    : 0.62 %
+    bottleneck rounds  : 0/1
+  [scenario_b]
+    rounds             : 1
+    target_ops mean    : 40000.00
+    total_requests mean: 213843.00
+    avg mean/stdev     : 9.61 / 0.00 ms
+    p50 mean           : 8.50 ms
+    p90 mean           : 17.25 ms
+    p99 mean           : 30.18 ms
+    max mean           : 131.29 ms
+    disk util mean     : 34.49 %
+    disk await mean    : 0.00 ms
+    cpu iowait mean    : 3.83 %
+    bottleneck rounds  : 0/1
+
+[Record Size: 10240 Bytes]
+  - scenario_a: no data
+  - scenario_b: no data
+
+[Record Size: 102400 Bytes]
+  - scenario_a: no data
+  - scenario_b: no data
+
+[Record Size: 1024000 Bytes]
+  - scenario_a: no data
+  - scenario_b: no data
+
+
+######################### FILESYSTEM: F2FS #########################
+
+[Record Size: 1024 Bytes]
+  [scenario_a]
+    rounds             : 1
+    target_ops mean    : 40000.00
+    total_requests mean: 216260.00
+    avg mean/stdev     : 8.89 / 0.00 ms
+    p50 mean           : 7.99 ms
+    p90 mean           : 16.23 ms
+    p99 mean           : 24.76 ms
+    max mean           : 77.38 ms
+    disk util mean     : 3.06 %
+    disk await mean    : 0.00 ms
+    cpu iowait mean    : 0.16 %
+    bottleneck rounds  : 0/1
+  [scenario_b]
+    rounds             : 1
+    target_ops mean    : 40000.00
+    total_requests mean: 211881.00
+    avg mean/stdev     : 9.96 / 0.00 ms
+    p50 mean           : 8.84 ms
+    p90 mean           : 18.09 ms
+    p99 mean           : 30.86 ms
+    max mean           : 98.13 ms
+    disk util mean     : 35.31 %
+    disk await mean    : 0.00 ms
+    cpu iowait mean    : 3.20 %
+    bottleneck rounds  : 0/1
+
+[Record Size: 10240 Bytes]
+  - scenario_a: no data
+  - scenario_b: no data
+
+[Record Size: 102400 Bytes]
+  - scenario_a: no data
+  - scenario_b: no data
+
+[Record Size: 1024000 Bytes]
+  - scenario_a: no data
+  - scenario_b: no data
+
+
+######################### CROSS-FS COMPARISON #########################
+
+[Record Size 1024 Bytes]
+  [scenario_a]
+    AVG latency  : ext4=9.34 ms | f2fs=8.89 ms
+    P99 latency  : ext4=26.79 ms | f2fs=24.76 ms
+    Disk util    : ext4=7.40% | f2fs=3.06%
+    Disk await   : ext4=0.00 ms | f2fs=0.00 ms
+  [scenario_b]
+    AVG latency  : ext4=9.61 ms | f2fs=9.96 ms
+    P99 latency  : ext4=30.18 ms | f2fs=30.86 ms
+    Disk util    : ext4=34.49% | f2fs=35.31%
+    Disk await   : ext4=0.00 ms | f2fs=0.00 ms
+
+[Record Size 10240 Bytes]
+  [scenario_a] insufficient data
+  [scenario_b] insufficient data
+
+[Record Size 102400 Bytes]
+  [scenario_a] insufficient data
+  [scenario_b] insufficient data
+
+[Record Size 1024000 Bytes]
+  [scenario_a] insufficient data
+  [scenario_b] insufficient data

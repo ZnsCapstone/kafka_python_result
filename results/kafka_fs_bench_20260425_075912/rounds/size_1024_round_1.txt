@@ -1,0 +1,71 @@
+
+================================================================================
+ RECORD SIZE 1024 / ROUND 1/3 START 
+================================================================================
+
+######################################################################
+# FILESYSTEM = EXT4
+######################################################################
+[Record Size] 1024 Bytes
+
+[Calibration] Searching target OP/s for EXT4 / scenario_a / 1024B
+  > Trying candidate target_ops=50000
+[Service] Stopping Kafka KRaft broker ...
+
+[Setup] Formatting & Mounting as ext4 ...
+NAME MAJ:MIN RM SIZE RO TYPE MOUNTPOINTS
+sdc    8:32   0  20G  0 disk /mnt/kafka-logs
+/dev/sdc on /mnt/kafka-logs type ext4 (rw,noatime,nodiratime)
+[Service] Starting Kafka in KRaft mode ...
+[Service] Recreating benchmark topic ...
+
+--- [CALIBRATION] EXT4 / scenario_a / 1024B / 50000 ops ---
+  > =====================================
+  >  Kafka Filesystem Benchmark (Java API)
+  > =====================================
+  >  - Record Size: 1024 Bytes
+  >  - Target OP/s (total): 50000
+  >  - Producers: 16
+  >  - Consumer Active: false
+  >  - Dynamic Topic Creation: false (rate=5/sec)
+  >  - Warmup: 30 sec / Total Duration: 90 sec
+  >  - Send mode: ASYNC (callback-based latency measurement)
+  > [Run] Producers started. warmup=30s, total=90s
+  > 
+  > --- [ Latency Results (ms) ] ---
+  >  (App-level: send() call -> broker ACK; reaches OS page cache)
+  >  Total Requests : 341575
+  >  Average        : 12.99 ms
+  >  p50 (Median)   : 9.48 ms
+  >  p90            : 24.33 ms
+  >  p99            : 84.24 ms
+  >  p999           : 175.87 ms
+  >  Max            : 324.54 ms
+  > --------------------------------
+  > --- [ Throughput / Errors ] ---
+  >  Target OP/s         : 50000
+  >  Achieved OP/s       : 5673.16
+  >  Achieved/Target (%) : 11.3
+  >  Total Sent (incl. warmup) : 518315
+  >  Send Errors               : 0
+  > --------------------------------
+  > Req=341575 | Achieved=5673.2 OP/s (11.3%) | App-Avg=12.99ms | App-P99=84.24ms | DiskUtil=9.23% | Block-await=0.00ms | iowait=0.15% | Bottleneck=False
+  > Trying candidate target_ops=150000
+[Service] Stopping Kafka KRaft broker ...
+
+[Setup] Formatting & Mounting as ext4 ...
+NAME MAJ:MIN RM SIZE RO TYPE MOUNTPOINTS
+sdc    8:32   0  20G  0 disk /mnt/kafka-logs
+/dev/sdc on /mnt/kafka-logs type ext4 (rw,noatime,nodiratime)
+[Service] Starting Kafka in KRaft mode ...
+[CRITICAL ERROR] KRaft storage format failed
+
+Exception in thread "main" java.lang.RuntimeException: Invalid cluster.id in: /var/lib/kafka-meta/meta.properties. Expected OaZTQJk1QDaNdY0o6WXZ4g, but read rSzc_RlYRtiJGqjH43prYw
+	at org.apache.kafka.metadata.properties.MetaPropertiesEnsemble.verify(MetaPropertiesEnsemble.java:503)
+	at org.apache.kafka.metadata.storage.Formatter.doFormat(Formatter.java:398)
+	at org.apache.kafka.metadata.storage.Formatter.run(Formatter.java:259)
+	at kafka.tools.StorageTool$.runFormatCommand(StorageTool.scala:173)
+	at kafka.tools.StorageTool$.execute(StorageTool.scala:86)
+	at kafka.tools.StorageTool$.main(StorageTool.scala:46)
+	at kafka.tools.StorageTool.main(StorageTool.scala)
+

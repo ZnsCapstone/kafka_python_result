@@ -1,0 +1,97 @@
+
+================================================================================
+ RECORD SIZE 1024000 / ROUND 2/3 START 
+================================================================================
+
+######################################################################
+# FILESYSTEM = EXT4
+######################################################################
+[Record Size] 1024000 Bytes
+[Fixed OP/s] EXT4 / scenario_a / 1024000B -> target_ops=200
+[Service] Stopping Kafka KRaft broker ...
+
+[Setup] Formatting & Mounting as ext4 ...
+NAME MAJ:MIN RM SIZE RO TYPE MOUNTPOINTS
+sdc    8:32   0  20G  0 disk /mnt/kafka-logs
+/dev/sdc on /mnt/kafka-logs type ext4 (rw,noatime,nodiratime)
+[Service] Starting Kafka in KRaft mode ...
+[Service] Recreating benchmark topic ...
+
+--- [MEASURE] EXT4 / scenario_a / 1024000B / 200 ops ---
+  > =====================================
+  >  Kafka Filesystem Benchmark (Java API)
+  > =====================================
+  >  - Record Size: 1024000 Bytes
+  >  - Target OP/s (total): 200
+  >  - Producers: 16
+  >  - Consumer Active: false
+  >  - Dynamic Topic Creation: false (rate=5/sec)
+  >  - Warmup: 30 sec / Total Duration: 120 sec
+  > [Run] Producers started. warmup=30s, total=120s
+  > [Warn] Some producers did not finish in 30s. Forcing shutdown.
+  > 
+  > --- [ Latency Results (ms) ] ---
+  >  Total Requests : 14735
+  >  Average        : 15.79 ms
+  >  p50 (Median)   : 0.17 ms
+  >  p90            : 22.83 ms
+  >  p99            : 310.28 ms
+  >  p999           : 533.60 ms
+  >  Max            : 890.88 ms
+  > --------------------------------
+  > --- [ Throughput / Errors ] ---
+  >  Target OP/s         : 200
+  >  Achieved OP/s       : 121.28
+  >  Achieved/Target (%) : 60.6
+  >  Total Sent (incl. warmup) : 20049
+  >  Send Errors               : 0
+  > --------------------------------
+  > Req=14735 | Achieved=121.3 OP/s (60.6%) | Avg=15.79ms | P99=310.28ms | DiskUtil=72.51% | iowait=11.65% | await=0.00ms | Bottleneck=False
+[Success] JSON snapshot saved: results/kafka_fs_bench_20260428_133621/results_snapshot.json
+[Success] CSV saved: results/kafka_fs_bench_20260428_133621/csv/full_results.csv
+[Success] CSV saved: results/kafka_fs_bench_20260428_133621/csv/summary_by_fs_recordsize_scenario.csv
+[Success] Summary report saved: results/kafka_fs_bench_20260428_133621/summary_report.txt
+[Fixed OP/s] EXT4 / scenario_b / 1024000B -> target_ops=200
+[Service] Stopping Kafka KRaft broker ...
+
+[Setup] Formatting & Mounting as ext4 ...
+NAME MAJ:MIN RM SIZE RO TYPE MOUNTPOINTS
+sdc    8:32   0  20G  0 disk /mnt/kafka-logs
+/dev/sdc on /mnt/kafka-logs type ext4 (rw,noatime,nodiratime)
+[Service] Starting Kafka in KRaft mode ...
+[Service] Recreating benchmark topic ...
+
+--- [MEASURE] EXT4 / scenario_b / 1024000B / 200 ops ---
+  > =====================================
+  >  Kafka Filesystem Benchmark (Java API)
+  > =====================================
+  >  - Record Size: 1024000 Bytes
+  >  - Target OP/s (total): 200
+  >  - Producers: 16
+  >  - Consumer Active: true
+  >  - Dynamic Topic Creation: true (rate=5/sec)
+  >  - Warmup: 30 sec / Total Duration: 120 sec
+  > [Run] Producers started. warmup=30s, total=120s
+  > #
+  > # A fatal error has been detected by the Java Runtime Environment:
+  > #
+  > #  SIGILL (0x4) at pc=0x00007a153274891b, pid=969319, tid=969342
+  > #
+  > # JRE version: OpenJDK Runtime Environment (17.0.18+8) (build 17.0.18+8-Ubuntu-124.04.1)
+  > # Java VM: OpenJDK 64-Bit Server VM (17.0.18+8-Ubuntu-124.04.1, mixed mode, sharing, tiered, compressed oops, compressed class ptrs, g1 gc, linux-amd64)
+  > # Problematic frame:
+  > # V  [libjvm.so+0x54891b]  ciEnv::register_method(ciMethod*, int, CodeOffsets*, int, CodeBuffer*, int, OopMapSet*, ExceptionHandlerTable*, ImplicitExceptionTable*, AbstractCompiler*, bool, bool, RTMState, GrowableArrayView<RuntimeStub*> const&)+0x9b
+  > #
+  > # Core dump will be written. Default location: Core dumps may be processed with "/usr/share/apport/apport -p%p -s%s -c%c -d%d -P%P -u%u -g%g -F%F -- %E" (or dumping to /opt/kafka-4.2.0/core.969319)
+  > #
+  > # An error report file with more information is saved as:
+  > # /opt/kafka-4.2.0/hs_err_pid969319.log
+  > #
+  > # Compiler replay data is saved as:
+  > # /opt/kafka-4.2.0/replay_pid969319.log
+  > #
+  > # If you would like to submit a bug report, please visit:
+  > #   https://bugs.launchpad.net/ubuntu/+source/openjdk-17
+  > #
+  > Aborted (core dumped)
+[CRITICAL ERROR] Java benchmark failed with exit code 134

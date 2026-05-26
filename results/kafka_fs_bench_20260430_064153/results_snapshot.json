@@ -1,0 +1,136 @@
+{
+  "ext4": {
+    "102400": {
+      "scenario_a": {
+        "rounds": [
+          {
+            "config": {
+              "record_size": 102400,
+              "target_ops": 4000,
+              "producers": 8,
+              "use_consumer": false,
+              "dynamic_topics": false,
+              "dynamic_topic_rate": 5,
+              "warmup_sec": 30,
+              "duration": 180
+            },
+            "metrics": {
+              "total_requests": 37551,
+              "avg_ms": 62.26,
+              "p50_ms": 27.68,
+              "p90_ms": 156.07,
+              "p99_ms": 421.78,
+              "p999_ms": 557.15,
+              "max_ms": 679.44,
+              "achieved_ops": 181.99,
+              "achieved_pct": 4.5,
+              "total_sent": 83980,
+              "send_errors": 2640,
+              "samples": 200,
+              "util_avg": 6.37865,
+              "util_max": 100.2,
+              "await_avg": 1.8688,
+              "await_max": 28.0,
+              "r_await_avg": 0.0,
+              "w_await_avg": 1.8688,
+              "rkB_s_avg": 0.0,
+              "wkB_s_avg": 23353.3952,
+              "rrqm_avg": 0.0,
+              "wrqm_avg": 2.4855,
+              "cpu_us_avg": 2.255,
+              "cpu_sy_avg": 8.215,
+              "cpu_id_avg": 89.19,
+              "cpu_wa_avg": 0.2,
+              "cpu_st_avg": 0.0,
+              "bi_avg": 75.9,
+              "bo_avg": 23459.96,
+              "cs_avg": 1644.455
+            },
+            "bottleneck": {
+              "is_bottleneck": false,
+              "reasons": []
+            },
+            "raw_output_path": "results/kafka_fs_bench_20260430_064153/raw/r1_ext4_scenario_a_102400B_4000ops_measure.txt.gz",
+            "monitor_files": {
+              "iostat": "results/kafka_fs_bench_20260430_064153/monitor/r1_ext4_scenario_a_102400B_4000ops_measure_iostat.txt.gz",
+              "vmstat": "results/kafka_fs_bench_20260430_064153/monitor/r1_ext4_scenario_a_102400B_4000ops_measure_vmstat.txt.gz"
+            },
+            "round": 1,
+            "calibration_reference": {
+              "chosen_ops": 4000,
+              "calibration_metrics": {
+                "total_requests": 90665,
+                "avg_ms": 96.14,
+                "p50_ms": 35.54,
+                "p90_ms": 266.95,
+                "p99_ms": 644.37,
+                "p999_ms": 768.97,
+                "max_ms": 874.99,
+                "achieved_ops": 1492.26,
+                "achieved_pct": 37.3,
+                "total_sent": 136167,
+                "send_errors": 0,
+                "samples": 63,
+                "util_avg": 49.445238095238096,
+                "util_max": 100.5,
+                "await_avg": 13.423492063492063,
+                "await_max": 24.06,
+                "r_await_avg": 0.0,
+                "w_await_avg": 13.423492063492063,
+                "rkB_s_avg": 0.0,
+                "wkB_s_avg": 157218.13333333333,
+                "rrqm_avg": 0.0,
+                "wrqm_avg": 12.01968253968254,
+                "cpu_us_avg": 17.095238095238095,
+                "cpu_sy_avg": 57.20634920634921,
+                "cpu_id_avg": 24.61904761904762,
+                "cpu_wa_avg": 1.0793650793650793,
+                "cpu_st_avg": 0.0,
+                "bi_avg": 2.1587301587301586,
+                "bo_avg": 158114.9841269841,
+                "cs_avg": 9582.015873015873
+              },
+              "calibration_bottleneck": {
+                "is_bottleneck": false,
+                "reasons": [
+                  "disk await avg 13.42 ms >= 5.00 ms"
+                ]
+              },
+              "calibrated_in_round": 1,
+              "reused_for_this_round": false
+            }
+          }
+        ]
+      },
+      "scenario_b": {
+        "rounds": []
+      }
+    },
+    "1024000": {
+      "scenario_a": {
+        "rounds": []
+      },
+      "scenario_b": {
+        "rounds": []
+      }
+    }
+  },
+  "f2fs": {
+    "102400": {
+      "scenario_a": {
+        "rounds": []
+      },
+      "scenario_b": {
+        "rounds": []
+      }
+    },
+    "1024000": {
+      "scenario_a": {
+        "rounds": []
+      },
+      "scenario_b": {
+        "rounds": []
+      }
+    }
+  }
+}

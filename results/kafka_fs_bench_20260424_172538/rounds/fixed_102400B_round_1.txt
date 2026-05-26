@@ -1,0 +1,58 @@
+
+================================================================================
+ FIXED RUN START | scenario=scenario_a | record_size=102400B | target_ops=5000 | round=1/1 
+================================================================================
+
+######################################################################
+# FILESYSTEM = EXT4
+######################################################################
+[Service] Stopping Kafka KRaft broker ...
+
+[Setup] Formatting & Mounting as ext4 ...
+NAME MAJ:MIN RM SIZE RO TYPE MOUNTPOINTS
+sdc    8:32   0  20G  0 disk /mnt/kafka-logs
+/dev/sdc on /mnt/kafka-logs type ext4 (rw,noatime,nodiratime)
+[Service] Starting Kafka in KRaft mode ...
+[Service] Recreating benchmark topic ...
+
+--- [MEASURE] EXT4 / scenario_a / 102400B / 5000 ops ---
+  > =====================================
+  >  Kafka Filesystem Benchmark (Java API)
+  > =====================================
+  >  - Record Size: 102400 Bytes
+  >  - Target OP/s (total): 5000
+  >  - Producers: 16
+  >  - Consumer Active: false
+  >  - Dynamic Topic Creation: false (rate=5/sec)
+  >  - Warmup: 30 sec / Total Duration: 120 sec
+  > [Run] Producers started. warmup=30s, total=120s
+  > [Warn] Some producers did not finish in 30s. Forcing shutdown.
+  > 
+  > --- [ Latency Results (ms) ] ---
+  >  Total Requests : 124591
+  >  Average        : 7.95 ms
+  >  p50 (Median)   : 0.01 ms
+  >  p90            : 0.07 ms
+  >  p99            : 5.46 ms
+  >  p999           : 23.22 ms
+  >  Max            : 60129.23 ms
+  > --------------------------------
+  > --- [ Throughput / Errors ] ---
+  >  Target OP/s         : 5000
+  >  Achieved OP/s       : 1037.17
+  >  Achieved/Target (%) : 20.7
+  >  Total Sent (incl. warmup) : 195588
+  >  Send Errors               : 0
+  > --------------------------------
+  > Req=124591 | Achieved=1037.2 OP/s (20.7%) | Avg=7.95ms | P99=5.46ms | DiskUtil=26.81% | iowait=0.21% | await=0.00ms | Bottleneck=False
+[Success] JSON snapshot saved: results/kafka_fs_bench_20260424_172538/results_snapshot.json
+[Success] CSV saved: results/kafka_fs_bench_20260424_172538/csv/full_results.csv
+[Success] CSV saved: results/kafka_fs_bench_20260424_172538/csv/summary_by_fs_recordsize_scenario.csv
+[Success] Summary report saved: results/kafka_fs_bench_20260424_172538/summary_report.txt
+
+######################################################################
+# FILESYSTEM = F2FS
+######################################################################
+[Service] Stopping Kafka KRaft broker ...
+
+[Setup] Formatting & Mounting as f2fs ...
