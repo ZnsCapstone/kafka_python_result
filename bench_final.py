@@ -49,7 +49,7 @@ class Logger:
 # =========================================================
 # 1. 환경 설정
 # =========================================================
-KAFKA_PATH = "/opt/kafka-4.2.0"
+KAFKA_PATH = os.path.expanduser("~/kafka-4.2.0-src")
 # 원본 Kafka 설정은 수정하지 않는다. 실행마다 결과 디렉터리에 실험용 설정을 만든다.
 KRAFT_CONFIG = f"{KAFKA_PATH}/config/server.properties"
 EXPERIMENT_KRAFT_CONFIG = f"{ENV_DIR}/server-femu.properties"
@@ -59,7 +59,7 @@ RAW_ZNS_DEVICE = "/dev/nvme0n1"
 RAW_DEVICE_BASENAME = os.path.basename(os.path.realpath(RAW_ZNS_DEVICE))
 # 이번 버전은 native F2FS-on-ZNS 확인용이다. ext4는 dm-zns-base mapper를 만든 뒤 지원한다.
 FILESYSTEMS = ("f2fs",)
-MOUNT_POINT = "/mnt/kafka-logs"
+MOUNT_POINT = "/result/kafka-logs"
 BOOTSTRAP = "localhost:9092"
 TOPIC_NAME = "bench-topic"
 
@@ -73,7 +73,7 @@ JAVA_BENCH_CMD = (
     "-Dorg.slf4j.simpleLogger.defaultLogLevel=off "
     "-Dorg.slf4j.simpleLogger.showDateTime=false "
     "-Dorg.slf4j.simpleLogger.showThreadName=false "
-    "-cp /opt/kafka-benchmark/build/libs/kafka-benchmark-1.0.jar "
+    f"-cp {os.path.expanduser('~/Kafka-benchmark/build/libs/kafka-benchmark-1.0.jar')} "
     "com.hanyang.cs.KafkaBenchmark"
 )
 
@@ -287,7 +287,8 @@ def setup_env(fs_type):
             f"{RAW_ZNS_DEVICE} is not a host-managed ZNS device (zoned={zoned!r})"
         )
 
-    reset = run_cmd_full(f"sudo blkzone reset -a {RAW_ZNS_DEVICE}")
+    # 이 guest의 util-linux blkzone은 -a를 지원하지 않으며, 범위를 생략하면 전체 장치를 reset한다.
+    reset = run_cmd_full(f"sudo blkzone reset {RAW_ZNS_DEVICE}")
     if reset.returncode != 0:
         raise RuntimeError(f"zone reset failed:\n{reset.stdout}\n{reset.stderr}")
 
