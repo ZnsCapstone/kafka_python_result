@@ -50,10 +50,15 @@ class Logger:
 # 1. 환경 설정
 # =========================================================
 KAFKA_PATH = "/opt/kafka-4.2.0"
+# 원본 Kafka 설정은 수정하지 않는다. 실행마다 결과 디렉터리에 실험용 설정을 만든다.
 KRAFT_CONFIG = f"{KAFKA_PATH}/config/server.properties"
+EXPERIMENT_KRAFT_CONFIG = f"{ENV_DIR}/server-femu.properties"
 
-DEVICE = "/dev/sdc"
-DEVICE_BASENAME = os.path.basename(DEVICE)
+# FEMU guest의 host-managed ZNS namespace. /dev/sda는 guest OS 디스크이므로 사용 금지.
+RAW_ZNS_DEVICE = "/dev/nvme0n1"
+RAW_DEVICE_BASENAME = os.path.basename(os.path.realpath(RAW_ZNS_DEVICE))
+# 이번 버전은 native F2FS-on-ZNS 확인용이다. ext4는 dm-zns-base mapper를 만든 뒤 지원한다.
+FILESYSTEMS = ("f2fs",)
 MOUNT_POINT = "/mnt/kafka-logs"
 BOOTSTRAP = "localhost:9092"
 TOPIC_NAME = "bench-topic"
@@ -242,7 +247,7 @@ def capture_environment():
     sections.append(("mkfs.f2fs version", run_cmd_quiet("mkfs.f2fs -V 2>&1 | head -1")))
     sections.append(("Java version", run_cmd_quiet("java -version 2>&1")))
     sections.append(("Kafka path", KAFKA_PATH))
-    sections.append(("Kafka config", run_cmd_quiet(f"cat {KRAFT_CONFIG} | head -50")))
+    sections.append(("Kafka config", run_cmd_quiet(f"cat {EXPERIMENT_KRAFT_CONFIG} | head -50")))
 
     blocks = []
     for name, value in sections:
@@ -255,34 +260,42 @@ def capture_environment():
 # 4. 디스크/파일시스템 준비
 # =========================================================
 def setup_env(fs_type):
-    print(f"\n[Setup] Formatting & Mounting as {fs_type} ...")
+    if fs_type != "f2fs":
+        raise ValueError(
+            "Raw host-managed ZNS에서는 native F2FS만 지원합니다. "
+            "ext4 실험은 dm-zns-base mapper를 구성한 뒤 실행하세요."
+        )
 
-    res = subprocess.run(
-        f"sudo umount {MOUNT_POINT}", shell=True, capture_output=True, text=True
-    )
-    if res.returncode != 0 and "not mounted" not in res.stderr.lower():
-        subprocess.run(f"sudo umount -l {MOUNT_POINT}", shell=True)
-        time.sleep(1)
+    print(f"\n[Setup] Resetting FEMU zones & mounting native {fs_type} ...")
 
+    # Kafka가 열린 파일을 남긴 채 lazy unmount 되는 것을 막기 위해 먼저 종료한다.
     run_cmd_quiet("pkill -9 -f kafka.Kafka || true")
     run_cmd_quiet("pkill -9 -f QuorumPeerMain || true")
     run_cmd_quiet("pkill -9 -f kafka || true")
     time.sleep(2)
 
-    run_cmd_quiet(f"sudo wipefs -a {DEVICE}")
+    res = subprocess.run(
+        f"sudo umount {MOUNT_POINT}", shell=True, capture_output=True, text=True
+    )
+    if res.returncode != 0 and "not mounted" not in res.stderr.lower():
+        busy = run_cmd_quiet(f"sudo fuser -vm {MOUNT_POINT} || true")
+        raise RuntimeError(f"umount failed: {res.stderr.strip()}\n{busy}")
 
-    if fs_type == "f2fs":
-        fmt = subprocess.run(
-            f"sudo mkfs.f2fs -f -l kafka_f2fs {DEVICE}",
-            shell=True, capture_output=True, text=True
+    zoned = run_cmd_quiet(f"cat /sys/block/{RAW_DEVICE_BASENAME}/queue/zoned")
+    if zoned != "host-managed":
+        raise RuntimeError(
+            f"{RAW_ZNS_DEVICE} is not a host-managed ZNS device (zoned={zoned!r})"
         )
-    elif fs_type == "ext4":
-        fmt = subprocess.run(
-            f"sudo mkfs.ext4 -F -L kafka_ext4 {DEVICE}",
-            shell=True, capture_output=True, text=True
-        )
-    else:
-        raise ValueError(f"Unsupported fs_type: {fs_type}")
+
+    reset = run_cmd_full(f"sudo blkzone reset -a {RAW_ZNS_DEVICE}")
+    if reset.returncode != 0:
+        raise RuntimeError(f"zone reset failed:\n{reset.stdout}\n{reset.stderr}")
+
+    # Raw ZNS에는 wipefs/ext4를 쓰지 않는다. mkfs.f2fs가 reset된 zone의 앞부분부터 기록한다.
+    fmt = subprocess.run(
+        f"sudo mkfs.f2fs -f -l kafka_f2fs {RAW_ZNS_DEVICE}",
+        shell=True, capture_output=True, text=True
+    )
 
     if fmt.returncode != 0:
         print("[CRITICAL ERROR] mkfs failed")
@@ -292,7 +305,7 @@ def setup_env(fs_type):
 
     run_cmd_quiet(f"sudo mkdir -p {MOUNT_POINT}")
     mount_res = run_cmd_full(
-        f"sudo mount -o noatime,nodiratime {DEVICE} {MOUNT_POINT}"
+        f"sudo mount -o noatime,nodiratime,nodiscard {RAW_ZNS_DEVICE} {MOUNT_POINT}"
     )
     if mount_res.returncode != 0:
         print("[CRITICAL ERROR] mount failed")
@@ -303,16 +316,11 @@ def setup_env(fs_type):
     run_cmd_quiet(f"sudo rm -rf {MOUNT_POINT}/lost+found")
     run_cmd_quiet(f"sudo chmod 777 {MOUNT_POINT}")
 
-    print(run_cmd_quiet(f"lsblk {DEVICE}"))
-    print(run_cmd_quiet(f"mount | grep {DEVICE_BASENAME}"))
+    print(run_cmd_quiet(f"lsblk {RAW_ZNS_DEVICE}"))
+    print(run_cmd_quiet(f"mount | grep {RAW_DEVICE_BASENAME}"))
 
     run_cmd_quiet("sudo sync")
     run_cmd_quiet("echo 3 | sudo tee /proc/sys/vm/drop_caches")
-
-    # metadata dir도 항상 정리
-    run_cmd_quiet(f"sudo mkdir -p {METADATA_DIR}")
-    run_cmd_quiet(f"sudo rm -rf {METADATA_DIR}/*")
-    run_cmd_quiet(f"sudo chmod 777 {METADATA_DIR}")
 
     if SEPARATE_METADATA_DIR:
         run_cmd_quiet(f"sudo mkdir -p {METADATA_DIR}")
@@ -344,6 +352,23 @@ def validate_kafka_environment():
             sys.exit(1)
 
 
+def prepare_experiment_kraft_config():
+    """Make KRaft format and broker start use identical log directories."""
+    with open(KRAFT_CONFIG, "r", encoding="utf-8") as source:
+        lines = source.readlines()
+
+    managed_keys = ("log.dirs", "metadata.log.dir")
+    retained = [
+        line for line in lines
+        if not any(line.strip().startswith(f"{key}=") for key in managed_keys)
+    ]
+    retained.append(f"\nlog.dirs={MOUNT_POINT}\n")
+    if SEPARATE_METADATA_DIR:
+        retained.append(f"metadata.log.dir={METADATA_DIR}\n")
+    write_text(EXPERIMENT_KRAFT_CONFIG, "".join(retained))
+    print(f"[Env] Experiment Kafka config saved: {EXPERIMENT_KRAFT_CONFIG}")
+
+
 def control_kafka(action):
     if action == "stop":
         print("[Service] Stopping Kafka KRaft broker ...")
@@ -365,7 +390,7 @@ def control_kafka(action):
         format_cmd = (
             f"{KAFKA_PATH}/bin/kafka-storage.sh format "
             f"-t {cluster_id} "
-            f"-c {KRAFT_CONFIG} "
+            f"-c {EXPERIMENT_KRAFT_CONFIG} "
             f"--standalone "
             f"--ignore-formatted"
         )
@@ -379,7 +404,6 @@ def control_kafka(action):
         # 1000KB record 도 정상 처리되도록 message.max.bytes 와 replica.fetch.max.bytes 명시.
         # (기본값 ~1MB 라 1000KB 가 헤더 포함하면 아슬아슬하게 거부될 수 있음)
         overrides = [
-            f"--override log.dirs={MOUNT_POINT}",
             f"--override num.partitions=8",
             f"--override offsets.topic.replication.factor=1",
             f"--override transaction.state.log.replication.factor=1",
@@ -391,11 +415,8 @@ def control_kafka(action):
             f"--override message.max.bytes=10485760",
             f"--override replica.fetch.max.bytes=10485760",
         ]
-        if SEPARATE_METADATA_DIR:
-            overrides.append(f"--override metadata.log.dir={METADATA_DIR}")
-
         start_cmd = (
-            f"{KAFKA_PATH}/bin/kafka-server-start.sh -daemon {KRAFT_CONFIG} "
+            f"{KAFKA_PATH}/bin/kafka-server-start.sh -daemon {EXPERIMENT_KRAFT_CONFIG} "
             + " ".join(overrides)
         )
         run_cmd_full(start_cmd)
@@ -434,7 +455,7 @@ def start_monitors(prefix):
     iostat_path = f"{prefix}_iostat.txt"
     vmstat_path = f"{prefix}_vmstat.txt"
 
-    iostat_cmd = f"iostat -dxm 1 {DEVICE_BASENAME}"
+    iostat_cmd = f"iostat -y -dxm 1 {RAW_DEVICE_BASENAME}"
     vmstat_cmd = "vmstat 1"
 
     iostat_f = open(iostat_path, "w", encoding="utf-8")
@@ -503,7 +524,7 @@ def parse_iostat_file(path, skip_samples=0):
         if line.startswith("Device"):
             headers = re.split(r"\s+", line)
             continue
-        if headers and line.startswith(DEVICE_BASENAME):
+        if headers and line.startswith(RAW_DEVICE_BASENAME):
             parts = re.split(r"\s+", line)
             if len(parts) == len(headers):
                 rows.append(dict(zip(headers, parts)))
@@ -540,19 +561,20 @@ def parse_iostat_file(path, skip_samples=0):
     else:
         wkB_vals = col_values("wkB/s")
 
-    # ----- await 합성: r_await * rkB + w_await * wkB / (rkB + wkB) -----
+    # ----- await 합성: 요청 수(r/s, w/s) 가중 평균 -----
+    rps_vals = col_values("r/s")
+    wps_vals = col_values("w/s")
     if not await_vals and (r_await_vals or w_await_vals):
         synthesized = []
         n = max(len(r_await_vals), len(w_await_vals))
         for i in range(n):
             r_aw = r_await_vals[i] if i < len(r_await_vals) else 0.0
             w_aw = w_await_vals[i] if i < len(w_await_vals) else 0.0
-            r_kb = rkB_vals[i] if i < len(rkB_vals) else 0.0
-            w_kb = wkB_vals[i] if i < len(wkB_vals) else 0.0
-            total_kb = r_kb + w_kb
-            if total_kb > 0:
-                # throughput 가중 평균 (실제 발생한 I/O 양에 비례)
-                weighted = (r_aw * r_kb + w_aw * w_kb) / total_kb
+            rps = rps_vals[i] if i < len(rps_vals) else 0.0
+            wps = wps_vals[i] if i < len(wps_vals) else 0.0
+            total_iops = rps + wps
+            if total_iops > 0:
+                weighted = (r_aw * rps + w_aw * wps) / total_iops
             elif w_aw > 0 or r_aw > 0:
                 # throughput 0 인데 await 가 있으면 (드문 경우) 단순 평균
                 nonzero = [x for x in [r_aw, w_aw] if x > 0]
@@ -575,6 +597,9 @@ def parse_iostat_file(path, skip_samples=0):
         "w_await_avg": safe_mean(w_await_vals),
         "rkB_s_avg": safe_mean(rkB_vals),
         "wkB_s_avg": safe_mean(wkB_vals),
+        "rps_avg": safe_mean(rps_vals),
+        "wps_avg": safe_mean(wps_vals),
+        "aqu_sz_avg": safe_mean(col_values("aqu-sz", "avgqu-sz")),
         "rrqm_avg": safe_mean(rqm_vals),
         "wrqm_avg": safe_mean(wqm_vals),
     }
@@ -743,9 +768,11 @@ def run_benchmark_once(fs_type, scenario_key, config, round_idx, phase_tag):
         f"{config['record_size']}B_{config['target_ops']}ops_{phase_tag}"
     )
     monitors = start_monitors(run_prefix)
-    cmd = build_java_cmd(config)
-    output, return_code = run_cmd_streaming(cmd)
-    stop_monitors(monitors)
+    try:
+        cmd = build_java_cmd(config)
+        output, return_code = run_cmd_streaming(cmd)
+    finally:
+        stop_monitors(monitors)
 
     if return_code != 0:
         print(f"[CRITICAL ERROR] Java benchmark failed with exit code {return_code}")
@@ -963,7 +990,7 @@ def save_summary_report(all_results, current_round, final=False):
     lines.append("Experiment Scope")
     lines.append("- Kafka 4.2 (KRaft single broker, replication=1)")
     lines.append(f"- metadata.log.dir separated: {SEPARATE_METADATA_DIR}")
-    lines.append("- Filesystems: ext4, f2fs (vanilla mkfs, mount: noatime,nodiratime)")
+    lines.append(f"- Filesystems: {', '.join(FILESYSTEMS)} (native F2FS-on-ZNS; mount: noatime,nodiratime,nodiscard)")
     lines.append(f"- Record sizes: {RECORD_SIZES}")
     lines.append("- Scenarios: A, B, A+Dynamic, B+Dynamic")
     lines.append(f"- Dynamic topic rate (/sec): {TOPIC_RATE}")
@@ -973,7 +1000,7 @@ def save_summary_report(all_results, current_round, final=False):
     lines.append(f"- FIXED_OPS_BY_RECORD_SIZE: {FIXED_OPS_BY_RECORD_SIZE}")
     lines.append("")
 
-    for fs_type in ["ext4", "f2fs"]:
+    for fs_type in FILESYSTEMS:
         lines.append(f"######################### FILESYSTEM: {fs_type.upper()} #########################")
         for record_size in RECORD_SIZES:
             lines.append(f"\n[Record Size: {record_size} Bytes]")
@@ -1024,40 +1051,6 @@ def save_summary_report(all_results, current_round, final=False):
                 lines.append(f"    bottleneck rounds     : {bn_cnt}/{len(rounds_data)}")
         lines.append("\n")
 
-    # ext4 vs f2fs 비교 — app-level + block-level 동시 표시
-    lines.append("######################### CROSS-FS COMPARISON (App-level vs Block-level) #########################")
-    for record_size in RECORD_SIZES:
-        lines.append(f"\n[Record Size {record_size} Bytes]")
-        for scenario_key in SCENARIO_KEYS:
-            ext = all_results.get("ext4", {}).get(record_size, {}).get(scenario_key, {}).get("rounds", [])
-            f2  = all_results.get("f2fs", {}).get(record_size, {}).get(scenario_key, {}).get("rounds", [])
-            if not ext or not f2:
-                lines.append(f"  [{scenario_key}] insufficient data")
-                continue
-
-            ext_ach    = safe_mean([x["metrics"].get("achieved_ops", 0.0) for x in ext])
-            f2_ach     = safe_mean([x["metrics"].get("achieved_ops", 0.0) for x in f2])
-
-            ext_app_p99 = safe_mean([x["metrics"].get("p99_ms", 0.0)     for x in ext])
-            f2_app_p99  = safe_mean([x["metrics"].get("p99_ms", 0.0)     for x in f2])
-            ext_app_avg = safe_mean([x["metrics"].get("avg_ms", 0.0)     for x in ext])
-            f2_app_avg  = safe_mean([x["metrics"].get("avg_ms", 0.0)     for x in f2])
-
-            ext_blk_util  = safe_mean([x["metrics"].get("util_avg", 0.0)  for x in ext])
-            f2_blk_util   = safe_mean([x["metrics"].get("util_avg", 0.0)  for x in f2])
-            ext_blk_await = safe_mean([x["metrics"].get("await_avg", 0.0) for x in ext])
-            f2_blk_await  = safe_mean([x["metrics"].get("await_avg", 0.0) for x in f2])
-            ext_blk_wkb   = safe_mean([x["metrics"].get("wkB_s_avg", 0.0) for x in ext])
-            f2_blk_wkb    = safe_mean([x["metrics"].get("wkB_s_avg", 0.0) for x in f2])
-
-            lines.append(f"  [{scenario_key}]")
-            lines.append(f"    Throughput      : ext4={ext_ach:>10.2f} OP/s | f2fs={f2_ach:>10.2f} OP/s")
-            lines.append(f"    App AVG         : ext4={ext_app_avg:>10.2f} ms   | f2fs={f2_app_avg:>10.2f} ms")
-            lines.append(f"    App P99         : ext4={ext_app_p99:>10.2f} ms   | f2fs={f2_app_p99:>10.2f} ms")
-            lines.append(f"    Block await     : ext4={ext_blk_await:>10.2f} ms   | f2fs={f2_blk_await:>10.2f} ms")
-            lines.append(f"    Block disk util : ext4={ext_blk_util:>10.2f} %    | f2fs={f2_blk_util:>10.2f} %")
-            lines.append(f"    Block wkB/s     : ext4={ext_blk_wkb:>10.2f} kB/s | f2fs={f2_blk_wkb:>10.2f} kB/s")
-
     write_text(report_path, "\n".join(lines))
     print(f"[Success] Summary report saved: {report_path}")
 
@@ -1067,7 +1060,7 @@ def save_summary_report(all_results, current_round, final=False):
 # =========================================================
 def init_result_structure():
     result = {}
-    for fs_type in ["ext4", "f2fs"]:
+    for fs_type in FILESYSTEMS:
         result[fs_type] = {}
         for record_size in RECORD_SIZES:
             result[fs_type][record_size] = {}
@@ -1080,10 +1073,12 @@ if __name__ == "__main__":
     rounds = int(sys.argv[1]) if len(sys.argv) > 1 else DEFAULT_ROUNDS
 
     validate_kafka_environment()
+    prepare_experiment_kraft_config()
     capture_environment()
 
     all_results = init_result_structure()
 
+    completed = False
     try:
         for record_size in RECORD_SIZES:
             if record_size not in FIXED_OPS_BY_RECORD_SIZE:
@@ -1101,7 +1096,7 @@ if __name__ == "__main__":
                     print(f" RECORD SIZE {record_size} / ROUND {r}/{rounds} START ")
                     print(f"{'='*80}")
 
-                    for fs_type in ["ext4", "f2fs"]:
+                    for fs_type in FILESYSTEMS:
                         print(f"\n{'#'*70}")
                         print(f"# FILESYSTEM = {fs_type.upper()}")
                         print(f"{'#'*70}")
@@ -1162,10 +1157,15 @@ if __name__ == "__main__":
         save_json_snapshot(all_results)
         save_csv_reports(all_results)
         save_summary_report(all_results, current_round=rounds, final=True)
+        completed = True
 
     finally:
         control_kafka("stop")
-        print("\n" + "=" * 80)
-        print(f"[Finish] All {rounds} rounds completed.")
-        print(f"Check '{RESULT_DIR}' for reports.")
-        print("=" * 80)
+        run_cmd_quiet("sudo sync")
+        if completed:
+            print("\n" + "=" * 80)
+            print(f"[Finish] All {rounds} rounds completed.")
+            print(f"Check '{RESULT_DIR}' for reports.")
+            print("=" * 80)
+        else:
+            print("[Finish] Benchmark stopped before completion; partial results were retained.")
