@@ -57,8 +57,23 @@ EXPERIMENT_KRAFT_CONFIG = f"{ENV_DIR}/server-femu.properties"
 # FEMU guest의 host-managed ZNS namespace. /dev/sda는 guest OS 디스크이므로 사용 금지.
 RAW_ZNS_DEVICE = "/dev/nvme0n1"
 RAW_DEVICE_BASENAME = os.path.basename(os.path.realpath(RAW_ZNS_DEVICE))
-# 이번 버전은 native F2FS-on-ZNS 확인용이다. ext4는 dm-zns-base mapper를 만든 뒤 지원한다.
-FILESYSTEMS = ("f2fs",)
+# dm-zns-base가 raw ZNS를 일반 논리 블록 장치로 노출한다.
+DM_NAME = "kafka-zns"
+FS_DEVICE = f"/dev/mapper/{DM_NAME}"
+DM_MODULE_PATH = os.environ.get(
+    "DM_ZNS_MODULE_PATH",
+    os.path.expanduser("~/milestone1-1/dm-zns-base.ko"),
+)
+METADATA_ZONES = 6  # manifest 2 + WAL 2 + SSTable 2; dm-zns-base.c와 일치해야 함
+GC_RESERVE_ZONES = 2
+# 실행 시 첫 번째 인자로 선택: 0=fixed(JW), 1=dynamic(MJ).
+# 두 구현은 같은 target 이름(zns-base)과 module 경로를 공유하며, DM table 크기만 다르다.
+DM_IMPLEMENTATION = "fixed"
+DM_IMPLEMENTATION_LABELS = {
+    "fixed": "fixed reservation (JW)",
+    "dynamic": "dynamic allocation (MJ)",
+}
+FILESYSTEMS = ("ext4", "f2fs")
 MOUNT_POINT = "/result/kafka-logs"
 BOOTSTRAP = "localhost:9092"
 TOPIC_NAME = "bench-topic"
@@ -186,6 +201,17 @@ def wait_for_port(port, timeout=180):
         time.sleep(2)
     return False
 
+
+def wait_for_port_closed(port, timeout=30):
+    deadline = time.time() + timeout
+    while time.time() < deadline:
+        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
+            sock.settimeout(1)
+            if sock.connect_ex(("localhost", port)) != 0:
+                return True
+        time.sleep(1)
+    return False
+
 def safe_float(v, default=0.0):
     try:
         return float(v)
@@ -248,6 +274,11 @@ def capture_environment():
     sections.append(("Java version", run_cmd_quiet("java -version 2>&1")))
     sections.append(("Kafka path", KAFKA_PATH))
     sections.append(("Kafka config", run_cmd_quiet(f"cat {EXPERIMENT_KRAFT_CONFIG} | head -50")))
+    sections.append(("Raw ZNS device", RAW_ZNS_DEVICE))
+    sections.append(("DM device", FS_DEVICE))
+    sections.append(("DM module", DM_MODULE_PATH))
+    sections.append(("DM implementation", DM_IMPLEMENTATION_LABELS[DM_IMPLEMENTATION]))
+    sections.append(("DM table", run_cmd_quiet(f"sudo dmsetup table {DM_NAME} 2>&1 || true")))
 
     blocks = []
     for name, value in sections:
@@ -257,16 +288,126 @@ def capture_environment():
 
 
 # =========================================================
-# 4. 디스크/파일시스템 준비
+# 4. Device-mapper / 디스크 / 파일시스템 준비
 # =========================================================
-def setup_env(fs_type):
-    if fs_type != "f2fs":
-        raise ValueError(
-            "Raw host-managed ZNS에서는 native F2FS만 지원합니다. "
-            "ext4 실험은 dm-zns-base mapper를 구성한 뒤 실행하세요."
+def dm_module_name():
+    """Kernel module names use underscores even when the .ko filename has hyphens."""
+    return os.path.basename(DM_MODULE_PATH).removesuffix(".ko").replace("-", "_")
+
+
+def configure_dm_implementation(value):
+    """Select the table shape while keeping the target/module interface identical."""
+    global DM_IMPLEMENTATION
+    implementations = {"0": "fixed", "1": "dynamic"}
+    if value not in implementations:
+        raise ValueError("implementation must be 0 (fixed/JW) or 1 (dynamic/MJ)")
+    DM_IMPLEMENTATION = implementations[value]
+
+
+def unmount_log_device(strict=True):
+    # Broker shutdown can return before its final file handles and writeback are gone.
+    # Never use lazy unmount before resetting the underlying ZNS device.
+    last_res = None
+    for attempt in range(1, 6):
+        res = subprocess.run(
+            f"sudo umount {MOUNT_POINT}", shell=True, capture_output=True, text=True
+        )
+        if res.returncode == 0 or "not mounted" in res.stderr.lower():
+            return
+        last_res = res
+        if attempt < 5:
+            print(f"[Setup] Mount still busy; retrying unmount ({attempt}/5) ...")
+            run_cmd_quiet("sudo sync")
+            time.sleep(2)
+
+    busy_res = run_cmd_full(f"sudo fuser -vm {MOUNT_POINT} 2>&1 || true")
+    message = f"umount failed: {last_res.stderr.strip()}\n{busy_res.stdout.strip()}"
+    if strict:
+        raise RuntimeError(message)
+    print(f"[Warn] {message}")
+
+
+def remove_dm_stack(strict=True):
+    """Remove the mapper before unloading its target; dtr() flushes the target WAL."""
+    remove = run_cmd_full(f"sudo dmsetup remove {DM_NAME}")
+    if remove.returncode != 0:
+        stderr = remove.stderr.lower()
+        if "no such device" not in stderr and "not found" not in stderr:
+            message = f"dmsetup remove failed:\n{remove.stdout}\n{remove.stderr}"
+            if strict:
+                raise RuntimeError(message)
+            print(f"[Warn] {message}")
+
+    unload = run_cmd_full(f"sudo rmmod {dm_module_name()}")
+    if unload.returncode != 0:
+        stderr = unload.stderr.lower()
+        if "not currently loaded" not in stderr and "no such file" not in stderr:
+            message = f"rmmod failed:\n{unload.stdout}\n{unload.stderr}"
+            if strict:
+                raise RuntimeError(message)
+            print(f"[Warn] {message}")
+
+
+def zns_logical_sectors():
+    zoned = run_cmd_quiet(f"cat /sys/block/{RAW_DEVICE_BASENAME}/queue/zoned")
+    if zoned != "host-managed":
+        raise RuntimeError(
+            f"{RAW_ZNS_DEVICE} is not a host-managed ZNS device (zoned={zoned!r})"
         )
 
-    print(f"\n[Setup] Resetting FEMU zones & mounting native {fs_type} ...")
+    try:
+        with open(f"/sys/block/{RAW_DEVICE_BASENAME}/queue/chunk_sectors", encoding="utf-8") as f:
+            zone_sectors = int(f.read().strip())
+        with open(f"/sys/block/{RAW_DEVICE_BASENAME}/queue/nr_zones", encoding="utf-8") as f:
+            nr_zones = int(f.read().strip())
+    except (OSError, ValueError) as exc:
+        raise RuntimeError(f"cannot read ZNS geometry for {RAW_ZNS_DEVICE}: {exc}") from exc
+
+    if DM_IMPLEMENTATION == "dynamic":
+        # MJ implementation manages USER_DATA/WAL/SSTABLE/GC zones internally.
+        return nr_zones * zone_sectors
+
+    reserved = METADATA_ZONES + GC_RESERVE_ZONES
+    if nr_zones <= reserved:
+        raise RuntimeError(
+            f"ZNS has {nr_zones} zones, but fixed dm-zns-base needs {reserved} reserved zones"
+        )
+    return (nr_zones - reserved) * zone_sectors
+
+
+def create_dm_target():
+    if not os.path.exists(DM_MODULE_PATH):
+        raise RuntimeError(
+            f"dm-zns-base module not found: {DM_MODULE_PATH}\n"
+            "Build dm-zns-base.c into dm-zns-base.ko first, or set DM_ZNS_MODULE_PATH."
+        )
+
+    load = run_cmd_full(f"sudo insmod {DM_MODULE_PATH}")
+    if load.returncode != 0:
+        raise RuntimeError(f"insmod failed:\n{load.stdout}\n{load.stderr}")
+
+    logical_sectors = zns_logical_sectors()
+    table = f"0 {logical_sectors} zns-base {RAW_ZNS_DEVICE}\n"
+    create = subprocess.run(
+        ["sudo", "dmsetup", "create", DM_NAME],
+        input=table,
+        text=True,
+        capture_output=True,
+    )
+    if create.returncode != 0:
+        # Do not leave a registered but unused module after a failed target creation.
+        run_cmd_quiet(f"sudo rmmod {dm_module_name()} || true")
+        raise RuntimeError(f"dmsetup create failed:\n{create.stdout}\n{create.stderr}")
+
+    print(f"[DM] Created {FS_DEVICE}: {logical_sectors} sectors "
+          f"({logical_sectors * 512 / 1024**3:.2f} GiB)")
+
+
+def setup_env(fs_type):
+    if fs_type not in FILESYSTEMS:
+        raise ValueError(f"Unsupported filesystem: {fs_type}")
+
+    print(f"\n[Setup] Resetting FEMU ZNS and mounting {fs_type} through {DM_NAME} ...")
 
     # Kafka가 열린 파일을 남긴 채 lazy unmount 되는 것을 막기 위해 먼저 종료한다.
     run_cmd_quiet("pkill -9 -f kafka.Kafka || true")
@@ -274,51 +415,46 @@ def setup_env(fs_type):
     run_cmd_quiet("pkill -9 -f kafka || true")
     time.sleep(2)
 
-    res = subprocess.run(
-        f"sudo umount {MOUNT_POINT}", shell=True, capture_output=True, text=True
-    )
-    if res.returncode != 0 and "not mounted" not in res.stderr.lower():
-        busy = run_cmd_quiet(f"sudo fuser -vm {MOUNT_POINT} || true")
-        raise RuntimeError(f"umount failed: {res.stderr.strip()}\n{busy}")
-
-    zoned = run_cmd_quiet(f"cat /sys/block/{RAW_DEVICE_BASENAME}/queue/zoned")
-    if zoned != "host-managed":
-        raise RuntimeError(
-            f"{RAW_ZNS_DEVICE} is not a host-managed ZNS device (zoned={zoned!r})"
-        )
+    unmount_log_device(strict=True)
+    remove_dm_stack(strict=True)
 
     # 이 guest의 util-linux blkzone은 -a를 지원하지 않으며, 범위를 생략하면 전체 장치를 reset한다.
     reset = run_cmd_full(f"sudo blkzone reset {RAW_ZNS_DEVICE}")
     if reset.returncode != 0:
         raise RuntimeError(f"zone reset failed:\n{reset.stdout}\n{reset.stderr}")
 
-    # Raw ZNS에는 wipefs/ext4를 쓰지 않는다. mkfs.f2fs가 reset된 zone의 앞부분부터 기록한다.
-    fmt = subprocess.run(
-        f"sudo mkfs.f2fs -f -l kafka_f2fs {RAW_ZNS_DEVICE}",
-        shell=True, capture_output=True, text=True
-    )
+    create_dm_target()
+    wipe = run_cmd_full(f"sudo wipefs -a {FS_DEVICE}")
+    if wipe.returncode != 0:
+        raise RuntimeError(f"wipefs failed:\n{wipe.stdout}\n{wipe.stderr}")
+
+    if fs_type == "ext4":
+        fmt = run_cmd_full(f"sudo mkfs.ext4 -F -E nodiscard -L kafka_ext4 {FS_DEVICE}")
+    else:
+        # dm-zns-base accepts only read/write/flush; it deliberately rejects discard.
+        fmt = run_cmd_full(f"sudo mkfs.f2fs -f -t 0 -l kafka_f2fs {FS_DEVICE}")
 
     if fmt.returncode != 0:
         print("[CRITICAL ERROR] mkfs failed")
         print(fmt.stdout)
         print(fmt.stderr)
-        sys.exit(1)
+        raise RuntimeError("mkfs failed")
 
     run_cmd_quiet(f"sudo mkdir -p {MOUNT_POINT}")
     mount_res = run_cmd_full(
-        f"sudo mount -o noatime,nodiratime,nodiscard {RAW_ZNS_DEVICE} {MOUNT_POINT}"
+        f"sudo mount -o noatime,nodiratime,nodiscard {FS_DEVICE} {MOUNT_POINT}"
     )
     if mount_res.returncode != 0:
         print("[CRITICAL ERROR] mount failed")
         print(mount_res.stdout)
         print(mount_res.stderr)
-        sys.exit(1)
+        raise RuntimeError("mount failed")
 
     run_cmd_quiet(f"sudo rm -rf {MOUNT_POINT}/lost+found")
     run_cmd_quiet(f"sudo chmod 777 {MOUNT_POINT}")
 
-    print(run_cmd_quiet(f"lsblk {RAW_ZNS_DEVICE}"))
-    print(run_cmd_quiet(f"mount | grep {RAW_DEVICE_BASENAME}"))
+    print(run_cmd_quiet(f"lsblk {FS_DEVICE}"))
+    print(run_cmd_quiet(f"mount | grep {DM_NAME}"))
 
     run_cmd_quiet("sudo sync")
     run_cmd_quiet("echo 3 | sudo tee /proc/sys/vm/drop_caches")
@@ -374,10 +510,13 @@ def control_kafka(action):
     if action == "stop":
         print("[Service] Stopping Kafka KRaft broker ...")
         run_cmd_quiet(f"{KAFKA_PATH}/bin/kafka-server-stop.sh")
-        time.sleep(3)
-        run_cmd_quiet("sudo fuser -k 9092/tcp || true")
-        run_cmd_quiet("pkill -9 -f kafka.Kafka || true")
-        run_cmd_quiet("pkill -9 -f kafka || true")
+        if not wait_for_port_closed(9092, timeout=15):
+            run_cmd_quiet("sudo fuser -k 9092/tcp || true")
+            run_cmd_quiet("pkill -TERM -f 'kafka.Kafka' || true")
+            if not wait_for_port_closed(9092, timeout=10):
+                run_cmd_quiet("pkill -KILL -f 'kafka.Kafka' || true")
+                wait_for_port_closed(9092, timeout=5)
+        run_cmd_quiet("sudo sync")
         time.sleep(2)
 
     elif action == "start":
@@ -991,7 +1130,13 @@ def save_summary_report(all_results, current_round, final=False):
     lines.append("Experiment Scope")
     lines.append("- Kafka 4.2 (KRaft single broker, replication=1)")
     lines.append(f"- metadata.log.dir separated: {SEPARATE_METADATA_DIR}")
-    lines.append(f"- Filesystems: {', '.join(FILESYSTEMS)} (native F2FS-on-ZNS; mount: noatime,nodiratime,nodiscard)")
+    lines.append(f"- Filesystems: {', '.join(FILESYSTEMS)} on {FS_DEVICE} (dm-zns-base over FEMU ZNS)")
+    lines.append(f"- DM implementation: {DM_IMPLEMENTATION_LABELS[DM_IMPLEMENTATION]}")
+    if DM_IMPLEMENTATION == "fixed":
+        lines.append(f"- Raw ZNS: {RAW_ZNS_DEVICE}; fixed reserved zones: metadata={METADATA_ZONES}, GC={GC_RESERVE_ZONES}")
+    else:
+        lines.append(f"- Raw ZNS: {RAW_ZNS_DEVICE}; zone roles allocated dynamically by the DM target")
+    lines.append("- Filesystem format/mount discard disabled because dm-zns-base supports read/write/flush only")
     lines.append(f"- Record sizes: {RECORD_SIZES}")
     lines.append("- Scenarios: A, B, A+Dynamic, B+Dynamic")
     lines.append(f"- Dynamic topic rate (/sec): {TOPIC_RATE}")
@@ -1071,7 +1216,21 @@ def init_result_structure():
 
 
 if __name__ == "__main__":
-    rounds = int(sys.argv[1]) if len(sys.argv) > 1 else DEFAULT_ROUNDS
+    if len(sys.argv) < 2 or len(sys.argv) > 3:
+        print("Usage: python3 bench_final.py <0=fixed|1=dynamic> [rounds]")
+        sys.exit(2)
+
+    try:
+        configure_dm_implementation(sys.argv[1])
+        rounds = int(sys.argv[2]) if len(sys.argv) == 3 else DEFAULT_ROUNDS
+        if rounds < 1:
+            raise ValueError("rounds must be positive")
+    except ValueError as exc:
+        print(f"[CRITICAL ERROR] {exc}")
+        print("Usage: python3 bench_final.py <0=fixed|1=dynamic> [rounds]")
+        sys.exit(2)
+
+    print(f"[Config] DM implementation: {DM_IMPLEMENTATION_LABELS[DM_IMPLEMENTATION]}")
 
     validate_kafka_environment()
     prepare_experiment_kraft_config()
@@ -1162,6 +1321,8 @@ if __name__ == "__main__":
 
     finally:
         control_kafka("stop")
+        unmount_log_device(strict=False)
+        remove_dm_stack(strict=False)
         run_cmd_quiet("sudo sync")
         if completed:
             print("\n" + "=" * 80)
