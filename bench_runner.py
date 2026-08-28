@@ -84,7 +84,8 @@ def run(argv=None):
                                     "dynamic_topics": scenario["dynamic_topics"],
                                     "dynamic_topic_rate": cfg.TOPIC_RATE,
                                     "warmup_sec": cfg.WARMUP_SECONDS,
-                                    "duration": cfg.MEASURE_DURATION,
+                                    "measure_sec": cfg.MEASURE_DURATION,
+                                    "drain_timeout_sec": cfg.DRAIN_TIMEOUT_SECONDS,
                                 },
                                 round_number,
                             )

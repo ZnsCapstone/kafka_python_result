@@ -40,7 +40,7 @@ def stop_monitors(monitors):
         file.close()
 
 
-def parse_iostat_file(path, skip_samples=0):
+def parse_iostat_file(path, skip_samples=0, max_samples=None):
     if not os.path.exists(path):
         return {}
     rows, headers = [], None
@@ -54,6 +54,8 @@ def parse_iostat_file(path, skip_samples=0):
                 if len(parts) == len(headers):
                     rows.append(dict(zip(headers, parts)))
     rows = rows[skip_samples:]
+    if max_samples is not None:
+        rows = rows[:max_samples]
     if not rows:
         return {}
 
@@ -97,7 +99,7 @@ def parse_iostat_file(path, skip_samples=0):
     }
 
 
-def parse_vmstat_file(path, skip_samples=0):
+def parse_vmstat_file(path, skip_samples=0, max_samples=None):
     if not os.path.exists(path):
         return {}
     rows, header = [], None
@@ -111,6 +113,8 @@ def parse_vmstat_file(path, skip_samples=0):
                 if len(parts) == len(header):
                     rows.append(dict(zip(header, parts)))
     rows = rows[skip_samples:]
+    if max_samples is not None:
+        rows = rows[:max_samples]
     if not rows:
         return {}
 
@@ -131,7 +135,9 @@ def build_java_cmd(config):
         f"--use-consumer {str(config['use_consumer']).lower()} "
         f"--dynamic-topics {str(config['dynamic_topics']).lower()} "
         f"--dynamic-topic-rate {config['dynamic_topic_rate']} "
-        f"--warmup-sec {config['warmup_sec']} --duration {config['duration']}"
+        f"--warmup-sec {config['warmup_sec']} "
+        f"--measure-sec {config['measure_sec']} "
+        f"--drain-timeout-sec {config['drain_timeout_sec']}"
     )
 
 
@@ -140,6 +146,7 @@ def parse_java_metrics(output):
         "total_requests": 0, "avg_ms": 0.0, "p50_ms": 0.0, "p90_ms": 0.0,
         "p99_ms": 0.0, "p999_ms": 0.0, "max_ms": 0.0, "achieved_ops": 0.0,
         "achieved_pct": 0.0, "total_sent": 0, "send_errors": 0,
+        "drain_time_sec": 0.0, "drain_completed": False,
     }
     patterns = {
         "total_requests": (r"Total Requests\s*:\s*(\d+)", int),
@@ -153,6 +160,11 @@ def parse_java_metrics(output):
         "achieved_pct": (r"Achieved/Target.*?:\s*([\d.]+)", float),
         "total_sent": (r"Total Sent.*?:\s*(\d+)", int),
         "send_errors": (r"Send Errors\s*:\s*(\d+)", int),
+        "drain_time_sec": (r"Drain Time\s*:\s*([\d.]+)\s*sec", float),
+        "drain_completed": (
+            r"Drain Completed\s*:\s*(true|false)",
+            lambda value: value == "true",
+        ),
     }
     for key, (pattern, converter) in patterns.items():
         match = re.search(pattern, output)
@@ -201,8 +213,13 @@ def run_benchmark_once(fs_type, scenario_key, config, round_idx, phase_tag="meas
 
     skip = config.get("warmup_sec", 0) + cfg.MONITOR_LEAD_SECONDS
     metrics = parse_java_metrics(output)
-    metrics.update(parse_iostat_file(monitors["paths"]["iostat"], skip))
-    metrics.update(parse_vmstat_file(monitors["paths"]["vmstat"], skip))
+    measure_samples = config["measure_sec"]
+    metrics.update(parse_iostat_file(
+        monitors["paths"]["iostat"], skip, max_samples=measure_samples
+    ))
+    metrics.update(parse_vmstat_file(
+        monitors["paths"]["vmstat"], skip, max_samples=measure_samples
+    ))
     bottleneck = detect_bottleneck(metrics)
     raw_path = (
         f"{cfg.RAW_DIR}/r{round_idx}_{fs_type}_{scenario_key}_"

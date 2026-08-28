@@ -26,7 +26,7 @@ RAW_DEVICE_BASENAME = os.path.basename(os.path.realpath(RAW_ZNS_DEVICE))
 DM_NAME = "kafka-zns"
 FS_DEVICE = f"/dev/mapper/{DM_NAME}"
 DM_MODULE_PATH = os.environ.get(
-    "DM_ZNS_MODULE_PATH", os.path.expanduser("~/milestone1-1/dm-zns-base.ko")
+    "DM_ZNS_MODULE_PATH", os.path.expanduser("~/dm-zns-base/src/dm-zns-base.ko")
 )
 METADATA_ZONES = 6
 GC_RESERVE_ZONES = 2
@@ -71,6 +71,7 @@ BOTTLENECK_RULES = {
 MONITOR_LEAD_SECONDS = 2
 WARMUP_SECONDS = 20
 MEASURE_DURATION = 60
+DRAIN_TIMEOUT_SECONDS = 180
 
 SCENARIO_TEMPLATES = {
     "scenario_a": {

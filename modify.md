@@ -54,6 +54,14 @@ python3 bench_final.py 1 3  # dynamic 구현, 3회 반복
 - 결과, 로그, 모니터링 파일의 저장 경로
 - 측정 종료 후 파일 압축 여부
 
+dm-zns 커널 모듈의 기본 경로는 다음과 같다.
+
+```text
+~/dm-zns-base/src/dm-zns-base.ko
+```
+
+다른 위치의 모듈을 사용해야 하면 `DM_ZNS_MODULE_PATH` 환경변수로 기본 경로를 덮어쓸 수 있다.
+
 현재 주요 시간 설정은 다음과 같다.
 
 ```python
