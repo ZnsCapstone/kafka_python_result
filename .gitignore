@@ -1,4 +1,3 @@
-cat > .gitignore <<'EOF'
 # 기본적으로 전부 무시
 *
 
@@ -8,8 +7,8 @@ cat > .gitignore <<'EOF'
 # Git 설정 파일은 추적
 !.gitignore
 
-# 올릴 파일만 허용
-!bench_final.py
+# 올릴 소스 파일은 허용
+!*.py
+!modify.md
 !results/
 !results/**
-EOF
