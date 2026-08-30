@@ -80,9 +80,11 @@ class PerformanceTest(unittest.TestCase):
         self.assertIn("--max-schedule-lag-ms 100", command)
 
     def test_parses_raw_and_mapper_rows_separately(self):
-        content = """Device r/s w/s rMB/s wMB/s r_await w_await aqu-sz %util
+        content = """
+Device r/s w/s rMB/s wMB/s r_await w_await aqu-sz %util
 nvme0n1 0 10 0 2 0 3 1 40
 kafka-zns 0 10 0 2 0 5 2 80
+
 """
         with tempfile.NamedTemporaryFile("w", delete=False) as file:
             file.write(content)

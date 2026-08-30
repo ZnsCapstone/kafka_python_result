@@ -47,6 +47,8 @@ def parse_iostat_file(path, device_name, skip_samples=0, max_samples=None):
     with open(path, "r", encoding="utf-8", errors="ignore") as file:
         for raw_line in file:
             line = raw_line.strip()
+            if not line:
+                continue
             if line.startswith("Device"):
                 headers = re.split(r"\s+", line)
             elif headers and line.split(maxsplit=1)[0] == device_name:
