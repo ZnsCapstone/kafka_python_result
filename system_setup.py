@@ -144,16 +144,23 @@ def create_dm_target():
     )
 
 
+def stop_stale_kafka_processes():
+    """Stop only known Kafka JVM main classes before replacing the log device.
+
+    Do not use a broad pattern such as ``pkill -f kafka`` here.  The benchmark
+    runner itself normally lives below a ``kafka_python_result`` directory, so
+    that pattern also matches and kills the Python process when an absolute
+    script path is used.
+    """
+    for process_class in ("kafka.Kafka", "QuorumPeerMain"):
+        run_cmd_quiet(f"pkill -9 -f '{process_class}' || true")
+
+
 def setup_filesystem(fs_type):
     if fs_type not in cfg.FILESYSTEMS:
         raise ValueError(f"Unsupported filesystem: {fs_type}")
     print(f"\n[Setup] Resetting FEMU ZNS and mounting {fs_type} through {cfg.DM_NAME} ...")
-    for command in (
-        "pkill -9 -f kafka.Kafka || true",
-        "pkill -9 -f QuorumPeerMain || true",
-        "pkill -9 -f kafka || true",
-    ):
-        run_cmd_quiet(command)
+    stop_stale_kafka_processes()
     time.sleep(2)
     unmount_log_device()
     remove_dm_stack()
