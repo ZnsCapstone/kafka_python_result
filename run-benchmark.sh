@@ -23,6 +23,7 @@ print_menu() {
     cat <<'EOF'
 Kafka FEMU/ZNS benchmark
 
+  0) Run all             - fresh + occupancy/long, latency + saturation
   1) Fresh latency       - every scenario starts from a reset device
   2) Occupancy latency   - measure at 20/40/60/80%, filesystem by filesystem
   3) Long latency        - occupancy test plus the long run at 80%
@@ -36,10 +37,11 @@ usage() {
     print_menu
     cat <<'EOF'
 
-Usage: ./run-benchmark.sh [1-6|--list|--help]
+Usage: ./run-benchmark.sh [0-6|--list|--help]
 
 Examples:
   ./run-benchmark.sh
+  ./run-benchmark.sh 0
   ./run-benchmark.sh 2
   BENCH_ROUNDS=3 ./run-benchmark.sh 1
   BENCH_LONG_DURATION_SECONDS=600 BENCH_LONG_WARMUP_SECONDS=60 ./run-benchmark.sh 3
@@ -63,12 +65,13 @@ case "$selection" in
         ;;
     "")
         print_menu
-        printf '\nSelect a test [1-6]: '
+        printf '\nSelect a test [0-6]: '
         read -r selection
         ;;
 esac
 
 case "$selection" in
+    0) profile="all";        workload_mode="all" ;;
     1) profile="latency";    workload_mode="fresh" ;;
     2) profile="latency";    workload_mode="occupancy" ;;
     3) profile="latency";    workload_mode="long" ;;
@@ -76,7 +79,7 @@ case "$selection" in
     5) profile="saturation"; workload_mode="occupancy" ;;
     6) profile="saturation"; workload_mode="long" ;;
     *)
-        printf 'Invalid selection: %s (expected 1-6)\n' "$selection" >&2
+        printf 'Invalid selection: %s (expected 0-6)\n' "$selection" >&2
         exit 2
         ;;
 esac
@@ -115,7 +118,7 @@ printf '  Rounds            : %s\n' "$ROUNDS"
 printf '  Profile           : %s\n' "$profile"
 printf '  Scenario group    : %s\n' "$SCENARIO_GROUP"
 printf '  Workload mode     : %s\n' "$workload_mode"
-if [[ "$workload_mode" != "fresh" ]]; then
+if [[ "$workload_mode" != "fresh" && "$workload_mode" != "all" ]]; then
     printf '  Occupancy points  : %s\n' "${BENCH_OCCUPANCY_POINTS:-20,40,60,80}"
 fi
 if [[ "$workload_mode" == "long" ]]; then
@@ -125,9 +128,34 @@ if [[ "$workload_mode" == "long" ]]; then
         "${BENCH_LONG_RECORD_SIZE:-1024}" \
         "${BENCH_LONG_SCENARIO:-scenario_b}"
 fi
+if [[ "$selection" == "0" ]]; then
+    printf '  Suites            : fresh latency, fresh saturation, long latency, long saturation\n'
+    printf '  Note              : each long suite includes all occupancy stages\n'
+fi
 printf '\nWARNING: this resets the configured FEMU ZNS device and destroys its data.\n\n'
 
 sudo -v
 cd "$SCRIPT_DIR"
-exec sudo -E python3 "$SCRIPT_DIR/bench_final.py" \
-    "$DM_IMPL" "$ROUNDS" "$profile" "$SCENARIO_GROUP" "$workload_mode"
+
+run_suite() {
+    local suite_profile="$1"
+    local suite_mode="$2"
+    printf '\n======================================================================\n'
+    printf 'Starting suite: profile=%s, mode=%s\n' "$suite_profile" "$suite_mode"
+    printf '======================================================================\n\n'
+    sudo -E python3 "$SCRIPT_DIR/bench_final.py" \
+        "$DM_IMPL" "$ROUNDS" "$suite_profile" "$SCENARIO_GROUP" "$suite_mode"
+}
+
+if [[ "$selection" == "0" ]]; then
+    # The long modes already include the 20/40/60/80% occupancy measurements,
+    # so separate occupancy-only suites would duplicate the same destructive
+    # and time-consuming work.
+    run_suite latency fresh
+    run_suite saturation fresh
+    run_suite latency long
+    run_suite saturation long
+    printf '\nAll benchmark suites completed successfully.\n'
+else
+    run_suite "$profile" "$workload_mode"
+fi

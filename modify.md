@@ -28,6 +28,7 @@ python3 bench_final.py <0=fixed|1=dynamic> [rounds] \
 
 ```bash
 ./run-benchmark.sh
+./run-benchmark.sh 0
 ./run-benchmark.sh 2
 ./run-benchmark.sh --list
 BENCH_LONG_DURATION_SECONDS=600 BENCH_LONG_WARMUP_SECONDS=60 ./run-benchmark.sh 3
@@ -35,6 +36,9 @@ BENCH_LONG_DURATION_SECONDS=600 BENCH_LONG_WARMUP_SECONDS=60 ./run-benchmark.sh 
 
 스크립트의 기본값은 dynamic DM, 1 round, baseline scenario이다. 각각
 `BENCH_DM_IMPL`, `BENCH_ROUNDS`, `BENCH_SCENARIO_GROUP`으로 변경할 수 있다.
+메뉴의 `0`은 fresh latency, fresh saturation, long latency, long saturation을
+순서대로 실행한다. long 모드 자체에 20/40/60/80% occupancy 측정이 포함되므로
+occupancy-only 항목을 다시 실행하지는 않는다.
 
 예시:
 
