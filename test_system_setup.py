@@ -32,6 +32,20 @@ class SystemSetupTest(unittest.TestCase):
         with self.assertRaises(ValueError):
             system_setup.fill_filesystem_to(81)
 
+    @patch.object(system_setup.time, "sleep")
+    @patch.object(system_setup.time, "monotonic")
+    @patch.object(system_setup, "filesystem_usage")
+    def test_waits_until_occupancy_returns_to_target(
+            self, filesystem_usage, monotonic, _sleep):
+        filesystem_usage.side_effect = [
+            {"used_percent": 24.0}, {"used_percent": 23.0},
+            {"used_percent": 20.4}, {"used_percent": 20.4},
+            {"used_percent": 20.4}, {"used_percent": 20.4},
+        ]
+        monotonic.side_effect = [0, 1, 2, 3, 4, 5, 6]
+        usage = system_setup.wait_for_filesystem_usage(20)
+        self.assertEqual(20.4, usage["used_percent"])
+
     def test_existing_kraft_cluster_id_is_reused(self):
         with tempfile.TemporaryDirectory() as directory:
             data_dir = os.path.join(directory, "data")

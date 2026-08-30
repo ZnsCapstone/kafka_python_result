@@ -267,6 +267,43 @@ def fill_filesystem_to(target_percent):
     return after
 
 
+def wait_for_filesystem_usage(expected_percent=None, stable_samples=3):
+    """Wait for asynchronous topic deletion to release filesystem space.
+
+    Kafka topic deletion and filesystem block reclamation can continue after
+    the Admin API returns.  Starting the next run immediately would mix that
+    cleanup I/O into the measurement and make a nominal 20% run begin at 25%.
+    Usage must remain nearly unchanged for consecutive samples; when an
+    occupancy target is supplied it must also return within the configured
+    tolerance.
+    """
+    deadline = time.monotonic() + cfg.OCCUPANCY_STABILIZE_TIMEOUT_SECONDS
+    previous = None
+    stable = 0
+    while time.monotonic() < deadline:
+        usage = filesystem_usage()
+        current = usage["used_percent"]
+        if previous is not None and abs(current - previous) <= 0.05:
+            stable += 1
+        else:
+            stable = 0
+        within_target = expected_percent is None or (
+            current <= expected_percent + cfg.OCCUPANCY_TOLERANCE_PERCENT
+        )
+        if stable >= stable_samples and within_target:
+            print(f"[Occupancy] filesystem usage stabilized at {current:.2f}%")
+            return usage
+        previous = current
+        time.sleep(2)
+    target_text = "any stable value" if expected_percent is None else (
+        f"<= {expected_percent + cfg.OCCUPANCY_TOLERANCE_PERCENT:.2f}%"
+    )
+    raise RuntimeError(
+        f"filesystem usage did not stabilize at {target_text} within "
+        f"{cfg.OCCUPANCY_STABILIZE_TIMEOUT_SECONDS}s; last={previous:.2f}%"
+    )
+
+
 def validate_kafka_environment():
     print("[Check] Validating Kafka environment ...")
     if "4.2" not in cfg.KAFKA_PATH:

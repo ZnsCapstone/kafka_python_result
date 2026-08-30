@@ -71,6 +71,21 @@ sudo -E python3 bench_final.py 1 1 latency baseline long
 각 결과에는 목표 사용률과 측정 직전/직후 실사용률이 함께 저장된다. 안전을 위해
 목표 사용률은 최대 80%로 제한한다.
 
+occupancy 측정에서는 topic 삭제 직후 바로 다음 run을 시작하지 않는다. 파일시스템
+사용률이 연속 표본에서 안정되고 목표 사용률의 기본 허용 오차 0.75% 안으로 돌아올
+때까지 기다린다. 제한 시간은 기본 180초이며 다음 환경변수로 조절한다.
+
+```bash
+BENCH_OCCUPANCY_TOLERANCE_PERCENT=0.75
+BENCH_OCCUPANCY_STABILIZE_TIMEOUT_SECONDS=180
+```
+
+Java 부하기가 출력하는 consumer 정합성 지표와 ACK stall 지표도 CSV/JSON에 저장한다.
+consumer drain 미완료, ACK/consume 수 불일치, header/CRC/sequence/duplicate/order 오류는
+`valid=false` 및 `FAILED`로 판정한다. 최장 zero-ACK 구간이 기본 1초를 넘으면 오류가
+없더라도 성능 상태를 `STALLED`로 기록한다. 기준은
+`BENCH_MAX_ACK_STALL_SECONDS`로 변경할 수 있다.
+
 옵션을 생략하면 `saturation`, `all`을 사용한다. latency profile의 초기값은 약
 20MB/s인 `{1KB: 20000, 10KB: 2000, 100KB: 200, 1MB: 20}`이며 전체 outstanding
 1000개, catch-up 10개, schedule lag 100ms 제한을 사용한다. 이 값은 FEMU 결과를

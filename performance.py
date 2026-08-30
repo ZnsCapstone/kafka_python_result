@@ -163,6 +163,13 @@ def parse_java_metrics(output):
         "backpressure_wait_count": 0, "backpressure_wait_ms": 0.0,
         "max_observed_outstanding": 0, "catch_up_resets": 0,
         "catch_up_records_skipped": 0, "max_schedule_lag_ms": 0.0,
+        "ack_stall_count": 0, "ack_stall_total_sec": 0,
+        "ack_stall_max_sec": 0,
+        "consumer_records": -1, "producer_acked_records": -1,
+        "consumer_record_delta": 0, "consumer_drain_completed": True,
+        "malformed_headers": 0, "payload_crc_errors": 0,
+        "sequence_gaps": 0, "duplicate_records": 0,
+        "out_of_order_records": 0,
         "topics_created": 0, "topics_failed": 0,
         "final_topic_count": -1,
         "topic_first_failure_elapsed_ms": -1, "topic_first_failure": "none",
@@ -200,6 +207,21 @@ def parse_java_metrics(output):
         "catch_up_resets": (r"Catch-up Resets\s*:\s*(\d+)", int),
         "catch_up_records_skipped": (r"Catch-up Records Skipped\s*:\s*(\d+)", int),
         "max_schedule_lag_ms": (r"Max Schedule Lag\s*:\s*([\d.]+)\s*ms", float),
+        "ack_stall_count": (r"ACK Stall Count\s*:\s*(\d+)", int),
+        "ack_stall_total_sec": (r"ACK Stall Total\s*:\s*(\d+)\s*sec", int),
+        "ack_stall_max_sec": (r"ACK Stall Max\s*:\s*(\d+)\s*sec", int),
+        "consumer_records": (r"Consumer Records\s*:\s*(\d+)", int),
+        "producer_acked_records": (r"Producer ACKed Records\s*:\s*(\d+)", int),
+        "consumer_record_delta": (r"Consumer Record Delta\s*:\s*(-?\d+)", int),
+        "consumer_drain_completed": (
+            r"Consumer Drain Completed\s*:\s*(true|false)",
+            lambda value: value == "true",
+        ),
+        "malformed_headers": (r"Malformed Headers\s*:\s*(\d+)", int),
+        "payload_crc_errors": (r"Payload CRC Errors\s*:\s*(\d+)", int),
+        "sequence_gaps": (r"Sequence Gaps\s*:\s*(\d+)", int),
+        "duplicate_records": (r"Duplicate Records\s*:\s*(\d+)", int),
+        "out_of_order_records": (r"Out-of-order Records\s*:\s*(\d+)", int),
         "topics_created": (r"\[TopicCreator\] created=(\d+)", int),
         "topics_failed": (r"\[TopicCreator\] created=\d+ failed=(\d+)", int),
         "topic_first_failure_elapsed_ms": (
@@ -243,15 +265,36 @@ def evaluate_run(metrics, return_code):
         invalid_reasons.append(
             f"latency_dropped_samples={metrics['latency_dropped_samples']}"
         )
+    if metrics.get("consumer_records", -1) >= 0:
+        integrity_fields = (
+            "malformed_headers", "payload_crc_errors", "sequence_gaps",
+            "duplicate_records", "out_of_order_records",
+        )
+        if not metrics.get("consumer_drain_completed", False):
+            invalid_reasons.append("consumer_drain_completed=false")
+        if metrics.get("consumer_record_delta", 0) != 0:
+            invalid_reasons.append(
+                f"consumer_record_delta={metrics['consumer_record_delta']}"
+            )
+        for key in integrity_fields:
+            if metrics.get(key, 0) > 0:
+                invalid_reasons.append(f"{key}={metrics[key]}")
 
     valid = not invalid_reasons
     if not valid:
+        integrity_failed = any(
+            metrics.get(key, 0) > 0 for key in (
+                "malformed_headers", "payload_crc_errors", "sequence_gaps",
+                "duplicate_records", "out_of_order_records",
+            )
+        ) or metrics.get("consumer_record_delta", 0) != 0
         failed = (
             return_code != 0
             or metrics.get("eventual_ack_requests", 0) == 0
             or metrics.get("failed_requests", 0) > 0
             or metrics.get("send_errors", 0) > 0
             or metrics.get("topics_failed", 0) > 0
+            or integrity_failed
         )
         state = "FAILED" if failed else "INCOMPLETE"
     else:
@@ -269,9 +312,12 @@ def evaluate_run(metrics, return_code):
             or metrics.get("ack_window_ops", 0.0)
             < metrics.get("sent_ops", 0.0) * 0.98
         )
-        state = "SATURATED" if saturated else (
-            "BACKPRESSURED" if backpressured else "NOT_SATURATED"
-        )
+        if metrics.get("ack_stall_max_sec", 0) > cfg.MAX_ACCEPTABLE_ACK_STALL_SECONDS:
+            state = "STALLED"
+        else:
+            state = "SATURATED" if saturated else (
+                "BACKPRESSURED" if backpressured else "NOT_SATURATED"
+            )
     return {"valid": valid, "state": state, "invalid_reasons": invalid_reasons}
 
 

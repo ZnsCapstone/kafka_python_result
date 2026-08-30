@@ -37,6 +37,18 @@ JAVA_OUTPUT = """
  Catch-up Resets           : 2
  Catch-up Records Skipped  : 7
  Max Schedule Lag          : 10.50 ms
+ ACK Stall Count          : 2
+ ACK Stall Total          : 7 sec
+ ACK Stall Max            : 5 sec
+ Consumer Records         : 7950
+ Producer ACKed Records   : 7950
+ Consumer Record Delta    : 0
+ Consumer Drain Completed : true
+ Malformed Headers        : 0
+ Payload CRC Errors       : 0
+ Sequence Gaps            : 0
+ Duplicate Records        : 0
+ Out-of-order Records     : 0
 [TopicCreator] created=10 failed=0 (rate=1/sec)
 [TopicCreator] first_failure_elapsed_ms=-1 first_failure=none
 """
@@ -51,6 +63,18 @@ class PerformanceTest(unittest.TestCase):
         self.assertEqual(60, metrics["outstanding_at_end"])
         self.assertEqual(10.5, metrics["max_schedule_lag_ms"])
         self.assertEqual(10, metrics["topics_created"])
+        self.assertEqual(5, metrics["ack_stall_max_sec"])
+        self.assertEqual(7950, metrics["consumer_records"])
+
+    def test_consumer_integrity_error_is_invalid(self):
+        metrics = parse_java_metrics(
+            JAVA_OUTPUT.replace("Payload CRC Errors       : 0",
+                                "Payload CRC Errors       : 1")
+        )
+        result = evaluate_run(metrics, 0)
+        self.assertFalse(result["valid"])
+        self.assertEqual("FAILED", result["state"])
+        self.assertIn("payload_crc_errors=1", result["invalid_reasons"])
 
     def test_incomplete_run_is_invalid(self):
         result = evaluate_run(parse_java_metrics(JAVA_OUTPUT), 0)

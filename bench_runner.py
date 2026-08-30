@@ -11,7 +11,7 @@ from reporting import save_csv_reports, save_json_snapshot, save_summary_report
 from system_setup import (
     capture_environment, control_kafka, count_kafka_topics, prepare_experiment_kraft_config,
     fill_filesystem_to, filesystem_usage, recreate_main_topic, remove_dm_stack, setup_filesystem,
-    unmount_log_device, validate_kafka_environment,
+    unmount_log_device, validate_kafka_environment, wait_for_filesystem_usage,
 )
 
 
@@ -75,6 +75,8 @@ def measure_one(results, fs_type, record_size, scenario_key, round_number,
     config["occupancy_target_pct"] = occupancy_target
     control_kafka("start")
     recreate_main_topic()
+    if occupancy_target is not None:
+        wait_for_filesystem_usage(occupancy_target)
     # Capture after deleting the previous topic so the value describes the
     # actual occupancy seen by this workload, not stale Kafka log segments.
     config["fs_usage_before"] = filesystem_usage()
@@ -123,6 +125,7 @@ def run_occupancy(results, rounds, include_long=False):
                 # next occupancy point start below its advertised value.
                 control_kafka("start")
                 recreate_main_topic()
+                wait_for_filesystem_usage()
                 control_kafka("stop")
                 fill_filesystem_to(occupancy)
                 for record_size in cfg.RECORD_SIZES:
