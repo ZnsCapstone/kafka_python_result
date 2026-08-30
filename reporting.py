@@ -20,6 +20,10 @@ def flatten_result_rows(all_results):
                         "filesystem": fs_type, "record_size": record_size,
                         "scenario": scenario, "round": entry["round"],
                         "profile": entry["config"].get("profile", "unknown"),
+                        "phase": entry["config"].get("phase", "measure"),
+                        "occupancy_target_pct": entry["config"].get("occupancy_target_pct"),
+                        "fs_used_pct_before": entry["config"].get("fs_usage_before", {}).get("used_percent"),
+                        "fs_used_pct_after": entry["config"].get("fs_usage_after", {}).get("used_percent"),
                         "valid": validity.get("valid", False),
                         "run_state": validity.get("state", "INCOMPLETE"),
                         "invalid_reasons": " | ".join(validity.get("invalid_reasons", [])),
@@ -101,14 +105,15 @@ def save_csv_reports(all_results):
     grouped = {}
     for row in rows:
         grouped.setdefault(
-            (row["profile"], row["filesystem"], row["record_size"], row["scenario"]), []
+            (row["profile"], row["phase"], row["occupancy_target_pct"], row["filesystem"], row["record_size"], row["scenario"]), []
         ).append(row)
     summaries = []
-    for (profile, fs_type, size, scenario), all_items in grouped.items():
+    for (profile, phase, occupancy, fs_type, size, scenario), all_items in grouped.items():
         items = [item for item in all_items if item["valid"]]
         if not items:
             summaries.append({
-                "profile": profile, "filesystem": fs_type, "record_size": size,
+                "profile": profile, "phase": phase, "occupancy_target_pct": occupancy,
+                "filesystem": fs_type, "record_size": size,
                 "scenario": scenario, "total_rounds": len(all_items), "valid_rounds": 0,
                 "invalid_rounds": len(all_items), "run_states": " | ".join(
                     item["run_state"] for item in all_items
@@ -117,7 +122,8 @@ def save_csv_reports(all_results):
             continue
         values = lambda key: [item[key] for item in items]
         summaries.append({
-            "profile": profile, "filesystem": fs_type, "record_size": size,
+            "profile": profile, "phase": phase, "occupancy_target_pct": occupancy,
+            "filesystem": fs_type, "record_size": size,
             "scenario": scenario, "total_rounds": len(all_items),
             "valid_rounds": len(items), "invalid_rounds": len(all_items) - len(items),
             "run_states": " | ".join(item["run_state"] for item in all_items),

@@ -14,9 +14,10 @@ from bench_utils import gzip_file, run_cmd_streaming, safe_float, safe_mean, wri
 def start_monitors(prefix):
     paths = {"iostat": f"{prefix}_iostat.txt", "vmstat": f"{prefix}_vmstat.txt"}
     files = {name: open(path, "w", encoding="utf-8") for name, path in paths.items()}
+    mapper_kernel_name = os.path.basename(os.path.realpath(cfg.FS_DEVICE))
     processes = {
         "iostat": subprocess.Popen(
-            f"iostat -N -y -dxm 1 {cfg.RAW_DEVICE_BASENAME} {cfg.DM_NAME}", shell=True,
+            f"iostat -N -y -dxm 1 {cfg.RAW_DEVICE_BASENAME} {mapper_kernel_name}", shell=True,
             stdout=files["iostat"], stderr=subprocess.STDOUT, text=True,
             preexec_fn=os.setsid,
         ),
@@ -44,6 +45,7 @@ def parse_iostat_file(path, device_name, skip_samples=0, max_samples=None):
     if not os.path.exists(path):
         return {}
     rows, headers = [], None
+    device_names = {device_name} if isinstance(device_name, str) else set(device_name)
     with open(path, "r", encoding="utf-8", errors="ignore") as file:
         for raw_line in file:
             line = raw_line.strip()
@@ -51,7 +53,7 @@ def parse_iostat_file(path, device_name, skip_samples=0, max_samples=None):
                 continue
             if line.startswith("Device"):
                 headers = re.split(r"\s+", line)
-            elif headers and line.split(maxsplit=1)[0] == device_name:
+            elif headers and line.split(maxsplit=1)[0] in device_names:
                 parts = re.split(r"\s+", line)
                 if len(parts) == len(headers):
                     rows.append(dict(zip(headers, parts)))
@@ -310,8 +312,10 @@ def run_benchmark_once(fs_type, scenario_key, config, round_idx, phase_tag="meas
     skip = config.get("warmup_sec", 0) + cfg.MONITOR_LEAD_SECONDS
     metrics = parse_java_metrics(output)
     measure_samples = config["measure_sec"]
+    mapper_kernel_name = os.path.basename(os.path.realpath(cfg.FS_DEVICE))
     for prefix_name, device_name in (
-        ("raw", cfg.RAW_DEVICE_BASENAME), ("mapper", cfg.DM_NAME)
+        ("raw", cfg.RAW_DEVICE_BASENAME),
+        ("mapper", (cfg.DM_NAME, mapper_kernel_name)),
     ):
         device_metrics = parse_iostat_file(
             monitors["paths"]["iostat"], device_name, skip,

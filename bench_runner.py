@@ -10,7 +10,7 @@ from performance import run_benchmark_once
 from reporting import save_csv_reports, save_json_snapshot, save_summary_report
 from system_setup import (
     capture_environment, control_kafka, count_kafka_topics, prepare_experiment_kraft_config,
-    recreate_main_topic, remove_dm_stack, setup_filesystem,
+    fill_filesystem_to, filesystem_usage, recreate_main_topic, remove_dm_stack, setup_filesystem,
     unmount_log_device, validate_kafka_environment,
 )
 
@@ -24,17 +24,19 @@ def init_result_structure():
 
 
 def parse_arguments(argv):
-    if len(argv) < 2 or len(argv) > 5:
+    if len(argv) < 2 or len(argv) > 6:
         raise ValueError(
             "Usage: python3 bench_final.py <0=fixed|1=dynamic> [rounds] "
-            "[saturation|latency] [baseline|dynamic|all]"
+            "[saturation|latency] [baseline|dynamic|all] [fresh|occupancy|long]"
         )
     cfg.configure_dm_implementation(argv[1])
     rounds = int(argv[2]) if len(argv) >= 3 else cfg.DEFAULT_ROUNDS
     profile = argv[3] if len(argv) >= 4 else cfg.DEFAULT_PROFILE
     cfg.configure_profile(profile)
-    scenario_group = argv[4] if len(argv) == 5 else cfg.DEFAULT_SCENARIO_GROUP
+    scenario_group = argv[4] if len(argv) >= 5 else cfg.DEFAULT_SCENARIO_GROUP
     cfg.configure_scenario_group(scenario_group)
+    workload_mode = argv[5] if len(argv) == 6 else cfg.DEFAULT_WORKLOAD_MODE
+    cfg.configure_workload_mode(workload_mode)
     if rounds < 1:
         raise ValueError("rounds must be positive")
     return rounds
@@ -44,6 +46,102 @@ def persist_results(results, round_number, final=False):
     save_json_snapshot(results)
     save_csv_reports(results)
     save_summary_report(results, round_number, final=final)
+
+
+def benchmark_config(record_size, scenario, measure_sec=None, warmup_sec=None):
+    profile = cfg.active_profile_config()
+    return {
+        "record_size": record_size,
+        "target_ops": cfg.FIXED_OPS_BY_RECORD_SIZE[record_size],
+        "producers": scenario["producers"],
+        "use_consumer": scenario["use_consumer"],
+        "dynamic_topics": scenario["dynamic_topics"],
+        "dynamic_topic_rate": cfg.TOPIC_RATE,
+        "warmup_sec": cfg.WARMUP_SECONDS if warmup_sec is None else warmup_sec,
+        "measure_sec": cfg.MEASURE_DURATION if measure_sec is None else measure_sec,
+        "drain_timeout_sec": cfg.DRAIN_TIMEOUT_SECONDS,
+        "profile": cfg.ACTIVE_PROFILE,
+        "max_in_flight_records": profile["max_in_flight_records"],
+        "max_catch_up_records": profile["max_catch_up_records"],
+        "max_schedule_lag_ms": profile["max_schedule_lag_ms"],
+    }
+
+
+def measure_one(results, fs_type, record_size, scenario_key, round_number,
+                occupancy_target=None, phase="measure", measure_sec=None, warmup_sec=None):
+    scenario = deepcopy(cfg.SCENARIO_TEMPLATES[scenario_key])
+    config = benchmark_config(record_size, scenario, measure_sec, warmup_sec)
+    config["phase"] = phase
+    config["occupancy_target_pct"] = occupancy_target
+    control_kafka("start")
+    recreate_main_topic()
+    # Capture after deleting the previous topic so the value describes the
+    # actual occupancy seen by this workload, not stale Kafka log segments.
+    config["fs_usage_before"] = filesystem_usage()
+    print(
+        f"[{cfg.ACTIVE_PROFILE}/{phase}] {fs_type.upper()} / {scenario_key} / "
+        f"{record_size}B -> target_ops={config['target_ops']}, "
+        f"fs_used={config['fs_usage_before']['used_percent']:.2f}%"
+    )
+    phase_tag = phase if occupancy_target is None else f"{phase}_used{occupancy_target}pct"
+    measured = run_benchmark_once(
+        fs_type, scenario_key, config, round_number, phase_tag=phase_tag,
+    )
+    measured["metrics"]["final_topic_count"] = count_kafka_topics()
+    control_kafka("stop")
+    config["fs_usage_after"] = filesystem_usage()
+    measured["config"] = deepcopy(config)
+    measured["round"] = round_number
+    measured["calibration_reference"] = {
+        "mode": cfg.ACTIVE_PROFILE, "chosen_ops": config["target_ops"],
+    }
+    results[fs_type][record_size][scenario_key]["rounds"].append(measured)
+    persist_results(results, round_number)
+
+
+def run_fresh(results, rounds):
+    """Preserve the original reset-before-every-scenario experiment."""
+    for record_size in cfg.RECORD_SIZES:
+        for round_number in range(1, rounds + 1):
+            for fs_type in cfg.FILESYSTEMS:
+                for scenario_key in cfg.SCENARIO_KEYS:
+                    control_kafka("stop")
+                    setup_filesystem(fs_type)
+                    measure_one(results, fs_type, record_size, scenario_key, round_number)
+
+
+def run_occupancy(results, rounds, include_long=False):
+    """Age one filesystem through all occupancy points before switching FS."""
+    for fs_type in cfg.FILESYSTEMS:
+        for round_number in range(1, rounds + 1):
+            print(f"\n{'#' * 70}\n# FILESYSTEM = {fs_type.upper()} / ROUND {round_number}\n{'#' * 70}")
+            control_kafka("stop")
+            setup_filesystem(fs_type)
+            for occupancy in cfg.OCCUPANCY_POINTS:
+                # Remove the preceding workload's topic before calculating the
+                # prefill delta; otherwise deleted Kafka data would make the
+                # next occupancy point start below its advertised value.
+                control_kafka("start")
+                recreate_main_topic()
+                control_kafka("stop")
+                fill_filesystem_to(occupancy)
+                for record_size in cfg.RECORD_SIZES:
+                    for scenario_key in cfg.SCENARIO_KEYS:
+                        measure_one(
+                            results, fs_type, record_size, scenario_key, round_number,
+                            occupancy_target=occupancy, phase="occupancy",
+                        )
+            if include_long:
+                if cfg.LONG_RECORD_SIZE not in cfg.RECORD_SIZES:
+                    raise ValueError("BENCH_LONG_RECORD_SIZE must be one of RECORD_SIZES")
+                if cfg.LONG_SCENARIO not in cfg.SCENARIO_KEYS:
+                    raise ValueError("BENCH_LONG_SCENARIO must be enabled by the scenario group")
+                measure_one(
+                    results, fs_type, cfg.LONG_RECORD_SIZE, cfg.LONG_SCENARIO,
+                    round_number, occupancy_target=cfg.OCCUPANCY_POINTS[-1],
+                    phase="long", measure_sec=cfg.LONG_DURATION_SECONDS,
+                    warmup_sec=cfg.LONG_WARMUP_SECONDS,
+                )
 
 
 def run(argv=None):
@@ -58,70 +156,30 @@ def run(argv=None):
     print(f"[Config] DM implementation: {cfg.DM_IMPLEMENTATION_LABELS[cfg.DM_IMPLEMENTATION]}")
     print(f"[Config] Benchmark profile: {cfg.ACTIVE_PROFILE}")
     print(f"[Config] Scenario group: {cfg.ACTIVE_SCENARIO_GROUP}")
+    print(f"[Config] Workload mode: {cfg.ACTIVE_WORKLOAD_MODE}")
+    if cfg.ACTIVE_WORKLOAD_MODE != "fresh":
+        print(f"[Config] Occupancy points: {cfg.OCCUPANCY_POINTS}%")
     validate_kafka_environment()
     prepare_experiment_kraft_config()
     capture_environment()
     results = init_result_structure()
     completed = False
     try:
-        for record_size in cfg.RECORD_SIZES:
-            if record_size not in cfg.FIXED_OPS_BY_RECORD_SIZE:
-                raise ValueError(f"FIXED_OPS_BY_RECORD_SIZE에 {record_size} 값이 없습니다.")
-            for round_number in range(1, rounds + 1):
-                log_path = f"{cfg.ROUND_DIR}/size_{record_size}_round_{round_number}.txt"
-                logger, original_stdout = TeeLogger(log_path), sys.stdout
-                sys.stdout = logger
-                try:
-                    print(f"\n{'=' * 80}\n RECORD SIZE {record_size} / ROUND {round_number}/{rounds} START \n{'=' * 80}")
-                    for fs_type in cfg.FILESYSTEMS:
-                        print(f"\n{'#' * 70}\n# FILESYSTEM = {fs_type.upper()}\n{'#' * 70}")
-                        print(f"[Record Size] {record_size} Bytes")
-                        for scenario_key in cfg.SCENARIO_KEYS:
-                            scenario = deepcopy(cfg.SCENARIO_TEMPLATES[scenario_key])
-                            chosen_ops = cfg.FIXED_OPS_BY_RECORD_SIZE[record_size]
-                            profile = cfg.active_profile_config()
-                            print(
-                                f"[{cfg.ACTIVE_PROFILE}] {fs_type.upper()} / {scenario_key} / "
-                                f"{record_size}B -> target_ops={chosen_ops}"
-                            )
-                            control_kafka("stop")
-                            setup_filesystem(fs_type)
-                            control_kafka("start")
-                            recreate_main_topic()
-                            measured = run_benchmark_once(
-                                fs_type, scenario_key,
-                                {
-                                    "record_size": record_size, "target_ops": chosen_ops,
-                                    "producers": scenario["producers"],
-                                    "use_consumer": scenario["use_consumer"],
-                                    "dynamic_topics": scenario["dynamic_topics"],
-                                    "dynamic_topic_rate": cfg.TOPIC_RATE,
-                                    "warmup_sec": cfg.WARMUP_SECONDS,
-                                    "measure_sec": cfg.MEASURE_DURATION,
-                                    "drain_timeout_sec": cfg.DRAIN_TIMEOUT_SECONDS,
-                                    "profile": cfg.ACTIVE_PROFILE,
-                                    "max_in_flight_records": profile["max_in_flight_records"],
-                                    "max_catch_up_records": profile["max_catch_up_records"],
-                                    "max_schedule_lag_ms": profile["max_schedule_lag_ms"],
-                                },
-                                round_number,
-                            )
-                            measured["metrics"]["final_topic_count"] = count_kafka_topics()
-                            measured["round"] = round_number
-                            measured["calibration_reference"] = {
-                                "mode": cfg.ACTIVE_PROFILE, "chosen_ops": chosen_ops,
-                            }
-                            results[fs_type][record_size][scenario_key]["rounds"].append(measured)
-                            persist_results(results, round_number)
-                except Exception as exc:
-                    original_stdout.write(
-                        f"\n[CRITICAL ERROR] Record Size {record_size} Round {round_number} failed: {exc}\n"
-                    )
-                    raise
-                finally:
-                    sys.stdout = original_stdout
-                    logger.close()
-                    print(f"[Done] Record Size {record_size} Round {round_number} log saved: {log_path}")
+        log_path = f"{cfg.ROUND_DIR}/{cfg.ACTIVE_WORKLOAD_MODE}_run.txt"
+        logger, original_stdout = TeeLogger(log_path), sys.stdout
+        sys.stdout = logger
+        try:
+            if cfg.ACTIVE_WORKLOAD_MODE == "fresh":
+                run_fresh(results, rounds)
+            else:
+                run_occupancy(results, rounds, include_long=cfg.ACTIVE_WORKLOAD_MODE == "long")
+        except Exception as exc:
+            original_stdout.write(f"\n[CRITICAL ERROR] benchmark failed: {exc}\n")
+            raise
+        finally:
+            sys.stdout = original_stdout
+            logger.close()
+            print(f"[Done] Run log saved: {log_path}")
         persist_results(results, rounds, final=True)
         completed = True
         return 0

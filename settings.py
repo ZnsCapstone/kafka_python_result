@@ -100,6 +100,23 @@ WARMUP_SECONDS = 20
 MEASURE_DURATION = 60
 DRAIN_TIMEOUT_SECONDS = 180
 
+# Disk-aging experiment.  These percentages refer to the mounted benchmark
+# filesystem, not the guest root filesystem.  Keep at least 20% free because
+# dm-zns-base metadata, relocation, and filesystem GC all need working space.
+WORKLOAD_MODES = ("fresh", "occupancy", "long")
+DEFAULT_WORKLOAD_MODE = "fresh"
+ACTIVE_WORKLOAD_MODE = DEFAULT_WORKLOAD_MODE
+OCCUPANCY_POINTS = tuple(
+    int(value) for value in os.environ.get("BENCH_OCCUPANCY_POINTS", "20,40,60,80").split(",")
+    if value.strip()
+)
+MAX_OCCUPANCY_PERCENT = 80
+PREFILL_FILE = f"{MOUNT_POINT}/.benchmark-prefill"
+LONG_DURATION_SECONDS = int(os.environ.get("BENCH_LONG_DURATION_SECONDS", "3600"))
+LONG_WARMUP_SECONDS = int(os.environ.get("BENCH_LONG_WARMUP_SECONDS", "300"))
+LONG_RECORD_SIZE = int(os.environ.get("BENCH_LONG_RECORD_SIZE", "1024"))
+LONG_SCENARIO = os.environ.get("BENCH_LONG_SCENARIO", "scenario_b")
+
 SCENARIO_TEMPLATES = {
     "scenario_a": {
         "name": "Scenario A", "desc": "Multi Producer Only",
@@ -162,3 +179,14 @@ def configure_scenario_group(value):
         raise ValueError(f"scenario group must be one of: {', '.join(SCENARIO_GROUPS)}")
     ACTIVE_SCENARIO_GROUP = value
     SCENARIO_KEYS = SCENARIO_GROUPS[value]
+
+
+def configure_workload_mode(value):
+    global ACTIVE_WORKLOAD_MODE
+    if value not in WORKLOAD_MODES:
+        raise ValueError(f"workload mode must be one of: {', '.join(WORKLOAD_MODES)}")
+    if any(point <= 0 or point > MAX_OCCUPANCY_PERCENT for point in OCCUPANCY_POINTS):
+        raise ValueError(f"occupancy points must be between 1 and {MAX_OCCUPANCY_PERCENT}")
+    if tuple(sorted(set(OCCUPANCY_POINTS))) != OCCUPANCY_POINTS:
+        raise ValueError("occupancy points must be unique and increasing")
+    ACTIVE_WORKLOAD_MODE = value

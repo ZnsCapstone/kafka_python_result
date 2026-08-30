@@ -20,8 +20,21 @@
 
 ```bash
 python3 bench_final.py <0=fixed|1=dynamic> [rounds] \
-  [saturation|latency] [baseline|dynamic|all]
+  [saturation|latency] [baseline|dynamic|all] [fresh|occupancy|long]
 ```
+
+메뉴형 실행 스크립트를 사용할 수도 있다. 인자 없이 실행하면 번호를 묻고, 번호를
+인자로 넘기면 해당 항목을 바로 시작한다.
+
+```bash
+./run-benchmark.sh
+./run-benchmark.sh 2
+./run-benchmark.sh --list
+BENCH_LONG_DURATION_SECONDS=600 BENCH_LONG_WARMUP_SECONDS=60 ./run-benchmark.sh 3
+```
+
+스크립트의 기본값은 dynamic DM, 1 round, baseline scenario이다. 각각
+`BENCH_DM_IMPL`, `BENCH_ROUNDS`, `BENCH_SCENARIO_GROUP`으로 변경할 수 있다.
 
 예시:
 
@@ -29,7 +42,30 @@ python3 bench_final.py <0=fixed|1=dynamic> [rounds] \
 python3 bench_final.py 0 3 saturation baseline
 python3 bench_final.py 0 3 latency baseline
 python3 bench_final.py 1 3 saturation dynamic
+python3 bench_final.py 1 1 latency baseline occupancy
+python3 bench_final.py 1 1 latency baseline long
 ```
+
+`fresh`는 기존처럼 각 측정 전에 장치를 초기화한다. `occupancy`는 EXT4를 한 번
+포맷한 뒤 20/40/60/80% 사용률에서 모든 측정을 수행하고, 이후 F2FS도 같은 순서로
+진행한다. `long`은 동일한 단계별 측정 후 80%에서 장기 측정을 추가한다. 여기서
+사용률은 게스트 루트(`/dev/sda1`)가 아니라 `/result/kafka-logs`의 논리 사용률이다.
+
+단계와 장기 측정은 환경변수로 조절할 수 있다.
+
+```bash
+BENCH_OCCUPANCY_POINTS=20,40,60,80 \
+BENCH_LONG_DURATION_SECONDS=3600 \
+BENCH_LONG_WARMUP_SECONDS=300 \
+BENCH_LONG_RECORD_SIZE=1024 \
+BENCH_LONG_SCENARIO=scenario_b \
+sudo -E python3 bench_final.py 1 1 latency baseline long
+```
+
+프리필은 `fallocate`가 아닌 direct-I/O `fio` 쓰기를 사용한다. 따라서 파일 공간만
+예약하는 것이 아니라 파일시스템과 dm-zns-base 및 실제 ZNS 쓰기 경로를 통과한다.
+각 결과에는 목표 사용률과 측정 직전/직후 실사용률이 함께 저장된다. 안전을 위해
+목표 사용률은 최대 80%로 제한한다.
 
 옵션을 생략하면 `saturation`, `all`을 사용한다. latency profile의 초기값은 약
 20MB/s인 `{1KB: 20000, 10KB: 2000, 100KB: 200, 1MB: 20}`이며 전체 outstanding

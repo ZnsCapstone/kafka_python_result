@@ -33,6 +33,8 @@ def capture_environment():
         ("Benchmark profile", cfg.ACTIVE_PROFILE),
         ("Profile config", str(cfg.active_profile_config())),
         ("Scenario group", cfg.ACTIVE_SCENARIO_GROUP),
+        ("Workload mode", cfg.ACTIVE_WORKLOAD_MODE),
+        ("Occupancy points", str(cfg.OCCUPANCY_POINTS)),
         ("Kafka path", cfg.KAFKA_PATH),
         ("Kafka config", run_cmd_quiet(f"cat {cfg.EXPERIMENT_KRAFT_CONFIG} | head -50")),
         ("Raw ZNS device", cfg.RAW_ZNS_DEVICE),
@@ -196,6 +198,73 @@ def setup_filesystem(fs_type):
         run_cmd_quiet(f"sudo mkdir -p {cfg.METADATA_DIR}")
         run_cmd_quiet(f"sudo rm -rf {cfg.METADATA_DIR}/*")
         run_cmd_quiet(f"sudo chmod 777 {cfg.METADATA_DIR}")
+
+
+def filesystem_usage():
+    """Return logical usage of the mounted benchmark filesystem.
+
+    ``df /`` is intentionally not used: the guest root disk is unrelated to
+    the dm-zns-base device being evaluated.  ``f_bavail`` is used for free
+    space so reserved filesystem blocks are treated as unavailable.
+    """
+    stats = os.statvfs(cfg.MOUNT_POINT)
+    total = stats.f_blocks * stats.f_frsize
+    free = stats.f_bfree * stats.f_frsize
+    available = stats.f_bavail * stats.f_frsize
+    used = total - free
+    usable = used + available
+    return {
+        "total_bytes": total,
+        "usable_bytes": usable,
+        "used_bytes": used,
+        "available_bytes": available,
+        "used_percent": (used * 100.0 / usable) if usable else 0.0,
+    }
+
+
+def fill_filesystem_to(target_percent):
+    """Append real data until the benchmark filesystem reaches a target.
+
+    fio performs actual direct writes; fallocate is unsuitable because merely
+    allocating extents would not age the filesystem or dm-zns-base.  The file
+    remains present for subsequent measurements so occupancy increases
+    monotonically within one filesystem run.
+    """
+    if target_percent <= 0 or target_percent > cfg.MAX_OCCUPANCY_PERCENT:
+        raise ValueError(
+            f"target occupancy must be in 1..{cfg.MAX_OCCUPANCY_PERCENT}%"
+        )
+    before = filesystem_usage()
+    target_bytes = int(before["usable_bytes"] * target_percent / 100.0)
+    delta = target_bytes - before["used_bytes"]
+    # Direct I/O requires aligned lengths.  A sub-MiB difference is immaterial
+    # at a 32-GiB scale and is reported through the observed percentage.
+    delta = delta // (1024 * 1024) * (1024 * 1024)
+    if delta > 0:
+        offset = os.path.getsize(cfg.PREFILL_FILE) if os.path.exists(cfg.PREFILL_FILE) else 0
+        print(
+            f"[Prefill] {before['used_percent']:.2f}% -> {target_percent}% "
+            f"(writing {delta / 1024**3:.2f} GiB)"
+        )
+        result = subprocess.run([
+            "sudo", "fio", "--name=benchmark-prefill",
+            f"--filename={cfg.PREFILL_FILE}", "--rw=write", "--bs=1M",
+            "--ioengine=sync", "--direct=1", f"--offset={offset}",
+            f"--size={delta}", "--end_fsync=1", "--eta=always",
+        ], text=True)
+        if result.returncode != 0:
+            raise RuntimeError(f"filesystem prefill failed with exit code {result.returncode}")
+        run_cmd_quiet("sudo sync")
+    after = filesystem_usage()
+    if after["used_percent"] > cfg.MAX_OCCUPANCY_PERCENT + 1.0:
+        raise RuntimeError(
+            f"benchmark filesystem exceeded safety limit: {after['used_percent']:.2f}%"
+        )
+    print(
+        f"[Prefill] observed usage: {after['used_percent']:.2f}% "
+        f"({after['available_bytes'] / 1024**3:.2f} GiB available)"
+    )
+    return after
 
 
 def validate_kafka_environment():
