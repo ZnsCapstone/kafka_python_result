@@ -315,7 +315,11 @@ def control_kafka(action):
         raise ValueError(f"Unknown action: {action}")
 
     print("[Service] Starting Kafka in KRaft mode ...")
-    cluster_id = run_cmd_quiet(f"{cfg.KAFKA_PATH}/bin/kafka-storage.sh random-uuid")
+    cluster_id = existing_kraft_cluster_id()
+    if cluster_id:
+        print(f"[Service] Reusing KRaft cluster id: {cluster_id}")
+    else:
+        cluster_id = run_cmd_quiet(f"{cfg.KAFKA_PATH}/bin/kafka-storage.sh random-uuid")
     if not cluster_id:
         raise RuntimeError("Failed to generate KRaft cluster id")
     result = run_cmd_full(
@@ -343,6 +347,39 @@ def control_kafka(action):
     if not wait_for_port(9092, timeout=180):
         raise RuntimeError("Kafka KRaft broker start timeout")
     time.sleep(8)
+
+
+def existing_kraft_cluster_id():
+    """Return the cluster ID already formatted on the current filesystem.
+
+    KRaft writes ``meta.properties`` to both the data log directory and the
+    optional metadata directory.  Occupancy and long-running modes preserve
+    those directories across broker restarts, so generating a new UUID at
+    every start would make Kafka reject the existing storage.  A disagreement
+    between the two files indicates genuine storage corruption or stale state
+    and must not be hidden by choosing either value.
+    """
+    paths = [f"{cfg.MOUNT_POINT}/meta.properties"]
+    if cfg.SEPARATE_METADATA_DIR:
+        paths.append(f"{cfg.METADATA_DIR}/meta.properties")
+    found = {}
+    for path in paths:
+        if not os.path.exists(path):
+            continue
+        try:
+            with open(path, encoding="utf-8") as file:
+                for raw_line in file:
+                    key, separator, value = raw_line.strip().partition("=")
+                    if separator and key == "cluster.id" and value:
+                        found[path] = value
+                        break
+        except OSError as exc:
+            raise RuntimeError(f"cannot read KRaft metadata {path}: {exc}") from exc
+    unique_ids = set(found.values())
+    if len(unique_ids) > 1:
+        details = ", ".join(f"{path}={value}" for path, value in found.items())
+        raise RuntimeError(f"KRaft cluster id mismatch: {details}")
+    return next(iter(unique_ids), "")
 
 
 def recreate_main_topic():

@@ -1,3 +1,5 @@
+import os
+import tempfile
 import unittest
 from unittest.mock import Mock, patch
 
@@ -29,6 +31,39 @@ class SystemSetupTest(unittest.TestCase):
     def test_prefill_rejects_unsafe_occupancy(self):
         with self.assertRaises(ValueError):
             system_setup.fill_filesystem_to(81)
+
+    def test_existing_kraft_cluster_id_is_reused(self):
+        with tempfile.TemporaryDirectory() as directory:
+            data_dir = os.path.join(directory, "data")
+            metadata_dir = os.path.join(directory, "metadata")
+            os.makedirs(data_dir)
+            os.makedirs(metadata_dir)
+            for path in (
+                os.path.join(data_dir, "meta.properties"),
+                os.path.join(metadata_dir, "meta.properties"),
+            ):
+                with open(path, "w", encoding="utf-8") as file:
+                    file.write("version=1\ncluster.id=stable-cluster-id\nnode.id=1\n")
+            with patch.object(system_setup.cfg, "MOUNT_POINT", data_dir), \
+                    patch.object(system_setup.cfg, "METADATA_DIR", metadata_dir):
+                self.assertEqual(
+                    "stable-cluster-id", system_setup.existing_kraft_cluster_id()
+                )
+
+    def test_existing_kraft_cluster_id_rejects_mismatch(self):
+        with tempfile.TemporaryDirectory() as directory:
+            data_dir = os.path.join(directory, "data")
+            metadata_dir = os.path.join(directory, "metadata")
+            os.makedirs(data_dir)
+            os.makedirs(metadata_dir)
+            with open(os.path.join(data_dir, "meta.properties"), "w", encoding="utf-8") as file:
+                file.write("cluster.id=cluster-a\n")
+            with open(os.path.join(metadata_dir, "meta.properties"), "w", encoding="utf-8") as file:
+                file.write("cluster.id=cluster-b\n")
+            with patch.object(system_setup.cfg, "MOUNT_POINT", data_dir), \
+                    patch.object(system_setup.cfg, "METADATA_DIR", metadata_dir):
+                with self.assertRaisesRegex(RuntimeError, "cluster id mismatch"):
+                    system_setup.existing_kraft_cluster_id()
 
 
 if __name__ == "__main__":
