@@ -419,16 +419,37 @@ def existing_kraft_cluster_id():
     return next(iter(unique_ids), "")
 
 
-def recreate_main_topic():
+def recreate_main_topic(retention_total_bytes=None):
     print("[Service] Recreating benchmark topic ...")
     run_cmd_quiet(
         f"{cfg.KAFKA_PATH}/bin/kafka-topics.sh --bootstrap-server {cfg.BOOTSTRAP} "
         f"--delete --topic {cfg.TOPIC_NAME} --if-exists"
     )
     time.sleep(3)
+    topic_configs = ""
+    if retention_total_bytes is not None:
+        if retention_total_bytes <= 0:
+            raise ValueError("retention_total_bytes must be positive")
+        retention_per_partition = retention_total_bytes // cfg.TOPIC_PARTITIONS
+        if retention_per_partition < cfg.RETENTION_SEGMENT_BYTES * 2:
+            raise ValueError(
+                "topic retention must hold at least two segments per partition"
+            )
+        topic_configs = " ".join([
+            "--config cleanup.policy=delete",
+            f"--config retention.bytes={retention_per_partition}",
+            "--config retention.ms=-1",
+            f"--config segment.bytes={cfg.RETENTION_SEGMENT_BYTES}",
+            f"--config segment.ms={cfg.RETENTION_SEGMENT_MS}",
+        ])
+        print(
+            f"[Service] Topic retention: {retention_total_bytes / 1024**3:.2f} GiB total "
+            f"({retention_per_partition / 1024**2:.0f} MiB/partition)"
+        )
     run_cmd_quiet(
         f"{cfg.KAFKA_PATH}/bin/kafka-topics.sh --bootstrap-server {cfg.BOOTSTRAP} "
-        f"--create --topic {cfg.TOPIC_NAME} --partitions 8 --replication-factor 1 --if-not-exists"
+        f"--create --topic {cfg.TOPIC_NAME} --partitions {cfg.TOPIC_PARTITIONS} "
+        f"--replication-factor 1 --if-not-exists {topic_configs}"
     )
     time.sleep(3)
 

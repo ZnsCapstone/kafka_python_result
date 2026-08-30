@@ -7,6 +7,19 @@ import system_setup
 
 
 class SystemSetupTest(unittest.TestCase):
+    @patch.object(system_setup.time, "sleep")
+    @patch.object(system_setup, "run_cmd_quiet")
+    def test_topic_retention_is_divided_across_partitions(self, run_cmd, _sleep):
+        with patch.object(system_setup.cfg, "TOPIC_PARTITIONS", 8), \
+             patch.object(system_setup.cfg, "RETENTION_SEGMENT_BYTES", 128 * 1024**2), \
+             patch.object(system_setup.cfg, "RETENTION_SEGMENT_MS", 60000):
+            system_setup.recreate_main_topic(2 * 1024**3)
+
+        create_command = run_cmd.call_args_list[1].args[0]
+        self.assertIn("retention.bytes=268435456", create_command)
+        self.assertIn("cleanup.policy=delete", create_command)
+        self.assertIn("segment.bytes=134217728", create_command)
+
     def test_stop_stale_kafka_processes_uses_only_jvm_main_classes(self):
         with patch.object(system_setup, "run_cmd_quiet") as run_cmd:
             system_setup.stop_stale_kafka_processes()

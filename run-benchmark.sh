@@ -23,13 +23,12 @@ print_menu() {
     cat <<'EOF'
 Kafka FEMU/ZNS benchmark
 
-  0) Run all             - fresh + occupancy/long, latency + saturation
-  1) Fresh latency       - every scenario starts from a reset device
-  2) Occupancy latency   - measure at 20/40/60/80%, filesystem by filesystem
-  3) Long latency        - occupancy test plus the long run at 80%
-  4) Fresh saturation    - saturation profile on a reset device
-  5) Occupancy saturation- saturation profile at 20/40/60/80%
-  6) Long saturation     - occupancy saturation plus the long run at 80%
+  0) Run all             - run the five useful suites below
+  1) Fresh latency       - normal-load latency, reset before every scenario
+  2) Occupancy latency   - per record size: reset, then 20/40/60/80%
+  3) Fresh saturation    - maximum-load throughput on a reset device
+  4) 80% endurance       - 80% fixed prefill + bounded Kafka retention cycling
+  5) Kafka steady-state  - no prefill; Kafka grows to retention equilibrium
 EOF
 }
 
@@ -37,14 +36,14 @@ usage() {
     print_menu
     cat <<'EOF'
 
-Usage: ./run-benchmark.sh [0-6|--list|--help]
+Usage: ./run-benchmark.sh [0-5|--list|--help]
 
 Examples:
   ./run-benchmark.sh
   ./run-benchmark.sh 0
   ./run-benchmark.sh 2
   BENCH_ROUNDS=3 ./run-benchmark.sh 1
-  BENCH_LONG_DURATION_SECONDS=600 BENCH_LONG_WARMUP_SECONDS=60 ./run-benchmark.sh 3
+  BENCH_LONG_DURATION_SECONDS=600 BENCH_LONG_WARMUP_SECONDS=60 ./run-benchmark.sh 4
 EOF
 }
 
@@ -65,7 +64,7 @@ case "$selection" in
         ;;
     "")
         print_menu
-        printf '\nSelect a test [0-6]: '
+        printf '\nSelect a test [0-5]: '
         read -r selection
         ;;
 esac
@@ -74,12 +73,11 @@ case "$selection" in
     0) profile="all";        workload_mode="all" ;;
     1) profile="latency";    workload_mode="fresh" ;;
     2) profile="latency";    workload_mode="occupancy" ;;
-    3) profile="latency";    workload_mode="long" ;;
-    4) profile="saturation"; workload_mode="fresh" ;;
-    5) profile="saturation"; workload_mode="occupancy" ;;
-    6) profile="saturation"; workload_mode="long" ;;
+    3) profile="saturation"; workload_mode="fresh" ;;
+    4) profile="latency";    workload_mode="endurance" ;;
+    5) profile="latency";    workload_mode="steady" ;;
     *)
-        printf 'Invalid selection: %s (expected 0-6)\n' "$selection" >&2
+        printf 'Invalid selection: %s (expected 0-5)\n' "$selection" >&2
         exit 2
         ;;
 esac
@@ -118,19 +116,27 @@ printf '  Rounds            : %s\n' "$ROUNDS"
 printf '  Profile           : %s\n' "$profile"
 printf '  Scenario group    : %s\n' "$SCENARIO_GROUP"
 printf '  Workload mode     : %s\n' "$workload_mode"
-if [[ "$workload_mode" != "fresh" && "$workload_mode" != "all" ]]; then
+if [[ "$workload_mode" == "occupancy" || "$workload_mode" == "endurance" ]]; then
     printf '  Occupancy points  : %s\n' "${BENCH_OCCUPANCY_POINTS:-20,40,60,80}"
 fi
-if [[ "$workload_mode" == "long" ]]; then
+if [[ "$workload_mode" == "endurance" || "$workload_mode" == "steady" ]]; then
     printf '  Long measurement  : %ss (warmup %ss, record %sB, %s)\n' \
         "${BENCH_LONG_DURATION_SECONDS:-3600}" \
         "${BENCH_LONG_WARMUP_SECONDS:-300}" \
         "${BENCH_LONG_RECORD_SIZE:-1024}" \
         "${BENCH_LONG_SCENARIO:-scenario_b}"
 fi
+if [[ "$workload_mode" == "endurance" ]]; then
+    printf '  Kafka retention   : %s bytes total\n' \
+        "${BENCH_ENDURANCE_RETENTION_TOTAL_BYTES:-2147483648}"
+elif [[ "$workload_mode" == "steady" ]]; then
+    printf '  Kafka retention   : %s bytes total\n' \
+        "${BENCH_STEADY_RETENTION_TOTAL_BYTES:-25769803776}"
+    printf '  Steady warmup     : %ss\n' "${BENCH_STEADY_WARMUP_SECONDS:-1800}"
+fi
 if [[ "$selection" == "0" ]]; then
-    printf '  Suites            : fresh latency, fresh saturation, long latency, long saturation\n'
-    printf '  Note              : each long suite includes all occupancy stages\n'
+    printf '  Suites            : fresh latency, occupancy latency, fresh saturation, endurance, steady-state\n'
+    printf '  Note              : each suite starts from its own reset device\n'
 fi
 printf '\nWARNING: this resets the configured FEMU ZNS device and destroys its data.\n\n'
 
@@ -148,13 +154,11 @@ run_suite() {
 }
 
 if [[ "$selection" == "0" ]]; then
-    # The long modes already include the 20/40/60/80% occupancy measurements,
-    # so separate occupancy-only suites would duplicate the same destructive
-    # and time-consuming work.
     run_suite latency fresh
+    run_suite latency occupancy
     run_suite saturation fresh
-    run_suite latency long
-    run_suite saturation long
+    run_suite latency endurance
+    run_suite latency steady
     printf '\nAll benchmark suites completed successfully.\n'
 else
     run_suite "$profile" "$workload_mode"

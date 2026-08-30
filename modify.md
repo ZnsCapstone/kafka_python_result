@@ -20,7 +20,8 @@
 
 ```bash
 python3 bench_final.py <0=fixed|1=dynamic> [rounds] \
-  [saturation|latency] [baseline|dynamic|all] [fresh|occupancy|long]
+  [saturation|latency] [baseline|dynamic|all] \
+  [fresh|occupancy|endurance|steady]
 ```
 
 메뉴형 실행 스크립트를 사용할 수도 있다. 인자 없이 실행하면 번호를 묻고, 번호를
@@ -31,14 +32,15 @@ python3 bench_final.py <0=fixed|1=dynamic> [rounds] \
 ./run-benchmark.sh 0
 ./run-benchmark.sh 2
 ./run-benchmark.sh --list
-BENCH_LONG_DURATION_SECONDS=600 BENCH_LONG_WARMUP_SECONDS=60 ./run-benchmark.sh 3
+BENCH_LONG_DURATION_SECONDS=600 BENCH_LONG_WARMUP_SECONDS=60 ./run-benchmark.sh 4
+BENCH_LONG_DURATION_SECONDS=600 BENCH_STEADY_WARMUP_SECONDS=1800 ./run-benchmark.sh 5
 ```
 
 스크립트의 기본값은 dynamic DM, 1 round, baseline scenario이다. 각각
 `BENCH_DM_IMPL`, `BENCH_ROUNDS`, `BENCH_SCENARIO_GROUP`으로 변경할 수 있다.
-메뉴의 `0`은 fresh latency, fresh saturation, long latency, long saturation을
-순서대로 실행한다. long 모드 자체에 20/40/60/80% occupancy 측정이 포함되므로
-occupancy-only 항목을 다시 실행하지는 않는다.
+메뉴는 목적이 겹치는 occupancy saturation과 long saturation을 제거했다.
+`0`은 fresh latency, occupancy latency, fresh saturation, 80% endurance,
+Kafka steady-state를 순서대로 실행한다.
 
 예시:
 
@@ -47,12 +49,18 @@ python3 bench_final.py 0 3 saturation baseline
 python3 bench_final.py 0 3 latency baseline
 python3 bench_final.py 1 3 saturation dynamic
 python3 bench_final.py 1 1 latency baseline occupancy
-python3 bench_final.py 1 1 latency baseline long
+python3 bench_final.py 1 1 latency baseline endurance
+python3 bench_final.py 1 1 latency baseline steady
 ```
 
-`fresh`는 기존처럼 각 측정 전에 장치를 초기화한다. `occupancy`는 EXT4를 한 번
-포맷한 뒤 20/40/60/80% 사용률에서 모든 측정을 수행하고, 이후 F2FS도 같은 순서로
-진행한다. `long`은 동일한 단계별 측정 후 80%에서 장기 측정을 추가한다. 여기서
+`fresh`는 각 filesystem/record-size/scenario 측정 전에 장치를 초기화한다.
+`occupancy`는 filesystem과 record size 조합마다 장치를 초기화한 뒤 같은 record
+size로 20→40→60→80%를 누적 측정한다. 따라서 다른 record size의 쓰기·GC 이력이
+점유율 곡선에 섞이지 않는다. 각 점유율에서는 producer-only 후
+producer+consumer를 실행한다. `endurance`는 선택한 record size로 장치를 별도
+초기화하고 80%까지 고정 live-data를 prefill한 뒤, 크기 제한 retention을 건 Kafka
+topic을 장시간 순환시킨다. `steady`는 fio prefill 없이 Kafka 데이터 자체를 retention
+상한까지 키운 뒤 segment 생성·삭제가 평형을 이루는 상태를 측정한다.
 사용률은 게스트 루트(`/dev/sda1`)가 아니라 `/result/kafka-logs`의 논리 사용률이다.
 
 단계와 장기 측정은 환경변수로 조절할 수 있다.
@@ -63,7 +71,23 @@ BENCH_LONG_DURATION_SECONDS=3600 \
 BENCH_LONG_WARMUP_SECONDS=300 \
 BENCH_LONG_RECORD_SIZE=1024 \
 BENCH_LONG_SCENARIO=scenario_b \
-sudo -E python3 bench_final.py 1 1 latency baseline long
+sudo -E python3 bench_final.py 1 1 latency baseline endurance
+```
+
+장기 retention 기본값은 다음과 같다. 값은 topic 전체 기준이며 코드가 Kafka의
+partition별 `retention.bytes`로 나눈다.
+
+```bash
+# 80% 고정 prefill 위에서 Kafka 로그 총 2GiB 순환
+BENCH_ENDURANCE_RETENTION_TOTAL_BYTES=2147483648
+
+# prefill 없이 Kafka 로그 총 24GiB에서 steady-state 유도
+BENCH_STEADY_RETENTION_TOTAL_BYTES=25769803776
+BENCH_STEADY_WARMUP_SECONDS=1800
+
+# segment roll 및 retention 회수 단위
+BENCH_RETENTION_SEGMENT_BYTES=134217728
+BENCH_RETENTION_SEGMENT_MS=60000
 ```
 
 프리필은 `fallocate`가 아닌 direct-I/O `fio` 쓰기를 사용한다. 따라서 파일 공간만

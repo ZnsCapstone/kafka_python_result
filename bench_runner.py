@@ -68,13 +68,15 @@ def benchmark_config(record_size, scenario, measure_sec=None, warmup_sec=None):
 
 
 def measure_one(results, fs_type, record_size, scenario_key, round_number,
-                occupancy_target=None, phase="measure", measure_sec=None, warmup_sec=None):
+                occupancy_target=None, phase="measure", measure_sec=None, warmup_sec=None,
+                retention_total_bytes=None):
     scenario = deepcopy(cfg.SCENARIO_TEMPLATES[scenario_key])
     config = benchmark_config(record_size, scenario, measure_sec, warmup_sec)
     config["phase"] = phase
     config["occupancy_target_pct"] = occupancy_target
+    config["topic_retention_total_bytes"] = retention_total_bytes
     control_kafka("start")
-    recreate_main_topic()
+    recreate_main_topic(retention_total_bytes=retention_total_bytes)
     if occupancy_target is not None:
         wait_for_filesystem_usage(occupancy_target)
     # Capture after deleting the previous topic so the value describes the
@@ -112,39 +114,88 @@ def run_fresh(results, rounds):
                     measure_one(results, fs_type, record_size, scenario_key, round_number)
 
 
-def run_occupancy(results, rounds, include_long=False):
-    """Age one filesystem through all occupancy points before switching FS."""
+def run_occupancy(results, rounds):
+    """Run an independent occupancy progression for each record size.
+
+    Resetting when the record size changes prevents workloads with other record
+    sizes from contaminating the 20 -> 40 -> 60 -> 80% aging curve.
+    """
     for fs_type in cfg.FILESYSTEMS:
         for round_number in range(1, rounds + 1):
-            print(f"\n{'#' * 70}\n# FILESYSTEM = {fs_type.upper()} / ROUND {round_number}\n{'#' * 70}")
-            control_kafka("stop")
-            setup_filesystem(fs_type)
-            for occupancy in cfg.OCCUPANCY_POINTS:
-                # Remove the preceding workload's topic before calculating the
-                # prefill delta; otherwise deleted Kafka data would make the
-                # next occupancy point start below its advertised value.
-                control_kafka("start")
-                recreate_main_topic()
-                wait_for_filesystem_usage()
+            for record_size in cfg.RECORD_SIZES:
+                print(
+                    f"\n{'#' * 70}\n# FILESYSTEM = {fs_type.upper()} / "
+                    f"RECORD SIZE = {record_size}B / ROUND {round_number}\n{'#' * 70}"
+                )
                 control_kafka("stop")
-                fill_filesystem_to(occupancy)
-                for record_size in cfg.RECORD_SIZES:
+                setup_filesystem(fs_type)
+                for occupancy in cfg.OCCUPANCY_POINTS:
+                    # Remove the preceding workload's topic before calculating
+                    # the next prefill delta.  The prefill file remains, so the
+                    # same record size ages progressively through all points.
+                    control_kafka("start")
+                    recreate_main_topic()
+                    wait_for_filesystem_usage()
+                    control_kafka("stop")
+                    fill_filesystem_to(occupancy)
                     for scenario_key in cfg.SCENARIO_KEYS:
                         measure_one(
                             results, fs_type, record_size, scenario_key, round_number,
                             occupancy_target=occupancy, phase="occupancy",
                         )
-            if include_long:
-                if cfg.LONG_RECORD_SIZE not in cfg.RECORD_SIZES:
-                    raise ValueError("BENCH_LONG_RECORD_SIZE must be one of RECORD_SIZES")
-                if cfg.LONG_SCENARIO not in cfg.SCENARIO_KEYS:
-                    raise ValueError("BENCH_LONG_SCENARIO must be enabled by the scenario group")
-                measure_one(
-                    results, fs_type, cfg.LONG_RECORD_SIZE, cfg.LONG_SCENARIO,
-                    round_number, occupancy_target=cfg.OCCUPANCY_POINTS[-1],
-                    phase="long", measure_sec=cfg.LONG_DURATION_SECONDS,
-                    warmup_sec=cfg.LONG_WARMUP_SECONDS,
-                )
+
+
+def validate_long_configuration():
+    if cfg.LONG_RECORD_SIZE not in cfg.RECORD_SIZES:
+        raise ValueError("BENCH_LONG_RECORD_SIZE must be one of RECORD_SIZES")
+    if cfg.LONG_SCENARIO not in cfg.SCENARIO_KEYS:
+        raise ValueError("BENCH_LONG_SCENARIO must be enabled by the scenario group")
+
+
+def run_endurance(results, rounds):
+    """Cycle a bounded Kafka log above 80% permanently-live prefill data."""
+    validate_long_configuration()
+    occupancy = cfg.OCCUPANCY_POINTS[-1]
+    for fs_type in cfg.FILESYSTEMS:
+        for round_number in range(1, rounds + 1):
+            print(
+                f"\n{'#' * 70}\n# 80% ENDURANCE = {fs_type.upper()} / "
+                f"{cfg.LONG_RECORD_SIZE}B / {occupancy}% / ROUND {round_number}\n{'#' * 70}"
+            )
+            control_kafka("stop")
+            setup_filesystem(fs_type)
+            control_kafka("start")
+            recreate_main_topic()
+            wait_for_filesystem_usage()
+            control_kafka("stop")
+            fill_filesystem_to(occupancy)
+            measure_one(
+                results, fs_type, cfg.LONG_RECORD_SIZE, cfg.LONG_SCENARIO,
+                round_number, occupancy_target=occupancy, phase="endurance",
+                measure_sec=cfg.LONG_DURATION_SECONDS,
+                warmup_sec=cfg.LONG_WARMUP_SECONDS,
+                retention_total_bytes=cfg.ENDURANCE_RETENTION_TOTAL_BYTES,
+            )
+
+
+def run_steady(results, rounds):
+    """Let Kafka data itself reach retention equilibrium, without fio prefill."""
+    validate_long_configuration()
+    for fs_type in cfg.FILESYSTEMS:
+        for round_number in range(1, rounds + 1):
+            print(
+                f"\n{'#' * 70}\n# KAFKA STEADY-STATE = {fs_type.upper()} / "
+                f"{cfg.LONG_RECORD_SIZE}B / ROUND {round_number}\n{'#' * 70}"
+            )
+            control_kafka("stop")
+            setup_filesystem(fs_type)
+            measure_one(
+                results, fs_type, cfg.LONG_RECORD_SIZE, cfg.LONG_SCENARIO,
+                round_number, phase="steady",
+                measure_sec=cfg.LONG_DURATION_SECONDS,
+                warmup_sec=cfg.STEADY_WARMUP_SECONDS,
+                retention_total_bytes=cfg.STEADY_RETENTION_TOTAL_BYTES,
+            )
 
 
 def run(argv=None):
@@ -174,8 +225,12 @@ def run(argv=None):
         try:
             if cfg.ACTIVE_WORKLOAD_MODE == "fresh":
                 run_fresh(results, rounds)
+            elif cfg.ACTIVE_WORKLOAD_MODE == "occupancy":
+                run_occupancy(results, rounds)
+            elif cfg.ACTIVE_WORKLOAD_MODE == "endurance":
+                run_endurance(results, rounds)
             else:
-                run_occupancy(results, rounds, include_long=cfg.ACTIVE_WORKLOAD_MODE == "long")
+                run_steady(results, rounds)
         except Exception as exc:
             original_stdout.write(f"\n[CRITICAL ERROR] benchmark failed: {exc}\n")
             raise

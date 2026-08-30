@@ -103,7 +103,7 @@ DRAIN_TIMEOUT_SECONDS = 180
 # Disk-aging experiment.  These percentages refer to the mounted benchmark
 # filesystem, not the guest root filesystem.  Keep at least 20% free because
 # dm-zns-base metadata, relocation, and filesystem GC all need working space.
-WORKLOAD_MODES = ("fresh", "occupancy", "long")
+WORKLOAD_MODES = ("fresh", "occupancy", "endurance", "steady")
 DEFAULT_WORKLOAD_MODE = "fresh"
 ACTIVE_WORKLOAD_MODE = DEFAULT_WORKLOAD_MODE
 OCCUPANCY_POINTS = tuple(
@@ -125,6 +125,22 @@ LONG_DURATION_SECONDS = int(os.environ.get("BENCH_LONG_DURATION_SECONDS", "3600"
 LONG_WARMUP_SECONDS = int(os.environ.get("BENCH_LONG_WARMUP_SECONDS", "300"))
 LONG_RECORD_SIZE = int(os.environ.get("BENCH_LONG_RECORD_SIZE", "1024"))
 LONG_SCENARIO = os.environ.get("BENCH_LONG_SCENARIO", "scenario_b")
+TOPIC_PARTITIONS = 8
+RETENTION_SEGMENT_BYTES = int(
+    os.environ.get("BENCH_RETENTION_SEGMENT_BYTES", str(128 * 1024**2))
+)
+RETENTION_SEGMENT_MS = int(os.environ.get("BENCH_RETENTION_SEGMENT_MS", "60000"))
+# Total topic retention across every partition.  Kafka's retention.bytes is
+# configured per partition, so system_setup divides these values by 8.
+ENDURANCE_RETENTION_TOTAL_BYTES = int(
+    os.environ.get("BENCH_ENDURANCE_RETENTION_TOTAL_BYTES", str(2 * 1024**3))
+)
+STEADY_RETENTION_TOTAL_BYTES = int(
+    os.environ.get("BENCH_STEADY_RETENTION_TOTAL_BYTES", str(24 * 1024**3))
+)
+STEADY_WARMUP_SECONDS = int(
+    os.environ.get("BENCH_STEADY_WARMUP_SECONDS", "1800")
+)
 
 SCENARIO_TEMPLATES = {
     "scenario_a": {
