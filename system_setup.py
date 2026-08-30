@@ -28,6 +28,11 @@ def capture_environment():
         ("mkfs.ext4 version", run_cmd_quiet("mkfs.ext4 -V 2>&1 | head -1")),
         ("mkfs.f2fs version", run_cmd_quiet("mkfs.f2fs -V 2>&1 | head -1")),
         ("Java version", run_cmd_quiet("java -version 2>&1")),
+        ("Java benchmark JAR", cfg.JAVA_BENCH_JAR),
+        ("Java benchmark SHA-256", run_cmd_quiet(f"sha256sum {cfg.JAVA_BENCH_JAR}")),
+        ("Benchmark profile", cfg.ACTIVE_PROFILE),
+        ("Profile config", str(cfg.active_profile_config())),
+        ("Scenario group", cfg.ACTIVE_SCENARIO_GROUP),
         ("Kafka path", cfg.KAFKA_PATH),
         ("Kafka config", run_cmd_quiet(f"cat {cfg.EXPERIMENT_KRAFT_CONFIG} | head -50")),
         ("Raw ZNS device", cfg.RAW_ZNS_DEVICE),
@@ -195,10 +200,11 @@ def validate_kafka_environment():
         f"{cfg.KAFKA_PATH}/bin/kafka-server-start.sh",
         f"{cfg.KAFKA_PATH}/bin/kafka-server-stop.sh",
         cfg.KRAFT_CONFIG,
+        cfg.JAVA_BENCH_JAR,
     ]
     missing = [path for path in required if not os.path.exists(path)]
     if missing:
-        raise RuntimeError("Required Kafka files not found:\n" + "\n".join(missing))
+        raise RuntimeError("Required benchmark files not found:\n" + "\n".join(missing))
 
 
 def prepare_experiment_kraft_config():
@@ -275,3 +281,13 @@ def recreate_main_topic():
         f"--create --topic {cfg.TOPIC_NAME} --partitions 8 --replication-factor 1 --if-not-exists"
     )
     time.sleep(3)
+
+
+def count_kafka_topics():
+    """Return the broker's current topic count, or -1 when the query fails."""
+    result = run_cmd_full(
+        f"{cfg.KAFKA_PATH}/bin/kafka-topics.sh --bootstrap-server {cfg.BOOTSTRAP} --list"
+    )
+    if result.returncode != 0:
+        return -1
+    return len([line for line in result.stdout.splitlines() if line.strip()])

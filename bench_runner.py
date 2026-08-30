@@ -9,7 +9,7 @@ from bench_utils import run_cmd_quiet
 from performance import run_benchmark_once
 from reporting import save_csv_reports, save_json_snapshot, save_summary_report
 from system_setup import (
-    capture_environment, control_kafka, prepare_experiment_kraft_config,
+    capture_environment, control_kafka, count_kafka_topics, prepare_experiment_kraft_config,
     recreate_main_topic, remove_dm_stack, setup_filesystem,
     unmount_log_device, validate_kafka_environment,
 )
@@ -24,10 +24,17 @@ def init_result_structure():
 
 
 def parse_arguments(argv):
-    if len(argv) < 2 or len(argv) > 3:
-        raise ValueError("Usage: python3 bench_final.py <0=fixed|1=dynamic> [rounds]")
+    if len(argv) < 2 or len(argv) > 5:
+        raise ValueError(
+            "Usage: python3 bench_final.py <0=fixed|1=dynamic> [rounds] "
+            "[saturation|latency] [baseline|dynamic|all]"
+        )
     cfg.configure_dm_implementation(argv[1])
-    rounds = int(argv[2]) if len(argv) == 3 else cfg.DEFAULT_ROUNDS
+    rounds = int(argv[2]) if len(argv) >= 3 else cfg.DEFAULT_ROUNDS
+    profile = argv[3] if len(argv) >= 4 else cfg.DEFAULT_PROFILE
+    cfg.configure_profile(profile)
+    scenario_group = argv[4] if len(argv) == 5 else cfg.DEFAULT_SCENARIO_GROUP
+    cfg.configure_scenario_group(scenario_group)
     if rounds < 1:
         raise ValueError("rounds must be positive")
     return rounds
@@ -49,6 +56,8 @@ def run(argv=None):
 
     cfg.initialize_result_directories()
     print(f"[Config] DM implementation: {cfg.DM_IMPLEMENTATION_LABELS[cfg.DM_IMPLEMENTATION]}")
+    print(f"[Config] Benchmark profile: {cfg.ACTIVE_PROFILE}")
+    print(f"[Config] Scenario group: {cfg.ACTIVE_SCENARIO_GROUP}")
     validate_kafka_environment()
     prepare_experiment_kraft_config()
     capture_environment()
@@ -70,7 +79,11 @@ def run(argv=None):
                         for scenario_key in cfg.SCENARIO_KEYS:
                             scenario = deepcopy(cfg.SCENARIO_TEMPLATES[scenario_key])
                             chosen_ops = cfg.FIXED_OPS_BY_RECORD_SIZE[record_size]
-                            print(f"[Fixed OP/s] {fs_type.upper()} / {scenario_key} / {record_size}B -> target_ops={chosen_ops}")
+                            profile = cfg.active_profile_config()
+                            print(
+                                f"[{cfg.ACTIVE_PROFILE}] {fs_type.upper()} / {scenario_key} / "
+                                f"{record_size}B -> target_ops={chosen_ops}"
+                            )
                             control_kafka("stop")
                             setup_filesystem(fs_type)
                             control_kafka("start")
@@ -86,12 +99,17 @@ def run(argv=None):
                                     "warmup_sec": cfg.WARMUP_SECONDS,
                                     "measure_sec": cfg.MEASURE_DURATION,
                                     "drain_timeout_sec": cfg.DRAIN_TIMEOUT_SECONDS,
+                                    "profile": cfg.ACTIVE_PROFILE,
+                                    "max_in_flight_records": profile["max_in_flight_records"],
+                                    "max_catch_up_records": profile["max_catch_up_records"],
+                                    "max_schedule_lag_ms": profile["max_schedule_lag_ms"],
                                 },
                                 round_number,
                             )
+                            measured["metrics"]["final_topic_count"] = count_kafka_topics()
                             measured["round"] = round_number
                             measured["calibration_reference"] = {
-                                "mode": "fixed", "chosen_ops": chosen_ops,
+                                "mode": cfg.ACTIVE_PROFILE, "chosen_ops": chosen_ops,
                             }
                             results[fs_type][record_size][scenario_key]["rounds"].append(measured)
                             persist_results(results, round_number)

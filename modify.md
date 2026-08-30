@@ -1,17 +1,40 @@
 # Kafka Python 벤치마크 파일 구성
 
-기존 `bench_final.py`에 모여 있던 설정, 시스템 준비, 성능 측정, 로깅, 결과 저장 코드를 역할별 파일로 분리했다. 실행 방법은 기존과 동일하다.
+기존 `bench_final.py`에 모여 있던 설정, 시스템 준비, 성능 측정, 로깅, 결과 저장 코드를 역할별 파일로 분리했다.
+
+## 2026-08-30 — Java 부하기 신규 지표 연동
+
+- `Sent`, `ACK Window`, `Eventual ACK`, outstanding, 실패, drain, backpressure와
+  catch-up 지표를 raw output에서 파싱해 CSV/JSON에 저장한다.
+- `FAILED`, `INCOMPLETE`, `SATURATED`, `BACKPRESSURED`, `NOT_SATURATED` 상태를
+  판정한다.
+- Java 오류, zero Eventual ACK, send/topic 오류, drain 미완료, unresolved 요청,
+  latency 표본 누락이 있는 run은 `valid=false`로 저장한다.
+- invalid run은 full CSV와 JSON에는 보존하지만 요약 평균과 표준편차에서는 제외한다.
+- raw ZNS와 `/dev/mapper/kafka-zns`를 같은 iostat 실행에서 동시에 수집하고 각각
+  `raw_*`, `mapper_*` 컬럼으로 저장한다.
+- 실행 환경에 Java benchmark JAR 경로와 SHA-256을 기록한다.
+- saturation/latency profile 및 baseline/dynamic scenario group을 CLI로 선택한다.
+
+현재 실행 형식은 다음과 같다.
 
 ```bash
-python3 bench_final.py <0=fixed|1=dynamic> [rounds]
+python3 bench_final.py <0=fixed|1=dynamic> [rounds] \
+  [saturation|latency] [baseline|dynamic|all]
 ```
 
 예시:
 
 ```bash
-python3 bench_final.py 0 3  # fixed 구현, 3회 반복
-python3 bench_final.py 1 3  # dynamic 구현, 3회 반복
+python3 bench_final.py 0 3 saturation baseline
+python3 bench_final.py 0 3 latency baseline
+python3 bench_final.py 1 3 saturation dynamic
 ```
+
+옵션을 생략하면 `saturation`, `all`을 사용한다. latency profile의 초기값은 약
+20MB/s인 `{1KB: 20000, 10KB: 2000, 100KB: 200, 1MB: 20}`이며 전체 outstanding
+1000개, catch-up 10개, schedule lag 100ms 제한을 사용한다. 이 값은 FEMU 결과를
+보고 조정해야 하며 고정된 최종 권장값이 아니다.
 
 ## 파일별 역할
 

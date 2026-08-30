@@ -44,12 +44,15 @@ TOPIC_NAME = "bench-topic"
 SEPARATE_METADATA_DIR = True
 METADATA_DIR = "/var/lib/kafka-meta"
 
+JAVA_BENCH_JAR = os.path.expanduser(
+    "~/Kafka-benchmark/build/libs/kafka-benchmark-1.0.jar"
+)
 JAVA_BENCH_CMD = (
     "java -Xms1G -Xmx2G "
     "-Dorg.slf4j.simpleLogger.defaultLogLevel=off "
     "-Dorg.slf4j.simpleLogger.showDateTime=false "
     "-Dorg.slf4j.simpleLogger.showThreadName=false "
-    f"-cp {os.path.expanduser('~/Kafka-benchmark/build/libs/kafka-benchmark-1.0.jar')} "
+    f"-cp {JAVA_BENCH_JAR} "
     "com.hanyang.cs.KafkaBenchmark"
 )
 os.environ["KAFKA_HEAP_OPTS"] = "-Xms1G -Xmx2G"
@@ -57,12 +60,36 @@ os.environ["KAFKA_HEAP_OPTS"] = "-Xms1G -Xmx2G"
 DEFAULT_ROUNDS = 3
 TOPIC_RATE = 5
 RECORD_SIZES = [1024, 10240, 102400, 1024000]
-FIXED_OPS_BY_RECORD_SIZE = {
+SATURATION_OPS_BY_RECORD_SIZE = {
     1024: 100000,
     10240: 10000,
     102400: 1000,
     1024000: 100,
 }
+LATENCY_OPS_BY_RECORD_SIZE = {
+    1024: 20000,
+    10240: 2000,
+    102400: 200,
+    1024000: 20,
+}
+PROFILES = {
+    "saturation": {
+        "ops_by_record_size": SATURATION_OPS_BY_RECORD_SIZE,
+        "max_in_flight_records": 0,
+        "max_catch_up_records": 0,
+        "max_schedule_lag_ms": 0,
+    },
+    "latency": {
+        "ops_by_record_size": LATENCY_OPS_BY_RECORD_SIZE,
+        "max_in_flight_records": 1000,
+        "max_catch_up_records": 10,
+        "max_schedule_lag_ms": 100,
+    },
+}
+DEFAULT_PROFILE = "saturation"
+ACTIVE_PROFILE = DEFAULT_PROFILE
+# Backward-compatible name for code that still imports the old setting.
+FIXED_OPS_BY_RECORD_SIZE = SATURATION_OPS_BY_RECORD_SIZE
 BOTTLENECK_RULES = {
     "min_disk_util_pct": 80.0,
     "min_cpu_iowait_pct": 5.0,
@@ -94,6 +121,13 @@ SCENARIO_TEMPLATES = {
     },
 }
 SCENARIO_KEYS = list(SCENARIO_TEMPLATES)
+SCENARIO_GROUPS = {
+    "baseline": ["scenario_a", "scenario_b"],
+    "dynamic": ["scenario_a_dynamic", "scenario_b_dynamic"],
+    "all": list(SCENARIO_TEMPLATES),
+}
+DEFAULT_SCENARIO_GROUP = "all"
+ACTIVE_SCENARIO_GROUP = DEFAULT_SCENARIO_GROUP
 COMPRESS_AFTER_RUN = True
 
 
@@ -108,3 +142,23 @@ def configure_dm_implementation(value):
     if value not in implementations:
         raise ValueError("implementation must be 0 (fixed/JW) or 1 (dynamic/MJ)")
     DM_IMPLEMENTATION = implementations[value]
+
+
+def configure_profile(value):
+    global ACTIVE_PROFILE, FIXED_OPS_BY_RECORD_SIZE
+    if value not in PROFILES:
+        raise ValueError(f"profile must be one of: {', '.join(PROFILES)}")
+    ACTIVE_PROFILE = value
+    FIXED_OPS_BY_RECORD_SIZE = PROFILES[value]["ops_by_record_size"]
+
+
+def active_profile_config():
+    return PROFILES[ACTIVE_PROFILE]
+
+
+def configure_scenario_group(value):
+    global ACTIVE_SCENARIO_GROUP, SCENARIO_KEYS
+    if value not in SCENARIO_GROUPS:
+        raise ValueError(f"scenario group must be one of: {', '.join(SCENARIO_GROUPS)}")
+    ACTIVE_SCENARIO_GROUP = value
+    SCENARIO_KEYS = SCENARIO_GROUPS[value]

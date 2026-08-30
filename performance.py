@@ -16,7 +16,7 @@ def start_monitors(prefix):
     files = {name: open(path, "w", encoding="utf-8") for name, path in paths.items()}
     processes = {
         "iostat": subprocess.Popen(
-            f"iostat -y -dxm 1 {cfg.RAW_DEVICE_BASENAME}", shell=True,
+            f"iostat -N -y -dxm 1 {cfg.RAW_DEVICE_BASENAME} {cfg.DM_NAME}", shell=True,
             stdout=files["iostat"], stderr=subprocess.STDOUT, text=True,
             preexec_fn=os.setsid,
         ),
@@ -40,7 +40,7 @@ def stop_monitors(monitors):
         file.close()
 
 
-def parse_iostat_file(path, skip_samples=0, max_samples=None):
+def parse_iostat_file(path, device_name, skip_samples=0, max_samples=None):
     if not os.path.exists(path):
         return {}
     rows, headers = [], None
@@ -49,7 +49,7 @@ def parse_iostat_file(path, skip_samples=0, max_samples=None):
             line = raw_line.strip()
             if line.startswith("Device"):
                 headers = re.split(r"\s+", line)
-            elif headers and line.startswith(cfg.RAW_DEVICE_BASENAME):
+            elif headers and line.split(maxsplit=1)[0] == device_name:
                 parts = re.split(r"\s+", line)
                 if len(parts) == len(headers):
                     rows.append(dict(zip(headers, parts)))
@@ -137,7 +137,11 @@ def build_java_cmd(config):
         f"--dynamic-topic-rate {config['dynamic_topic_rate']} "
         f"--warmup-sec {config['warmup_sec']} "
         f"--measure-sec {config['measure_sec']} "
-        f"--drain-timeout-sec {config['drain_timeout_sec']}"
+        f"--drain-timeout-sec {config['drain_timeout_sec']} "
+        f"--bootstrap-servers {cfg.BOOTSTRAP} --topic {cfg.TOPIC_NAME} "
+        f"--max-in-flight-records {config['max_in_flight_records']} "
+        f"--max-catch-up-records {config['max_catch_up_records']} "
+        f"--max-schedule-lag-ms {config['max_schedule_lag_ms']}"
     )
 
 
@@ -147,6 +151,17 @@ def parse_java_metrics(output):
         "p99_ms": 0.0, "p999_ms": 0.0, "max_ms": 0.0, "achieved_ops": 0.0,
         "achieved_pct": 0.0, "total_sent": 0, "send_errors": 0,
         "drain_time_sec": 0.0, "drain_completed": False,
+        "sent_requests": 0, "sent_ops": 0.0,
+        "ack_window_requests": 0, "ack_window_ops": 0.0,
+        "eventual_ack_requests": 0, "eventual_ack_ops": 0.0,
+        "outstanding_at_end": 0, "failed_requests": 0,
+        "unresolved_after_drain": 0, "latency_dropped_samples": 0,
+        "backpressure_wait_count": 0, "backpressure_wait_ms": 0.0,
+        "max_observed_outstanding": 0, "catch_up_resets": 0,
+        "catch_up_records_skipped": 0, "max_schedule_lag_ms": 0.0,
+        "topics_created": 0, "topics_failed": 0,
+        "final_topic_count": -1,
+        "topic_first_failure_elapsed_ms": -1, "topic_first_failure": "none",
     }
     patterns = {
         "total_requests": (r"Total Requests\s*:\s*(\d+)", int),
@@ -165,20 +180,102 @@ def parse_java_metrics(output):
             r"Drain Completed\s*:\s*(true|false)",
             lambda value: value == "true",
         ),
+        "sent_requests": (r"Sent Requests\s*:\s*(\d+)", int),
+        "sent_ops": (r"Sent OP/s\s*:\s*([\d.]+)", float),
+        "ack_window_requests": (r"ACK Window Requests\s*:\s*(\d+)", int),
+        "ack_window_ops": (r"ACK Window OP/s\s*:\s*([\d.]+)", float),
+        "eventual_ack_requests": (r"Eventual ACK Requests\s*:\s*(\d+)", int),
+        "eventual_ack_ops": (r"Eventual ACK OP/s\s*:\s*([\d.]+)", float),
+        "outstanding_at_end": (r"Outstanding at End\s*:\s*(\d+)", int),
+        "failed_requests": (r"Failed Requests\s*:\s*(\d+)", int),
+        "unresolved_after_drain": (r"Unresolved After Drain\s*:\s*(\d+)", int),
+        "latency_dropped_samples": (r"Latency Dropped Samples\s*:\s*(\d+)", int),
+        "backpressure_wait_count": (r"Backpressure Wait Count\s*:\s*(\d+)", int),
+        "backpressure_wait_ms": (r"Backpressure Wait Time\s*:\s*([\d.]+)\s*ms", float),
+        "max_observed_outstanding": (r"Max Observed Outstanding\s*:\s*(\d+)", int),
+        "catch_up_resets": (r"Catch-up Resets\s*:\s*(\d+)", int),
+        "catch_up_records_skipped": (r"Catch-up Records Skipped\s*:\s*(\d+)", int),
+        "max_schedule_lag_ms": (r"Max Schedule Lag\s*:\s*([\d.]+)\s*ms", float),
+        "topics_created": (r"\[TopicCreator\] created=(\d+)", int),
+        "topics_failed": (r"\[TopicCreator\] created=\d+ failed=(\d+)", int),
+        "topic_first_failure_elapsed_ms": (
+            r"\[TopicCreator\] first_failure_elapsed_ms=(-?\d+)", int,
+        ),
     }
     for key, (pattern, converter) in patterns.items():
         match = re.search(pattern, output)
         if match:
             metrics[key] = converter(match.group(1))
+    failure_match = re.search(
+        r"\[TopicCreator\] first_failure_elapsed_ms=-?\d+ first_failure=(.*)", output
+    )
+    if failure_match:
+        metrics["topic_first_failure"] = failure_match.group(1).strip()
     if metrics["total_requests"] == 0:
         print("[WARN] total_requests=0 — Java 출력 파싱 실패 가능성. raw output 확인 필요.")
     return metrics
 
 
+def evaluate_run(metrics, return_code):
+    """Classify validity first, then describe the dominant runtime state."""
+    invalid_reasons = []
+    if return_code != 0:
+        invalid_reasons.append(f"java_exit_code={return_code}")
+    if metrics.get("eventual_ack_requests", 0) == 0:
+        invalid_reasons.append("eventual_ack_requests=0")
+    if metrics.get("failed_requests", 0) > 0:
+        invalid_reasons.append(f"failed_requests={metrics['failed_requests']}")
+    if metrics.get("send_errors", 0) > 0:
+        invalid_reasons.append(f"send_errors={metrics['send_errors']}")
+    if metrics.get("topics_failed", 0) > 0:
+        invalid_reasons.append(f"topics_failed={metrics['topics_failed']}")
+    if not metrics.get("drain_completed", False):
+        invalid_reasons.append("drain_completed=false")
+    if metrics.get("unresolved_after_drain", 0) > 0:
+        invalid_reasons.append(
+            f"unresolved_after_drain={metrics['unresolved_after_drain']}"
+        )
+    if metrics.get("latency_dropped_samples", 0) > 0:
+        invalid_reasons.append(
+            f"latency_dropped_samples={metrics['latency_dropped_samples']}"
+        )
+
+    valid = not invalid_reasons
+    if not valid:
+        failed = (
+            return_code != 0
+            or metrics.get("eventual_ack_requests", 0) == 0
+            or metrics.get("failed_requests", 0) > 0
+            or metrics.get("send_errors", 0) > 0
+            or metrics.get("topics_failed", 0) > 0
+        )
+        state = "FAILED" if failed else "INCOMPLETE"
+    else:
+        rules = cfg.BOTTLENECK_RULES
+        util = metrics.get("mapper_util_avg", metrics.get("raw_util_avg", 0.0))
+        await_avg = metrics.get("mapper_await_avg", metrics.get("raw_await_avg", 0.0))
+        iowait = metrics.get("cpu_wa_avg", 0.0)
+        saturated = util >= rules["min_disk_util_pct"] and (
+            await_avg >= rules["min_await_ms"]
+            or iowait >= rules["min_cpu_iowait_pct"]
+        )
+        backpressured = (
+            metrics.get("outstanding_at_end", 0) > 0
+            or metrics.get("backpressure_wait_count", 0) > 0
+            or metrics.get("ack_window_ops", 0.0)
+            < metrics.get("sent_ops", 0.0) * 0.98
+        )
+        state = "SATURATED" if saturated else (
+            "BACKPRESSURED" if backpressured else "NOT_SATURATED"
+        )
+    return {"valid": valid, "state": state, "invalid_reasons": invalid_reasons}
+
+
 def detect_bottleneck(metrics):
     util, iowait, await_avg = (
-        metrics.get("util_avg", 0.0), metrics.get("cpu_wa_avg", 0.0),
-        metrics.get("await_avg", 0.0),
+        metrics.get("mapper_util_avg", metrics.get("raw_util_avg", 0.0)),
+        metrics.get("cpu_wa_avg", 0.0),
+        metrics.get("mapper_await_avg", metrics.get("raw_await_avg", 0.0)),
     )
     rules = cfg.BOTTLENECK_RULES
     util_hit = util >= rules["min_disk_util_pct"]
@@ -208,19 +305,23 @@ def run_benchmark_once(fs_type, scenario_key, config, round_idx, phase_tag="meas
         output, return_code = run_cmd_streaming(build_java_cmd(config))
     finally:
         stop_monitors(monitors)
-    if return_code != 0:
-        raise RuntimeError(f"{scenario_key} failed with Java exit code {return_code}")
-
     skip = config.get("warmup_sec", 0) + cfg.MONITOR_LEAD_SECONDS
     metrics = parse_java_metrics(output)
     measure_samples = config["measure_sec"]
-    metrics.update(parse_iostat_file(
-        monitors["paths"]["iostat"], skip, max_samples=measure_samples
-    ))
+    for prefix_name, device_name in (
+        ("raw", cfg.RAW_DEVICE_BASENAME), ("mapper", cfg.DM_NAME)
+    ):
+        device_metrics = parse_iostat_file(
+            monitors["paths"]["iostat"], device_name, skip,
+            max_samples=measure_samples,
+        )
+        metrics.update({f"{prefix_name}_{key}": value
+                        for key, value in device_metrics.items()})
     metrics.update(parse_vmstat_file(
         monitors["paths"]["vmstat"], skip, max_samples=measure_samples
     ))
     bottleneck = detect_bottleneck(metrics)
+    validity = evaluate_run(metrics, return_code)
     raw_path = (
         f"{cfg.RAW_DIR}/r{round_idx}_{fs_type}_{scenario_key}_"
         f"{config['record_size']}B_{config['target_ops']}ops_{phase_tag}.txt"
@@ -228,14 +329,15 @@ def run_benchmark_once(fs_type, scenario_key, config, round_idx, phase_tag="meas
     write_text(raw_path, output)
     print(
         f"  > Req={metrics.get('total_requests', 0)} | "
-        f"Achieved={metrics.get('achieved_ops', 0.0):.1f} OP/s "
-        f"({metrics.get('achieved_pct', 0.0):.1f}%) | "
+        f"Sent/ACKwin/Eventual={metrics.get('sent_ops', 0.0):.1f}/"
+        f"{metrics.get('ack_window_ops', 0.0):.1f}/"
+        f"{metrics.get('eventual_ack_ops', 0.0):.1f} OP/s | "
         f"App-Avg={metrics.get('avg_ms', 0.0):.2f}ms | "
         f"App-P99={metrics.get('p99_ms', 0.0):.2f}ms | "
-        f"DiskUtil={metrics.get('util_avg', 0.0):.2f}% | "
-        f"Block-await={metrics.get('await_avg', 0.0):.2f}ms | "
+        f"MapperUtil={metrics.get('mapper_util_avg', 0.0):.2f}% | "
+        f"RawUtil={metrics.get('raw_util_avg', 0.0):.2f}% | "
         f"iowait={metrics.get('cpu_wa_avg', 0.0):.2f}% | "
-        f"Bottleneck={bottleneck['is_bottleneck']}"
+        f"State={validity['state']} | Valid={validity['valid']}"
     )
     paths = monitors["paths"]
     if cfg.COMPRESS_AFTER_RUN:
@@ -243,5 +345,6 @@ def run_benchmark_once(fs_type, scenario_key, config, round_idx, phase_tag="meas
         paths = {name: gzip_file(path) for name, path in paths.items()}
     return {
         "config": deepcopy(config), "metrics": metrics, "bottleneck": bottleneck,
+        "validity": validity, "java_exit_code": return_code,
         "raw_output_path": raw_path, "monitor_files": paths,
     }
