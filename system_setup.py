@@ -112,11 +112,13 @@ def zns_logical_sectors():
         raise RuntimeError(f"cannot read ZNS geometry for {cfg.RAW_ZNS_DEVICE}: {exc}") from exc
 
     if cfg.DM_IMPLEMENTATION == "dynamic":
-        return nr_zones * zone_sectors
-    reserved = cfg.METADATA_ZONES + cfg.GC_RESERVE_ZONES
+        reserved = cfg.GC_RESERVE_ZONES
+    else:
+        reserved = cfg.METADATA_ZONES + cfg.GC_RESERVE_ZONES
     if nr_zones <= reserved:
         raise RuntimeError(
-            f"ZNS has {nr_zones} zones, but fixed dm-zns-base needs {reserved} reserved zones"
+            f"ZNS has {nr_zones} zones, but {cfg.DM_IMPLEMENTATION} dm-zns-base "
+            f"needs {reserved} reserved zones"
         )
     return (nr_zones - reserved) * zone_sectors
 

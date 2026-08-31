@@ -1,3 +1,4 @@
+import io
 import os
 import tempfile
 import unittest
@@ -7,6 +8,23 @@ import system_setup
 
 
 class SystemSetupTest(unittest.TestCase):
+    @patch.object(system_setup, "run_cmd_quiet", return_value="host-managed")
+    def test_dynamic_logical_size_excludes_gc_reserve(self, _run_cmd):
+        geometry = [io.StringIO("4194304\n"), io.StringIO("16\n")]
+        with patch("builtins.open", side_effect=geometry), \
+                patch.object(system_setup.cfg, "DM_IMPLEMENTATION", "dynamic"), \
+                patch.object(system_setup.cfg, "GC_RESERVE_ZONES", 2):
+            self.assertEqual(14 * 4194304, system_setup.zns_logical_sectors())
+
+    @patch.object(system_setup, "run_cmd_quiet", return_value="host-managed")
+    def test_fixed_logical_size_excludes_metadata_and_gc_reserve(self, _run_cmd):
+        geometry = [io.StringIO("4194304\n"), io.StringIO("16\n")]
+        with patch("builtins.open", side_effect=geometry), \
+                patch.object(system_setup.cfg, "DM_IMPLEMENTATION", "fixed"), \
+                patch.object(system_setup.cfg, "METADATA_ZONES", 6), \
+                patch.object(system_setup.cfg, "GC_RESERVE_ZONES", 2):
+            self.assertEqual(8 * 4194304, system_setup.zns_logical_sectors())
+
     @patch.object(system_setup.time, "sleep")
     @patch.object(system_setup, "run_cmd_quiet")
     def test_topic_retention_is_divided_across_partitions(self, run_cmd, _sleep):
