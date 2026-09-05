@@ -209,6 +209,7 @@ def run(argv=None):
 
     cfg.initialize_result_directories()
     print(f"[Config] DM implementation: {cfg.DM_IMPLEMENTATION_LABELS[cfg.DM_IMPLEMENTATION]}")
+    print(f"[Config] DM logical capacity: at most {cfg.LOGICAL_CAPACITY_PERCENT}% of physical")
     print(f"[Config] Benchmark profile: {cfg.ACTIVE_PROFILE}")
     print(f"[Config] Scenario group: {cfg.ACTIVE_SCENARIO_GROUP}")
     print(f"[Config] Workload mode: {cfg.ACTIVE_WORKLOAD_MODE}")

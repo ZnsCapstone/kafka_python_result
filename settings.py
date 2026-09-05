@@ -30,6 +30,9 @@ DM_MODULE_PATH = os.environ.get(
 )
 METADATA_ZONES = 6
 GC_RESERVE_ZONES = 2
+# 로그 구조 변환 계층의 GC 이주, WAL, SSTable을 위해 물리 용량의 25%를
+# host-visible 논리 주소 밖에 남긴다. 환경변수로 실험별 조정 가능하다.
+LOGICAL_CAPACITY_PERCENT = int(os.environ.get("DM_LOGICAL_CAPACITY_PERCENT", "75"))
 
 DM_IMPLEMENTATION = "fixed"
 DM_IMPLEMENTATION_LABELS = {

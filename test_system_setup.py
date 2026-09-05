@@ -13,8 +13,9 @@ class SystemSetupTest(unittest.TestCase):
         geometry = [io.StringIO("4194304\n"), io.StringIO("16\n")]
         with patch("builtins.open", side_effect=geometry), \
                 patch.object(system_setup.cfg, "DM_IMPLEMENTATION", "dynamic"), \
-                patch.object(system_setup.cfg, "GC_RESERVE_ZONES", 2):
-            self.assertEqual(14 * 4194304, system_setup.zns_logical_sectors())
+                patch.object(system_setup.cfg, "GC_RESERVE_ZONES", 2), \
+                patch.object(system_setup.cfg, "LOGICAL_CAPACITY_PERCENT", 75):
+            self.assertEqual(12 * 4194304, system_setup.zns_logical_sectors())
 
     @patch.object(system_setup, "run_cmd_quiet", return_value="host-managed")
     def test_fixed_logical_size_excludes_metadata_and_gc_reserve(self, _run_cmd):
@@ -22,8 +23,17 @@ class SystemSetupTest(unittest.TestCase):
         with patch("builtins.open", side_effect=geometry), \
                 patch.object(system_setup.cfg, "DM_IMPLEMENTATION", "fixed"), \
                 patch.object(system_setup.cfg, "METADATA_ZONES", 6), \
-                patch.object(system_setup.cfg, "GC_RESERVE_ZONES", 2):
+                patch.object(system_setup.cfg, "GC_RESERVE_ZONES", 2), \
+                patch.object(system_setup.cfg, "LOGICAL_CAPACITY_PERCENT", 75):
             self.assertEqual(8 * 4194304, system_setup.zns_logical_sectors())
+
+    @patch.object(system_setup, "run_cmd_quiet", return_value="host-managed")
+    def test_logical_capacity_percent_must_leave_overprovisioning(self, _run_cmd):
+        geometry = [io.StringIO("4194304\n"), io.StringIO("16\n")]
+        with patch("builtins.open", side_effect=geometry), \
+                patch.object(system_setup.cfg, "LOGICAL_CAPACITY_PERCENT", 100):
+            with self.assertRaisesRegex(RuntimeError, "between 1 and 99"):
+                system_setup.zns_logical_sectors()
 
     @patch.object(system_setup.time, "sleep")
     @patch.object(system_setup, "run_cmd_quiet")

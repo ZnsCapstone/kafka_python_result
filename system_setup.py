@@ -111,6 +111,9 @@ def zns_logical_sectors():
     except (OSError, ValueError) as exc:
         raise RuntimeError(f"cannot read ZNS geometry for {cfg.RAW_ZNS_DEVICE}: {exc}") from exc
 
+    if not 1 <= cfg.LOGICAL_CAPACITY_PERCENT < 100:
+        raise RuntimeError("LOGICAL_CAPACITY_PERCENT must be between 1 and 99")
+
     if cfg.DM_IMPLEMENTATION == "dynamic":
         reserved = cfg.GC_RESERVE_ZONES
     else:
@@ -120,7 +123,14 @@ def zns_logical_sectors():
             f"ZNS has {nr_zones} zones, but {cfg.DM_IMPLEMENTATION} dm-zns-base "
             f"needs {reserved} reserved zones"
         )
-    return (nr_zones - reserved) * zone_sectors
+    # 논리 주소 범위는 zone 경계에 맞추고, 구현별 고정 reserve와 비율 기반
+    # over-provisioning 중 더 보수적인 쪽을 사용한다. allocator는 underlying의
+    # 모든 zone을 계속 관리하므로 줄어든 부분은 GC/WAL/SSTable 물리 여유다.
+    percent_zones = nr_zones * cfg.LOGICAL_CAPACITY_PERCENT // 100
+    logical_zones = min(nr_zones - reserved, percent_zones)
+    if logical_zones < 1:
+        raise RuntimeError("logical capacity leaves no host-visible zone")
+    return logical_zones * zone_sectors
 
 
 def create_dm_target():
@@ -144,7 +154,8 @@ def create_dm_target():
         raise RuntimeError(f"dmsetup create failed:\n{result.stdout}\n{result.stderr}")
     print(
         f"[DM] Created {cfg.FS_DEVICE}: {logical_sectors} sectors "
-        f"({logical_sectors * 512 / 1024**3:.2f} GiB)"
+        f"({logical_sectors * 512 / 1024**3:.2f} GiB, "
+        f"logical={cfg.LOGICAL_CAPACITY_PERCENT}% max)"
     )
 
 
