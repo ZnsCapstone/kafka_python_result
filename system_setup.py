@@ -224,6 +224,48 @@ def filesystem_usage():
     }
 
 
+def _run_with_refresh(command):
+    """Render carriage-return progress by replacing one terminal line."""
+    process = subprocess.Popen(
+        command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, bufsize=0
+    )
+    pending = bytearray()
+    progress_active = False
+    # During a run sys.stdout is TeeLogger.  Progress belongs on the terminal
+    # only; newline-delimited fio summaries still pass through the run log.
+    terminal = getattr(sys.stdout, "terminal", sys.stdout)
+
+    while True:
+        char = process.stdout.read(1)
+        if not char:
+            break
+        if char == b"\r":
+            terminal.write("\r\033[K" + pending.decode(errors="replace"))
+            terminal.flush()
+            pending.clear()
+            progress_active = True
+        elif char == b"\n":
+            if progress_active:
+                terminal.write("\r\033[K")
+                terminal.flush()
+                progress_active = False
+            print(pending.decode(errors="replace"))
+            pending.clear()
+        else:
+            pending.extend(char)
+
+    if pending:
+        if progress_active:
+            terminal.write("\r\033[K")
+            terminal.flush()
+        print(pending.decode(errors="replace"))
+        progress_active = False
+    if progress_active:
+        terminal.write("\n")
+        terminal.flush()
+    return process.wait()
+
+
 def fill_filesystem_to(target_percent):
     """Append real data until the benchmark filesystem reaches a target.
 
@@ -248,14 +290,14 @@ def fill_filesystem_to(target_percent):
             f"[Prefill] {before['used_percent']:.2f}% -> {target_percent}% "
             f"(writing {delta / 1024**3:.2f} GiB)"
         )
-        result = subprocess.run([
+        returncode = _run_with_refresh([
             "sudo", "fio", "--name=benchmark-prefill",
             f"--filename={cfg.PREFILL_FILE}", "--rw=write", "--bs=1M",
             "--ioengine=sync", "--direct=1", f"--offset={offset}",
             f"--size={delta}", "--end_fsync=1", "--eta=always",
-        ], text=True)
-        if result.returncode != 0:
-            raise RuntimeError(f"filesystem prefill failed with exit code {result.returncode}")
+        ])
+        if returncode != 0:
+            raise RuntimeError(f"filesystem prefill failed with exit code {returncode}")
         run_cmd_quiet("sudo sync")
     after = filesystem_usage()
     if after["used_percent"] > cfg.MAX_OCCUPANCY_PERCENT + 1.0:
