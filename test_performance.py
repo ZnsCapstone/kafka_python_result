@@ -98,10 +98,12 @@ class PerformanceTest(unittest.TestCase):
             "dynamic_topic_rate": 1, "warmup_sec": 20, "measure_sec": 60,
             "drain_timeout_sec": 180, "max_in_flight_records": 1000,
             "max_catch_up_records": 10, "max_schedule_lag_ms": 100,
+            "fail_fast_stall_sec": 60,
         })
         self.assertIn("--max-in-flight-records 1000", command)
         self.assertIn("--max-catch-up-records 10", command)
         self.assertIn("--max-schedule-lag-ms 100", command)
+        self.assertIn("--fail-fast-stall-sec 60", command)
 
     def test_parses_raw_and_mapper_rows_separately(self):
         content = """

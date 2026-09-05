@@ -142,6 +142,7 @@ def build_java_cmd(config):
         f"--warmup-sec {config['warmup_sec']} "
         f"--measure-sec {config['measure_sec']} "
         f"--drain-timeout-sec {config['drain_timeout_sec']} "
+        f"--fail-fast-stall-sec {config['fail_fast_stall_sec']} "
         f"--bootstrap-servers {cfg.BOOTSTRAP} --topic {cfg.TOPIC_NAME} "
         f"--max-in-flight-records {config['max_in_flight_records']} "
         f"--max-catch-up-records {config['max_catch_up_records']} "

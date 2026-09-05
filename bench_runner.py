@@ -60,6 +60,7 @@ def benchmark_config(record_size, scenario, measure_sec=None, warmup_sec=None):
         "warmup_sec": cfg.WARMUP_SECONDS if warmup_sec is None else warmup_sec,
         "measure_sec": cfg.MEASURE_DURATION if measure_sec is None else measure_sec,
         "drain_timeout_sec": cfg.DRAIN_TIMEOUT_SECONDS,
+        "fail_fast_stall_sec": cfg.FAIL_FAST_STALL_SECONDS,
         "profile": cfg.ACTIVE_PROFILE,
         "max_in_flight_records": profile["max_in_flight_records"],
         "max_catch_up_records": profile["max_catch_up_records"],

@@ -44,6 +44,7 @@ Examples:
   ./run-benchmark.sh 2
   BENCH_ROUNDS=3 ./run-benchmark.sh 1
   BENCH_LONG_DURATION_SECONDS=600 BENCH_LONG_WARMUP_SECONDS=60 ./run-benchmark.sh 4
+  BENCH_FAIL_FAST_STALL_SECONDS=60 ./run-benchmark.sh 4
 EOF
 }
 

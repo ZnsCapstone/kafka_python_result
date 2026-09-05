@@ -99,6 +99,7 @@ MONITOR_LEAD_SECONDS = 2
 WARMUP_SECONDS = 20
 MEASURE_DURATION = 60
 DRAIN_TIMEOUT_SECONDS = 180
+FAIL_FAST_STALL_SECONDS = int(os.environ.get("BENCH_FAIL_FAST_STALL_SECONDS", "60"))
 
 # Disk-aging experiment.  These percentages refer to the mounted benchmark
 # filesystem, not the guest root filesystem.  Keep at least 20% free because

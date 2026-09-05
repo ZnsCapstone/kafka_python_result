@@ -207,6 +207,7 @@ def save_summary_report(all_results, current_round, final=False):
         f"- Dynamic topic rate (/sec): {cfg.TOPIC_RATE}",
         f"- Measure: {cfg.MEASURE_DURATION}s (warmup {cfg.WARMUP_SECONDS}s)",
         f"- Drain timeout: {cfg.DRAIN_TIMEOUT_SECONDS}s",
+        f"- Fail-fast ACK stall: {cfg.FAIL_FAST_STALL_SECONDS}s (0 disables)",
         f"- FIXED_OPS_BY_RECORD_SIZE: {cfg.FIXED_OPS_BY_RECORD_SIZE}", "",
     ])
     for fs_type in cfg.FILESYSTEMS:
