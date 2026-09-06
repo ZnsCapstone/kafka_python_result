@@ -2,11 +2,16 @@
 
 import gzip
 import os
+import re
 import shutil
 import socket
 import statistics
 import subprocess
+import sys
 import time
+
+
+_PER_SECOND_RESULT = re.compile(r"^\s*Sec\s+\d+\s*\|")
 
 
 def run_cmd_quiet(cmd):
@@ -27,7 +32,16 @@ def run_cmd_streaming(cmd):
         if not line and process.poll() is not None:
             break
         if line:
-            print(f"  > {line.rstrip()}")
+            formatted = f"  > {line.rstrip()}\n"
+            if _PER_SECOND_RESULT.match(line):
+                # The complete Java output is still returned for the raw result
+                # file.  When stdout is TeeLogger, also retain it in the round
+                # log while omitting thousands of per-second rows from the TTY.
+                write_log_only = getattr(sys.stdout, "write_log_only", None)
+                if write_log_only is not None:
+                    write_log_only(formatted)
+            else:
+                print(formatted, end="")
             output.append(line)
     return "".join(output), process.wait()
 

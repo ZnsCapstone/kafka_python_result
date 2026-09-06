@@ -12,6 +12,10 @@ class TeeLogger:
         self.terminal.write(message)
         self.log.write(message)
 
+    def write_log_only(self, message):
+        """Write verbose output to the round log without flooding the terminal."""
+        self.log.write(message)
+
     def flush(self):
         self.terminal.flush()
         self.log.flush()
