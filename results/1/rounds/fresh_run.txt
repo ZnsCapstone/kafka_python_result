@@ -1,0 +1,2592 @@
+[Service] Stopping Kafka KRaft broker ...
+
+[Setup] Resetting FEMU ZNS and mounting ext4 through kafka-zns ...
+[DM] Created /dev/mapper/kafka-zns: 50331648 sectors (24.00 GiB, logical=75% max)
+NAME      MAJ:MIN RM SIZE RO TYPE MOUNTPOINTS
+kafka-zns 253:0    0  24G  0 dm   /result/kafka-logs
+/dev/mapper/kafka-zns on /result/kafka-logs type ext4 (rw,noatime,nodiratime)
+[Service] Starting Kafka in KRaft mode ...
+[Service] Recreating benchmark topic ...
+[latency/measure] EXT4 / scenario_a / 1024B -> target_ops=20000, fs_used=0.00%
+
+--- [MEASURE] EXT4 / scenario_a / 1024B / 20000 ops ---
+  > =====================================
+  >  Kafka Filesystem Benchmark (Java API)
+  > =====================================
+  >  - Record Size: 1024 Bytes
+  >  - Target OP/s (total): 20000
+  >  - Producers: 8
+  >  - Consumer Active: false
+  >  - Dynamic Topic Creation: false (rate=5/sec)
+  >  - Warmup: 20 sec / Measurement: 60 sec / Drain timeout: 180 sec
+  >  - Max outstanding records: 1000
+  >  - Catch-up limit: records=10, lag=100ms
+  >  - Fail-fast ACK stall: 60 sec
+  >  - Send mode: ASYNC (callback-based latency measurement)
+  > [Config] BUFFER_MEMORY per producer = 16 MB
+  > [Config] linger.ms=0, batch.size=1536
+  > [Run] Producers started. warmup=20s, measure=60s, total=80s
+  > 
+  > --- [ Latency Results (ms) ] ---
+  >  (App-level: send() call -> broker ACK; reaches OS page cache)
+  >  Total Requests : 1140545
+  >  Average        : 3.99 ms
+  >  p50 (Median)   : 0.30 ms
+  >  p90            : 0.55 ms
+  >  p99            : 26.33 ms
+  >  p999           : 894.24 ms
+  >  Max            : 2474.71 ms
+  > --------------------------------
+  > --- [ Throughput / Errors ] ---
+  >  Target OP/s         : 20000
+  >  Achieved OP/s       : 19009.08
+  >  Achieved/Target (%) : 95.0
+  >  Total Sent (incl. warmup) : 1484151
+  >  Send Errors               : 0
+  >  Drain Time                : 0.03 sec
+  >  Drain Completed           : true
+  >  Sent Requests             : 1140545
+  >  Sent OP/s                 : 19009.08
+  >  ACK Window Requests       : 1140540
+  >  ACK Window OP/s           : 19009.00
+  >  Eventual ACK Requests     : 1140545
+  >  Eventual ACK OP/s         : 19009.08
+  >  Outstanding at End        : 0
+  >  Failed Requests           : 0
+  >  Unresolved After Drain    : 0
+  >  Latency Dropped Samples   : 0
+  >  Backpressure Wait Count   : 18590
+  >  Backpressure Wait Time    : 49910.23 ms
+  >  Max Observed Outstanding  : 1003
+  >  Catch-up Resets           : 3669
+  >  Catch-up Records Skipped  : 114117
+  >  Max Schedule Lag          : 2371.92 ms
+  >  ACK Stall Count          : 1
+  >  ACK Stall Total          : 1 sec
+  >  ACK Stall Max            : 1 sec
+  > --------------------------------
+  > 
+  > --- [ Per-second Throughput & Latency ] ---
+  > Sec   0 | send=  1887 | ack=   888 | no data
+  > Sec   1 | send=  4431 | ack=  4430 | no data
+  > Sec   2 | send=  7405 | ack=  7405 | no data
+  > Sec   3 | send= 11238 | ack= 11239 | no data
+  > Sec   4 | send= 19771 | ack= 19885 | no data
+  > Sec   5 | send= 19858 | ack= 20729 | no data
+  > Sec   6 | send= 19819 | ack= 19832 | no data
+  > Sec   7 | send= 19956 | ack= 19950 | no data
+  > Sec   8 | send= 19782 | ack= 19694 | no data
+  > Sec   9 | send= 19981 | ack= 20073 | no data
+  > Sec  10 | send= 19930 | ack= 19925 | no data
+  > Sec  11 | send= 20000 | ack= 20001 | no data
+  > Sec  12 | send= 20000 | ack= 19999 | no data
+  > Sec  13 | send= 19980 | ack= 19985 | no data
+  > Sec  14 | send= 19908 | ack= 19906 | no data
+  > Sec  15 | send= 19936 | ack= 19934 | no data
+  > Sec  16 | send= 19889 | ack= 19892 | no data
+  > Sec  17 | send= 19846 | ack= 19842 | no data
+  > Sec  18 | send= 19989 | ack= 19992 | no data
+  > Sec  19 | send= 20000 | ack= 19987 | no data
+  > Sec  20 | send= 19907 | ack= 19919 | p50=0.30 ms | p99=7.09 ms
+  > Sec  21 | send= 20000 | ack= 19998 | p50=0.29 ms | p99=0.80 ms
+  > Sec  22 | send= 20000 | ack= 20000 | p50=0.29 ms | p99=0.83 ms
+  > Sec  23 | send= 20000 | ack= 20000 | p50=0.29 ms | p99=8.14 ms
+  > Sec  24 | send= 20000 | ack= 20000 | p50=0.29 ms | p99=0.97 ms
+  > Sec  25 | send= 20000 | ack= 20001 | p50=0.29 ms | p99=1.09 ms
+  > Sec  26 | send= 19976 | ack= 19975 | p50=0.28 ms | p99=0.92 ms
+  > Sec  27 | send= 19930 | ack= 19931 | p50=0.29 ms | p99=1.35 ms
+  > Sec  28 | send= 19989 | ack= 19990 | p50=0.29 ms | p99=7.85 ms
+  > Sec  29 | send= 20000 | ack= 20000 | p50=0.29 ms | p99=1.08 ms
+  > Sec  30 | send= 19888 | ack= 19889 | p50=0.29 ms | p99=0.85 ms
+  > Sec  31 | send= 19975 | ack= 19812 | p50=0.31 ms | p99=6.61 ms
+  > Sec  32 | send=  9306 | ack=  8691 | p50=0.36 ms | p99=899.37 ms
+  > Sec  33 | send= 11215 | ack= 10998 | p50=2.45 ms | p99=817.47 ms
+  > Sec  34 | send=     0 | ack=     0 | no data
+  > Sec  35 | send=  1314 | ack=  1394 | p50=2462.72 ms | p99=2474.19 ms
+  > Sec  36 | send= 19827 | ack= 20739 | p50=0.40 ms | p99=2458.61 ms
+  > Sec  37 | send= 19984 | ack= 19989 | p50=0.31 ms | p99=1.65 ms
+  > Sec  38 | send= 20000 | ack= 20000 | p50=0.29 ms | p99=10.08 ms
+  > Sec  39 | send= 20000 | ack= 20000 | p50=0.29 ms | p99=1.33 ms
+  > Sec  40 | send= 19978 | ack= 19977 | p50=0.29 ms | p99=1.18 ms
+  > Sec  41 | send= 20000 | ack= 19997 | p50=0.29 ms | p99=1.29 ms
+  > Sec  42 | send= 20000 | ack= 20004 | p50=0.28 ms | p99=0.92 ms
+  > Sec  43 | send= 19889 | ack= 19886 | p50=0.29 ms | p99=9.71 ms
+  > Sec  44 | send= 20000 | ack= 20003 | p50=0.29 ms | p99=0.98 ms
+  > Sec  45 | send= 20000 | ack= 19997 | p50=0.29 ms | p99=0.86 ms
+  > Sec  46 | send= 20000 | ack= 20000 | p50=0.29 ms | p99=2.07 ms
+  > Sec  47 | send= 20000 | ack= 19999 | p50=0.29 ms | p99=1.03 ms
+  > Sec  48 | send= 20000 | ack= 20000 | p50=0.30 ms | p99=11.27 ms
+  > Sec  49 | send= 20000 | ack= 19999 | p50=0.30 ms | p99=1.07 ms
+  > Sec  50 | send= 19899 | ack= 19902 | p50=0.30 ms | p99=1.26 ms
+  > Sec  51 | send= 19986 | ack= 19988 | p50=0.29 ms | p99=2.03 ms
+  > Sec  52 | send= 20000 | ack= 19986 | p50=0.30 ms | p99=7.13 ms
+  > Sec  53 | send= 19989 | ack= 20002 | p50=0.30 ms | p99=12.24 ms
+  > Sec  54 | send= 20000 | ack= 20000 | p50=0.29 ms | p99=1.10 ms
+  > Sec  55 | send= 19983 | ack= 19983 | p50=0.30 ms | p99=2.74 ms
+  > Sec  56 | send= 20000 | ack= 19998 | p50=0.30 ms | p99=1.51 ms
+  > Sec  57 | send= 19989 | ack= 19984 | p50=0.32 ms | p99=2.93 ms
+  > Sec  58 | send= 19986 | ack= 19987 | p50=0.31 ms | p99=12.73 ms
+  > Sec  59 | send= 20000 | ack= 20008 | p50=0.30 ms | p99=1.29 ms
+  > Sec  60 | send= 19999 | ack= 19998 | p50=0.30 ms | p99=1.06 ms
+  > Sec  61 | send= 20001 | ack= 20000 | p50=0.29 ms | p99=1.06 ms
+  > Sec  62 | send= 20000 | ack= 19999 | p50=0.29 ms | p99=1.20 ms
+  > Sec  63 | send= 20000 | ack= 20000 | p50=0.30 ms | p99=13.80 ms
+  > Sec  64 | send= 19631 | ack= 19627 | p50=2.56 ms | p99=66.54 ms
+  > Sec  65 | send= 19999 | ack= 20004 | p50=0.30 ms | p99=0.99 ms
+  > Sec  66 | send= 20001 | ack= 19999 | p50=0.32 ms | p99=2.86 ms
+  > Sec  67 | send= 20000 | ack= 19998 | p50=0.31 ms | p99=1.91 ms
+  > Sec  68 | send= 19978 | ack= 19984 | p50=0.35 ms | p99=14.47 ms
+  > Sec  69 | send= 19983 | ack= 19980 | p50=0.29 ms | p99=0.98 ms
+  > Sec  70 | send= 20000 | ack= 20002 | p50=0.30 ms | p99=1.56 ms
+  > Sec  71 | send= 20000 | ack= 20000 | p50=0.30 ms | p99=2.73 ms
+  > Sec  72 | send= 20000 | ack= 19997 | p50=0.30 ms | p99=1.00 ms
+  > Sec  73 | send= 20000 | ack= 20002 | p50=0.31 ms | p99=11.77 ms
+  > Sec  74 | send= 19965 | ack= 19966 | p50=0.30 ms | p99=0.91 ms
+  > Sec  75 | send= 20000 | ack= 20000 | p50=0.31 ms | p99=1.46 ms
+  > Sec  76 | send= 20000 | ack= 19997 | p50=0.31 ms | p99=1.02 ms
+  > Sec  77 | send= 19988 | ack= 19992 | p50=0.31 ms | p99=1.99 ms
+  > Sec  78 | send= 19990 | ack= 19984 | p50=0.31 ms | p99=7.91 ms
+  > Sec  79 | send= 20000 | ack= 20003 | p50=0.31 ms | p99=1.21 ms
+  > ------------------------------------------
+  > Req=1140545 | Sent/ACKwin/Eventual=19009.1/19009.0/19009.1 OP/s | App-Avg=3.99ms | App-P99=26.33ms | MapperUtil=15.06% | RawUtil=14.25% | iowait=3.67% | State=BACKPRESSURED | Valid=True
+[Service] Stopping Kafka KRaft broker ...
+[Success] JSON snapshot saved: results/kafka_fs_bench_20260906_102324/results_snapshot.json
+[Success] CSV saved: results/kafka_fs_bench_20260906_102324/csv/full_results.csv
+[Success] CSV saved: results/kafka_fs_bench_20260906_102324/csv/summary_by_fs_recordsize_scenario.csv
+[Success] Summary report saved: results/kafka_fs_bench_20260906_102324/summary_report.txt
+[Service] Stopping Kafka KRaft broker ...
+
+[Setup] Resetting FEMU ZNS and mounting ext4 through kafka-zns ...
+[DM] Created /dev/mapper/kafka-zns: 50331648 sectors (24.00 GiB, logical=75% max)
+NAME      MAJ:MIN RM SIZE RO TYPE MOUNTPOINTS
+kafka-zns 253:0    0  24G  0 dm   /result/kafka-logs
+/dev/mapper/kafka-zns on /result/kafka-logs type ext4 (rw,noatime,nodiratime)
+[Service] Starting Kafka in KRaft mode ...
+[Service] Recreating benchmark topic ...
+[latency/measure] EXT4 / scenario_b / 1024B -> target_ops=20000, fs_used=0.00%
+
+--- [MEASURE] EXT4 / scenario_b / 1024B / 20000 ops ---
+  > =====================================
+  >  Kafka Filesystem Benchmark (Java API)
+  > =====================================
+  >  - Record Size: 1024 Bytes
+  >  - Target OP/s (total): 20000
+  >  - Producers: 8
+  >  - Consumer Active: true
+  >  - Dynamic Topic Creation: false (rate=5/sec)
+  >  - Warmup: 20 sec / Measurement: 60 sec / Drain timeout: 180 sec
+  >  - Max outstanding records: 1000
+  >  - Catch-up limit: records=10, lag=100ms
+  >  - Fail-fast ACK stall: 60 sec
+  >  - Send mode: ASYNC (callback-based latency measurement)
+  > [Config] BUFFER_MEMORY per producer = 16 MB
+  > [Config] linger.ms=0, batch.size=1536
+  > [Run] Producers started. warmup=20s, measure=60s, total=80s
+  > [Consumer] consumed 1434438 records
+  > 
+  > --- [ Latency Results (ms) ] ---
+  >  (App-level: send() call -> broker ACK; reaches OS page cache)
+  >  Total Requests : 1125395
+  >  Average        : 4.99 ms
+  >  p50 (Median)   : 0.40 ms
+  >  p90            : 1.87 ms
+  >  p99            : 42.21 ms
+  >  p999           : 478.74 ms
+  >  Max            : 3233.55 ms
+  > --------------------------------
+  > --- [ Throughput / Errors ] ---
+  >  Target OP/s         : 20000
+  >  Achieved OP/s       : 18756.58
+  >  Achieved/Target (%) : 93.8
+  >  Total Sent (incl. warmup) : 1434438
+  >  Send Errors               : 0
+  >  Drain Time                : 0.02 sec
+  >  Drain Completed           : true
+  >  Sent Requests             : 1125395
+  >  Sent OP/s                 : 18756.58
+  >  ACK Window Requests       : 1125388
+  >  ACK Window OP/s           : 18756.47
+  >  Eventual ACK Requests     : 1125395
+  >  Eventual ACK OP/s         : 18756.58
+  >  Outstanding at End        : 0
+  >  Failed Requests           : 0
+  >  Unresolved After Drain    : 0
+  >  Latency Dropped Samples   : 0
+  >  Backpressure Wait Count   : 31967
+  >  Backpressure Wait Time    : 75448.47 ms
+  >  Max Observed Outstanding  : 1003
+  >  Catch-up Resets           : 4823
+  >  Catch-up Records Skipped  : 163253
+  >  Max Schedule Lag          : 3172.63 ms
+  >  ACK Stall Count          : 1
+  >  ACK Stall Total          : 2 sec
+  >  ACK Stall Max            : 2 sec
+  > --- [ Consumer Integrity ] ---
+  >  Consumer Records         : 1434438
+  >  Producer ACKed Records   : 1434438
+  >  Consumer Record Delta    : 0
+  >  Consumer Drain Completed : true
+  >  Malformed Headers        : 0
+  >  Payload CRC Errors       : 0
+  >  Sequence Gaps            : 0
+  >  Duplicate Records        : 0
+  >  Out-of-order Records     : 0
+  > --------------------------------
+  > --------------------------------
+  > 
+  > --- [ Per-second Throughput & Latency ] ---
+  > Sec   0 | send=  1439 | ack=   439 | no data
+  > Sec   1 | send=  2044 | ack=  2044 | no data
+  > Sec   2 | send=  3220 | ack=  3220 | no data
+  > Sec   3 | send=  3972 | ack=  3979 | no data
+  > Sec   4 | send= 10099 | ack= 10092 | no data
+  > Sec   5 | send= 18544 | ack= 19530 | no data
+  > Sec   6 | send= 19881 | ack= 19589 | no data
+  > Sec   7 | send= 13193 | ack= 12502 | no data
+  > Sec   8 | send= 17290 | ack= 18277 | no data
+  > Sec   9 | send= 19937 | ack= 19939 | no data
+  > Sec  10 | send= 19898 | ack= 19897 | no data
+  > Sec  11 | send= 19953 | ack= 19939 | no data
+  > Sec  12 | send= 19980 | ack= 19994 | no data
+  > Sec  13 | send= 19979 | ack= 19978 | no data
+  > Sec  14 | send= 19917 | ack= 19919 | no data
+  > Sec  15 | send= 19978 | ack= 19980 | no data
+  > Sec  16 | send= 19912 | ack= 19912 | no data
+  > Sec  17 | send= 19916 | ack= 19905 | no data
+  > Sec  18 | send= 19989 | ack= 20002 | no data
+  > Sec  19 | send= 19902 | ack= 19838 | no data
+  > Sec  20 | send= 19936 | ack= 19995 | p50=0.47 ms | p99=17.41 ms
+  > Sec  21 | send= 19952 | ack= 19955 | p50=0.42 ms | p99=18.11 ms
+  > Sec  22 | send= 19884 | ack= 19871 | p50=0.47 ms | p99=8.92 ms
+  > Sec  23 | send= 20000 | ack= 20015 | p50=0.40 ms | p99=8.46 ms
+  > Sec  24 | send= 19953 | ack= 19953 | p50=0.40 ms | p99=7.47 ms
+  > Sec  25 | send= 19971 | ack= 19969 | p50=0.36 ms | p99=3.41 ms
+  > Sec  26 | send= 19958 | ack= 19958 | p50=0.37 ms | p99=7.94 ms
+  > Sec  27 | send= 20000 | ack= 20000 | p50=0.36 ms | p99=2.79 ms
+  > Sec  28 | send= 19949 | ack= 19951 | p50=0.39 ms | p99=11.09 ms
+  > Sec  29 | send= 19956 | ack= 19948 | p50=0.36 ms | p99=9.23 ms
+  > Sec  30 | send= 20000 | ack= 19924 | p50=0.35 ms | p99=2.44 ms
+  > Sec  31 | send= 19985 | ack= 20069 | p50=0.37 ms | p99=4.52 ms
+  > Sec  32 | send= 20000 | ack= 20001 | p50=0.38 ms | p99=4.85 ms
+  > Sec  33 | send= 19961 | ack= 19959 | p50=0.43 ms | p99=15.44 ms
+  > Sec  34 | send= 19990 | ack= 19989 | p50=0.38 ms | p99=2.64 ms
+  > Sec  35 | send= 19988 | ack= 19984 | p50=0.37 ms | p99=3.93 ms
+  > Sec  36 | send= 19956 | ack= 19939 | p50=0.38 ms | p99=2.50 ms
+  > Sec  37 | send= 19571 | ack= 19561 | p50=16.78 ms | p99=130.60 ms
+  > Sec  38 | send=  9023 | ack=  8060 | p50=0.46 ms | p99=8.31 ms
+  > Sec  39 | send=     0 | ack=     0 | no data
+  > Sec  40 | send=     0 | ack=     0 | no data
+  > Sec  41 | send=  7014 | ack=  7637 | p50=46.60 ms | p99=3229.27 ms
+  > Sec  42 | send= 19969 | ack= 20317 | p50=0.45 ms | p99=39.45 ms
+  > Sec  43 | send= 19926 | ack= 19948 | p50=0.40 ms | p99=12.95 ms
+  > Sec  44 | send= 20000 | ack= 20000 | p50=0.39 ms | p99=4.68 ms
+  > Sec  45 | send= 19979 | ack= 19979 | p50=0.37 ms | p99=2.82 ms
+  > Sec  46 | send= 19989 | ack= 19753 | p50=0.40 ms | p99=15.60 ms
+  > Sec  47 | send= 19974 | ack= 20208 | p50=0.41 ms | p99=12.27 ms
+  > Sec  48 | send= 20000 | ack= 20001 | p50=0.36 ms | p99=12.73 ms
+  > Sec  49 | send= 20000 | ack= 19997 | p50=0.37 ms | p99=2.42 ms
+  > Sec  50 | send= 19956 | ack= 19959 | p50=0.38 ms | p99=6.04 ms
+  > Sec  51 | send= 19999 | ack= 19999 | p50=0.36 ms | p99=3.02 ms
+  > Sec  52 | send= 19988 | ack= 19991 | p50=0.39 ms | p99=12.26 ms
+  > Sec  53 | send= 19960 | ack= 19958 | p50=0.44 ms | p99=26.45 ms
+  > Sec  54 | send= 19966 | ack= 19959 | p50=0.43 ms | p99=10.58 ms
+  > Sec  55 | send= 19958 | ack= 19964 | p50=0.41 ms | p99=5.05 ms
+  > Sec  56 | send= 19989 | ack= 19988 | p50=0.39 ms | p99=17.18 ms
+  > Sec  57 | send= 19982 | ack= 19985 | p50=0.42 ms | p99=5.74 ms
+  > Sec  58 | send= 20000 | ack= 19990 | p50=0.40 ms | p99=16.90 ms
+  > Sec  59 | send= 20000 | ack= 20010 | p50=0.39 ms | p99=5.35 ms
+  > Sec  60 | send= 19983 | ack= 19981 | p50=0.47 ms | p99=5.92 ms
+  > Sec  61 | send= 19973 | ack= 19973 | p50=0.42 ms | p99=4.17 ms
+  > Sec  62 | send= 19987 | ack= 19981 | p50=0.36 ms | p99=2.54 ms
+  > Sec  63 | send= 19943 | ack= 19925 | p50=0.38 ms | p99=14.06 ms
+  > Sec  64 | send= 19970 | ack= 19989 | p50=0.39 ms | p99=8.57 ms
+  > Sec  65 | send= 19984 | ack= 19992 | p50=0.39 ms | p99=4.84 ms
+  > Sec  66 | send= 19963 | ack= 19958 | p50=0.37 ms | p99=2.65 ms
+  > Sec  67 | send= 19999 | ack= 20001 | p50=0.37 ms | p99=3.25 ms
+  > Sec  68 | send= 19736 | ack= 19729 | p50=1.98 ms | p99=36.86 ms
+  > Sec  69 | send= 19868 | ack= 19875 | p50=0.46 ms | p99=6.50 ms
+  > Sec  70 | send= 20000 | ack= 20001 | p50=0.36 ms | p99=2.38 ms
+  > Sec  71 | send= 19987 | ack= 19985 | p50=0.35 ms | p99=9.82 ms
+  > Sec  72 | send= 11393 | ack= 11378 | p50=0.82 ms | p99=478.87 ms
+  > Sec  73 | send= 19996 | ack= 20012 | p50=0.39 ms | p99=10.71 ms
+  > Sec  74 | send= 19990 | ack= 19990 | p50=0.37 ms | p99=3.04 ms
+  > Sec  75 | send= 19962 | ack= 19960 | p50=0.37 ms | p99=2.97 ms
+  > Sec  76 | send= 19990 | ack= 19993 | p50=0.35 ms | p99=3.33 ms
+  > Sec  77 | send= 20000 | ack= 20000 | p50=0.36 ms | p99=2.81 ms
+  > Sec  78 | send= 20000 | ack= 19998 | p50=0.36 ms | p99=14.10 ms
+  > Sec  79 | send= 19989 | ack= 19991 | p50=0.35 ms | p99=2.36 ms
+  > ------------------------------------------
+  > Req=1125395 | Sent/ACKwin/Eventual=18756.6/18756.5/18756.6 OP/s | App-Avg=4.99ms | App-P99=42.21ms | MapperUtil=14.85% | RawUtil=14.43% | iowait=3.90% | State=STALLED | Valid=True
+[Service] Stopping Kafka KRaft broker ...
+[Success] JSON snapshot saved: results/kafka_fs_bench_20260906_102324/results_snapshot.json
+[Success] CSV saved: results/kafka_fs_bench_20260906_102324/csv/full_results.csv
+[Success] CSV saved: results/kafka_fs_bench_20260906_102324/csv/summary_by_fs_recordsize_scenario.csv
+[Success] Summary report saved: results/kafka_fs_bench_20260906_102324/summary_report.txt
+[Service] Stopping Kafka KRaft broker ...
+
+[Setup] Resetting FEMU ZNS and mounting f2fs through kafka-zns ...
+[DM] Created /dev/mapper/kafka-zns: 50331648 sectors (24.00 GiB, logical=75% max)
+NAME      MAJ:MIN RM SIZE RO TYPE MOUNTPOINTS
+kafka-zns 253:0    0  24G  0 dm   /result/kafka-logs
+/dev/mapper/kafka-zns on /result/kafka-logs type f2fs (rw,noatime,nodiratime,lazytime,background_gc=on,nodiscard,no_heap,user_xattr,inline_xattr,acl,inline_data,inline_dentry,flush_merge,extent_cache,mode=adaptive,active_logs=6,alloc_mode=default,checkpoint_merge,fsync_mode=posix,discard_unit=block)
+[Service] Starting Kafka in KRaft mode ...
+[Service] Recreating benchmark topic ...
+[latency/measure] F2FS / scenario_a / 1024B -> target_ops=20000, fs_used=3.26%
+
+--- [MEASURE] F2FS / scenario_a / 1024B / 20000 ops ---
+  > =====================================
+  >  Kafka Filesystem Benchmark (Java API)
+  > =====================================
+  >  - Record Size: 1024 Bytes
+  >  - Target OP/s (total): 20000
+  >  - Producers: 8
+  >  - Consumer Active: false
+  >  - Dynamic Topic Creation: false (rate=5/sec)
+  >  - Warmup: 20 sec / Measurement: 60 sec / Drain timeout: 180 sec
+  >  - Max outstanding records: 1000
+  >  - Catch-up limit: records=10, lag=100ms
+  >  - Fail-fast ACK stall: 60 sec
+  >  - Send mode: ASYNC (callback-based latency measurement)
+  > [Config] BUFFER_MEMORY per producer = 16 MB
+  > [Config] linger.ms=0, batch.size=1536
+  > [Run] Producers started. warmup=20s, measure=60s, total=80s
+  > 
+  > --- [ Latency Results (ms) ] ---
+  >  (App-level: send() call -> broker ACK; reaches OS page cache)
+  >  Total Requests : 1195160
+  >  Average        : 0.75 ms
+  >  p50 (Median)   : 0.31 ms
+  >  p90            : 0.53 ms
+  >  p99            : 6.57 ms
+  >  p999           : 49.10 ms
+  >  Max            : 267.44 ms
+  > --------------------------------
+  > --- [ Throughput / Errors ] ---
+  >  Target OP/s         : 20000
+  >  Achieved OP/s       : 19919.33
+  >  Achieved/Target (%) : 99.6
+  >  Total Sent (incl. warmup) : 1534193
+  >  Send Errors               : 0
+  >  Drain Time                : 0.03 sec
+  >  Drain Completed           : true
+  >  Sent Requests             : 1195160
+  >  Sent OP/s                 : 19919.33
+  >  ACK Window Requests       : 1195149
+  >  ACK Window OP/s           : 19919.15
+  >  Eventual ACK Requests     : 1195160
+  >  Eventual ACK OP/s         : 19919.33
+  >  Outstanding at End        : 0
+  >  Failed Requests           : 0
+  >  Unresolved After Drain    : 0
+  >  Latency Dropped Samples   : 0
+  >  Backpressure Wait Count   : 19393
+  >  Backpressure Wait Time    : 30047.23 ms
+  >  Max Observed Outstanding  : 1003
+  >  Catch-up Resets           : 3819
+  >  Catch-up Records Skipped  : 64043
+  >  Max Schedule Lag          : 603.45 ms
+  >  ACK Stall Count          : 0
+  >  ACK Stall Total          : 0 sec
+  >  ACK Stall Max            : 0 sec
+  > --------------------------------
+  > 
+  > --- [ Per-second Throughput & Latency ] ---
+  > Sec   0 | send=  1595 | ack=   595 | no data
+  > Sec   1 | send=  3932 | ack=  3932 | no data
+  > Sec   2 | send=  6386 | ack=  6386 | no data
+  > Sec   3 | send=  9272 | ack=  9272 | no data
+  > Sec   4 | send= 18381 | ack= 18389 | no data
+  > Sec   5 | send= 19793 | ack= 20761 | no data
+  > Sec   6 | send= 19984 | ack= 19999 | no data
+  > Sec   7 | send= 20000 | ack= 20003 | no data
+  > Sec   8 | send= 19970 | ack= 19968 | no data
+  > Sec   9 | send= 20000 | ack= 19997 | no data
+  > Sec  10 | send= 19964 | ack= 19967 | no data
+  > Sec  11 | send= 20000 | ack= 19998 | no data
+  > Sec  12 | send= 20000 | ack= 20002 | no data
+  > Sec  13 | send= 19960 | ack= 19960 | no data
+  > Sec  14 | send= 20000 | ack= 19998 | no data
+  > Sec  15 | send= 20000 | ack= 20002 | no data
+  > Sec  16 | send= 19796 | ack= 19753 | no data
+  > Sec  17 | send= 20000 | ack= 20044 | no data
+  > Sec  18 | send= 20000 | ack= 20000 | no data
+  > Sec  19 | send= 20000 | ack= 19999 | no data
+  > Sec  20 | send= 19961 | ack= 19956 | p50=0.32 ms | p99=4.20 ms
+  > Sec  21 | send= 19761 | ack= 19765 | p50=0.38 ms | p99=36.44 ms
+  > Sec  22 | send= 20000 | ack= 20002 | p50=0.31 ms | p99=2.47 ms
+  > Sec  23 | send= 20000 | ack= 20001 | p50=0.31 ms | p99=1.51 ms
+  > Sec  24 | send= 19989 | ack= 19984 | p50=0.30 ms | p99=1.65 ms
+  > Sec  25 | send= 20000 | ack= 20005 | p50=0.29 ms | p99=0.82 ms
+  > Sec  26 | send= 20000 | ack= 20000 | p50=0.29 ms | p99=0.89 ms
+  > Sec  27 | send= 20000 | ack= 20001 | p50=0.30 ms | p99=1.67 ms
+  > Sec  28 | send= 20000 | ack= 20000 | p50=0.30 ms | p99=4.79 ms
+  > Sec  29 | send= 20000 | ack= 19999 | p50=0.30 ms | p99=1.57 ms
+  > Sec  30 | send= 20000 | ack= 19999 | p50=0.30 ms | p99=1.28 ms
+  > Sec  31 | send= 20000 | ack= 20001 | p50=0.31 ms | p99=1.94 ms
+  > Sec  32 | send= 20000 | ack= 19999 | p50=0.30 ms | p99=1.08 ms
+  > Sec  33 | send= 20000 | ack= 20000 | p50=0.31 ms | p99=9.12 ms
+  > Sec  34 | send= 20000 | ack= 20002 | p50=0.31 ms | p99=0.96 ms
+  > Sec  35 | send= 20000 | ack= 19998 | p50=0.31 ms | p99=0.99 ms
+  > Sec  36 | send= 20000 | ack= 20001 | p50=0.30 ms | p99=1.14 ms
+  > Sec  37 | send= 20000 | ack= 19998 | p50=0.30 ms | p99=1.74 ms
+  > Sec  38 | send= 20000 | ack= 20002 | p50=0.30 ms | p99=4.80 ms
+  > Sec  39 | send= 20000 | ack= 20000 | p50=0.31 ms | p99=0.91 ms
+  > Sec  40 | send= 20000 | ack= 19999 | p50=0.31 ms | p99=2.29 ms
+  > Sec  41 | send= 20000 | ack= 20000 | p50=0.31 ms | p99=3.29 ms
+  > Sec  42 | send= 20000 | ack= 19913 | p50=0.32 ms | p99=1.65 ms
+  > Sec  43 | send= 20000 | ack= 20088 | p50=0.31 ms | p99=9.29 ms
+  > Sec  44 | send= 20000 | ack= 19999 | p50=0.31 ms | p99=1.83 ms
+  > Sec  45 | send= 20000 | ack= 20002 | p50=0.30 ms | p99=0.93 ms
+  > Sec  46 | send= 20000 | ack= 19999 | p50=0.30 ms | p99=0.88 ms
+  > Sec  47 | send= 20000 | ack= 19995 | p50=0.31 ms | p99=1.80 ms
+  > Sec  48 | send= 19987 | ack= 19991 | p50=0.31 ms | p99=10.14 ms
+  > Sec  49 | send= 20000 | ack= 20002 | p50=0.31 ms | p99=1.56 ms
+  > Sec  50 | send= 20000 | ack= 19999 | p50=0.32 ms | p99=1.39 ms
+  > Sec  51 | send= 20000 | ack= 20000 | p50=0.30 ms | p99=2.30 ms
+  > Sec  52 | send= 19987 | ack= 19989 | p50=0.30 ms | p99=1.02 ms
+  > Sec  53 | send= 20001 | ack= 19999 | p50=0.31 ms | p99=20.48 ms
+  > Sec  54 | send= 20000 | ack= 20001 | p50=0.30 ms | p99=0.95 ms
+  > Sec  55 | send= 19999 | ack= 19973 | p50=0.31 ms | p99=1.14 ms
+  > Sec  56 | send= 20001 | ack= 20025 | p50=0.31 ms | p99=1.13 ms
+  > Sec  57 | send= 20000 | ack= 19999 | p50=0.30 ms | p99=1.27 ms
+  > Sec  58 | send= 19999 | ack= 20001 | p50=0.30 ms | p99=4.49 ms
+  > Sec  59 | send= 20001 | ack= 20002 | p50=0.29 ms | p99=0.77 ms
+  > Sec  60 | send= 19999 | ack= 20000 | p50=0.29 ms | p99=1.44 ms
+  > Sec  61 | send= 20001 | ack= 20000 | p50=0.29 ms | p99=0.77 ms
+  > Sec  62 | send= 19917 | ack= 19910 | p50=0.32 ms | p99=9.38 ms
+  > Sec  63 | send= 19933 | ack= 19937 | p50=0.36 ms | p99=7.96 ms
+  > Sec  64 | send= 20000 | ack= 20002 | p50=0.31 ms | p99=1.67 ms
+  > Sec  65 | send= 20001 | ack= 20001 | p50=0.31 ms | p99=0.84 ms
+  > Sec  66 | send= 19999 | ack= 19998 | p50=0.30 ms | p99=0.96 ms
+  > Sec  67 | send= 19985 | ack= 19916 | p50=0.32 ms | p99=8.87 ms
+  > Sec  68 | send= 19945 | ack= 20012 | p50=0.50 ms | p99=15.08 ms
+  > Sec  69 | send= 20000 | ack= 20002 | p50=0.31 ms | p99=1.43 ms
+  > Sec  70 | send= 15958 | ack= 14965 | p50=0.31 ms | p99=1.90 ms
+  > Sec  71 | send= 19760 | ack= 20751 | p50=0.32 ms | p99=261.19 ms
+  > Sec  72 | send= 20000 | ack= 20001 | p50=0.30 ms | p99=1.02 ms
+  > Sec  73 | send= 20000 | ack= 20000 | p50=0.31 ms | p99=8.51 ms
+  > Sec  74 | send= 19987 | ack= 19990 | p50=0.31 ms | p99=3.49 ms
+  > Sec  75 | send= 20000 | ack= 20000 | p50=0.30 ms | p99=1.10 ms
+  > Sec  76 | send= 19989 | ack= 19989 | p50=0.31 ms | p99=2.69 ms
+  > Sec  77 | send= 20000 | ack= 19998 | p50=0.29 ms | p99=2.04 ms
+  > Sec  78 | send= 19999 | ack= 20000 | p50=0.31 ms | p99=4.26 ms
+  > Sec  79 | send= 20001 | ack= 19996 | p50=0.31 ms | p99=1.55 ms
+  > ------------------------------------------
+  > Req=1195160 | Sent/ACKwin/Eventual=19919.3/19919.2/19919.3 OP/s | App-Avg=0.75ms | App-P99=6.57ms | MapperUtil=8.05% | RawUtil=9.75% | iowait=1.20% | State=BACKPRESSURED | Valid=True
+[Service] Stopping Kafka KRaft broker ...
+[Success] JSON snapshot saved: results/kafka_fs_bench_20260906_102324/results_snapshot.json
+[Success] CSV saved: results/kafka_fs_bench_20260906_102324/csv/full_results.csv
+[Success] CSV saved: results/kafka_fs_bench_20260906_102324/csv/summary_by_fs_recordsize_scenario.csv
+[Success] Summary report saved: results/kafka_fs_bench_20260906_102324/summary_report.txt
+[Service] Stopping Kafka KRaft broker ...
+
+[Setup] Resetting FEMU ZNS and mounting f2fs through kafka-zns ...
+[DM] Created /dev/mapper/kafka-zns: 50331648 sectors (24.00 GiB, logical=75% max)
+NAME      MAJ:MIN RM SIZE RO TYPE MOUNTPOINTS
+kafka-zns 253:0    0  24G  0 dm   /result/kafka-logs
+/dev/mapper/kafka-zns on /result/kafka-logs type f2fs (rw,noatime,nodiratime,lazytime,background_gc=on,nodiscard,no_heap,user_xattr,inline_xattr,acl,inline_data,inline_dentry,flush_merge,extent_cache,mode=adaptive,active_logs=6,alloc_mode=default,checkpoint_merge,fsync_mode=posix,discard_unit=block)
+[Service] Starting Kafka in KRaft mode ...
+[Service] Recreating benchmark topic ...
+[latency/measure] F2FS / scenario_b / 1024B -> target_ops=20000, fs_used=3.26%
+
+--- [MEASURE] F2FS / scenario_b / 1024B / 20000 ops ---
+  > =====================================
+  >  Kafka Filesystem Benchmark (Java API)
+  > =====================================
+  >  - Record Size: 1024 Bytes
+  >  - Target OP/s (total): 20000
+  >  - Producers: 8
+  >  - Consumer Active: true
+  >  - Dynamic Topic Creation: false (rate=5/sec)
+  >  - Warmup: 20 sec / Measurement: 60 sec / Drain timeout: 180 sec
+  >  - Max outstanding records: 1000
+  >  - Catch-up limit: records=10, lag=100ms
+  >  - Fail-fast ACK stall: 60 sec
+  >  - Send mode: ASYNC (callback-based latency measurement)
+  > [Config] BUFFER_MEMORY per producer = 16 MB
+  > [Config] linger.ms=0, batch.size=1536
+  > [Run] Producers started. warmup=20s, measure=60s, total=80s
+  > [Consumer] consumed 1521386 records
+  > 
+  > --- [ Latency Results (ms) ] ---
+  >  (App-level: send() call -> broker ACK; reaches OS page cache)
+  >  Total Requests : 1197727
+  >  Average        : 0.90 ms
+  >  p50 (Median)   : 0.37 ms
+  >  p90            : 1.05 ms
+  >  p99            : 11.98 ms
+  >  p999           : 70.68 ms
+  >  Max            : 89.15 ms
+  > --------------------------------
+  > --- [ Throughput / Errors ] ---
+  >  Target OP/s         : 20000
+  >  Achieved OP/s       : 19962.12
+  >  Achieved/Target (%) : 99.8
+  >  Total Sent (incl. warmup) : 1521386
+  >  Send Errors               : 0
+  >  Drain Time                : 0.02 sec
+  >  Drain Completed           : true
+  >  Sent Requests             : 1197727
+  >  Sent OP/s                 : 19962.12
+  >  ACK Window Requests       : 1197722
+  >  ACK Window OP/s           : 19962.03
+  >  Eventual ACK Requests     : 1197727
+  >  Eventual ACK OP/s         : 19962.12
+  >  Outstanding at End        : 0
+  >  Failed Requests           : 0
+  >  Unresolved After Drain    : 0
+  >  Latency Dropped Samples   : 0
+  >  Backpressure Wait Count   : 26075
+  >  Backpressure Wait Time    : 38691.01 ms
+  >  Max Observed Outstanding  : 1003
+  >  Catch-up Resets           : 4229
+  >  Catch-up Records Skipped  : 76595
+  >  Max Schedule Lag          : 514.36 ms
+  >  ACK Stall Count          : 0
+  >  ACK Stall Total          : 0 sec
+  >  ACK Stall Max            : 0 sec
+  > --- [ Consumer Integrity ] ---
+  >  Consumer Records         : 1521386
+  >  Producer ACKed Records   : 1521386
+  >  Consumer Record Delta    : 0
+  >  Consumer Drain Completed : true
+  >  Malformed Headers        : 0
+  >  Payload CRC Errors       : 0
+  >  Sequence Gaps            : 0
+  >  Duplicate Records        : 0
+  >  Out-of-order Records     : 0
+  > --------------------------------
+  > --------------------------------
+  > 
+  > --- [ Per-second Throughput & Latency ] ---
+  > Sec   0 | send=  1710 | ack=   710 | no data
+  > Sec   1 | send=  2691 | ack=  2691 | no data
+  > Sec   2 | send=  4150 | ack=  4150 | no data
+  > Sec   3 | send=  6367 | ack=  6367 | no data
+  > Sec   4 | send= 15618 | ack= 16270 | no data
+  > Sec   5 | send= 19176 | ack= 19244 | no data
+  > Sec   6 | send= 19709 | ack= 18990 | no data
+  > Sec   7 | send= 15491 | ack= 15587 | no data
+  > Sec   8 | send= 19309 | ack= 20138 | no data
+  > Sec   9 | send= 19831 | ack= 19901 | no data
+  > Sec  10 | send= 19949 | ack= 19946 | no data
+  > Sec  11 | send= 19920 | ack= 19917 | no data
+  > Sec  12 | send= 20000 | ack= 19994 | no data
+  > Sec  13 | send= 19954 | ack= 19916 | no data
+  > Sec  14 | send= 19947 | ack= 19994 | no data
+  > Sec  15 | send= 19979 | ack= 19979 | no data
+  > Sec  16 | send= 19954 | ack= 19944 | no data
+  > Sec  17 | send= 19955 | ack= 19965 | no data
+  > Sec  18 | send= 19960 | ack= 19951 | no data
+  > Sec  19 | send= 19989 | ack= 19996 | no data
+  > Sec  20 | send= 19916 | ack= 19919 | p50=0.37 ms | p99=18.67 ms
+  > Sec  21 | send= 19977 | ack= 19973 | p50=0.35 ms | p99=9.79 ms
+  > Sec  22 | send= 19924 | ack= 19925 | p50=0.34 ms | p99=7.25 ms
+  > Sec  23 | send= 19973 | ack= 19972 | p50=0.36 ms | p99=11.55 ms
+  > Sec  24 | send= 19986 | ack= 19992 | p50=0.34 ms | p99=3.25 ms
+  > Sec  25 | send= 20000 | ack= 19979 | p50=0.34 ms | p99=4.89 ms
+  > Sec  26 | send= 20000 | ack= 19889 | p50=0.38 ms | p99=6.30 ms
+  > Sec  27 | send= 19963 | ack= 20091 | p50=0.40 ms | p99=16.37 ms
+  > Sec  28 | send= 19972 | ack= 19973 | p50=0.36 ms | p99=4.11 ms
+  > Sec  29 | send= 20000 | ack= 19992 | p50=0.37 ms | p99=3.82 ms
+  > Sec  30 | send= 20000 | ack= 20009 | p50=0.35 ms | p99=2.31 ms
+  > Sec  31 | send= 20000 | ack= 19998 | p50=0.34 ms | p99=3.07 ms
+  > Sec  32 | send= 19671 | ack= 19663 | p50=0.73 ms | p99=73.11 ms
+  > Sec  33 | send= 19944 | ack= 19944 | p50=0.62 ms | p99=21.41 ms
+  > Sec  34 | send= 20000 | ack= 20008 | p50=0.36 ms | p99=2.62 ms
+  > Sec  35 | send= 19232 | ack= 19235 | p50=0.43 ms | p99=85.04 ms
+  > Sec  36 | send= 20000 | ack= 19999 | p50=0.33 ms | p99=3.21 ms
+  > Sec  37 | send= 20000 | ack= 20000 | p50=0.34 ms | p99=3.87 ms
+  > Sec  38 | send= 19927 | ack= 19923 | p50=0.36 ms | p99=12.11 ms
+  > Sec  39 | send= 19963 | ack= 19966 | p50=0.35 ms | p99=3.79 ms
+  > Sec  40 | send= 20000 | ack= 19999 | p50=0.35 ms | p99=15.27 ms
+  > Sec  41 | send= 19977 | ack= 19978 | p50=0.36 ms | p99=4.30 ms
+  > Sec  42 | send= 19937 | ack= 19936 | p50=0.36 ms | p99=9.42 ms
+  > Sec  43 | send= 19989 | ack= 19990 | p50=0.35 ms | p99=6.58 ms
+  > Sec  44 | send= 20000 | ack= 19974 | p50=0.38 ms | p99=3.34 ms
+  > Sec  45 | send= 19988 | ack= 20012 | p50=0.37 ms | p99=3.05 ms
+  > Sec  46 | send= 19939 | ack= 19942 | p50=0.40 ms | p99=18.55 ms
+  > Sec  47 | send= 19986 | ack= 19982 | p50=0.36 ms | p99=2.67 ms
+  > Sec  48 | send= 19970 | ack= 19969 | p50=0.41 ms | p99=10.02 ms
+  > Sec  49 | send= 19987 | ack= 19985 | p50=0.39 ms | p99=3.84 ms
+  > Sec  50 | send= 19989 | ack= 19995 | p50=0.40 ms | p99=12.12 ms
+  > Sec  51 | send= 20000 | ack= 20000 | p50=0.37 ms | p99=2.62 ms
+  > Sec  52 | send= 19984 | ack= 19984 | p50=0.37 ms | p99=3.21 ms
+  > Sec  53 | send= 19976 | ack= 19975 | p50=0.37 ms | p99=3.93 ms
+  > Sec  54 | send= 19984 | ack= 19987 | p50=0.36 ms | p99=4.68 ms
+  > Sec  55 | send= 20000 | ack= 19998 | p50=0.37 ms | p99=2.28 ms
+  > Sec  56 | send= 19976 | ack= 19978 | p50=0.37 ms | p99=6.70 ms
+  > Sec  57 | send= 19920 | ack= 19919 | p50=0.34 ms | p99=2.05 ms
+  > Sec  58 | send= 19956 | ack= 19955 | p50=0.36 ms | p99=20.67 ms
+  > Sec  59 | send= 20000 | ack= 19998 | p50=0.34 ms | p99=2.07 ms
+  > Sec  60 | send= 20000 | ack= 20005 | p50=0.34 ms | p99=3.47 ms
+  > Sec  61 | send= 20000 | ack= 19997 | p50=0.35 ms | p99=5.07 ms
+  > Sec  62 | send= 19927 | ack= 19924 | p50=0.35 ms | p99=2.98 ms
+  > Sec  63 | send= 19979 | ack= 19968 | p50=0.39 ms | p99=10.69 ms
+  > Sec  64 | send= 19972 | ack= 19986 | p50=0.38 ms | p99=8.05 ms
+  > Sec  65 | send= 19968 | ack= 19968 | p50=0.37 ms | p99=5.77 ms
+  > Sec  66 | send= 20000 | ack= 20001 | p50=0.35 ms | p99=2.79 ms
+  > Sec  67 | send= 20000 | ack= 20000 | p50=0.39 ms | p99=2.29 ms
+  > Sec  68 | send= 19976 | ack= 19977 | p50=0.40 ms | p99=12.77 ms
+  > Sec  69 | send= 20000 | ack= 19996 | p50=0.37 ms | p99=2.40 ms
+  > Sec  70 | send= 19985 | ack= 19988 | p50=0.35 ms | p99=2.62 ms
+  > Sec  71 | send= 19976 | ack= 19972 | p50=0.35 ms | p99=3.89 ms
+  > Sec  72 | send= 19962 | ack= 19966 | p50=0.36 ms | p99=2.26 ms
+  > Sec  73 | send= 20000 | ack= 19999 | p50=0.37 ms | p99=7.22 ms
+  > Sec  74 | send= 20000 | ack= 20005 | p50=0.35 ms | p99=1.76 ms
+  > Sec  75 | send= 20000 | ack= 19996 | p50=0.35 ms | p99=4.82 ms
+  > Sec  76 | send= 20000 | ack= 19999 | p50=0.35 ms | p99=2.91 ms
+  > Sec  77 | send= 20000 | ack= 19994 | p50=0.36 ms | p99=3.10 ms
+  > Sec  78 | send= 19976 | ack= 19986 | p50=0.39 ms | p99=10.11 ms
+  > Sec  79 | send= 20000 | ack= 19998 | p50=0.35 ms | p99=3.72 ms
+  > ------------------------------------------
+  > Req=1197727 | Sent/ACKwin/Eventual=19962.1/19962.0/19962.1 OP/s | App-Avg=0.90ms | App-P99=11.98ms | MapperUtil=6.44% | RawUtil=7.10% | iowait=0.48% | State=BACKPRESSURED | Valid=True
+[Service] Stopping Kafka KRaft broker ...
+[Success] JSON snapshot saved: results/kafka_fs_bench_20260906_102324/results_snapshot.json
+[Success] CSV saved: results/kafka_fs_bench_20260906_102324/csv/full_results.csv
+[Success] CSV saved: results/kafka_fs_bench_20260906_102324/csv/summary_by_fs_recordsize_scenario.csv
+[Success] Summary report saved: results/kafka_fs_bench_20260906_102324/summary_report.txt
+[Service] Stopping Kafka KRaft broker ...
+
+[Setup] Resetting FEMU ZNS and mounting ext4 through kafka-zns ...
+[DM] Created /dev/mapper/kafka-zns: 50331648 sectors (24.00 GiB, logical=75% max)
+NAME      MAJ:MIN RM SIZE RO TYPE MOUNTPOINTS
+kafka-zns 253:0    0  24G  0 dm   /result/kafka-logs
+/dev/mapper/kafka-zns on /result/kafka-logs type ext4 (rw,noatime,nodiratime)
+[Service] Starting Kafka in KRaft mode ...
+[Service] Recreating benchmark topic ...
+[latency/measure] EXT4 / scenario_a / 10240B -> target_ops=2000, fs_used=0.00%
+
+--- [MEASURE] EXT4 / scenario_a / 10240B / 2000 ops ---
+  > =====================================
+  >  Kafka Filesystem Benchmark (Java API)
+  > =====================================
+  >  - Record Size: 10240 Bytes
+  >  - Target OP/s (total): 2000
+  >  - Producers: 8
+  >  - Consumer Active: false
+  >  - Dynamic Topic Creation: false (rate=5/sec)
+  >  - Warmup: 20 sec / Measurement: 60 sec / Drain timeout: 180 sec
+  >  - Max outstanding records: 1000
+  >  - Catch-up limit: records=10, lag=100ms
+  >  - Fail-fast ACK stall: 60 sec
+  >  - Send mode: ASYNC (callback-based latency measurement)
+  > [Config] BUFFER_MEMORY per producer = 16 MB
+  > [Config] linger.ms=0, batch.size=10752
+  > [Run] Producers started. warmup=20s, measure=60s, total=80s
+  > 
+  > --- [ Latency Results (ms) ] ---
+  >  (App-level: send() call -> broker ACK; reaches OS page cache)
+  >  Total Requests : 116881
+  >  Average        : 24.35 ms
+  >  p50 (Median)   : 0.56 ms
+  >  p90            : 0.75 ms
+  >  p99            : 1071.28 ms
+  >  p999           : 1949.94 ms
+  >  Max            : 2006.84 ms
+  > --------------------------------
+  > --- [ Throughput / Errors ] ---
+  >  Target OP/s         : 2000
+  >  Achieved OP/s       : 1948.02
+  >  Achieved/Target (%) : 97.4
+  >  Total Sent (incl. warmup) : 155801
+  >  Send Errors               : 0
+  >  Drain Time                : 0.02 sec
+  >  Drain Completed           : true
+  >  Sent Requests             : 116881
+  >  Sent OP/s                 : 1948.02
+  >  ACK Window Requests       : 116878
+  >  ACK Window OP/s           : 1947.97
+  >  Eventual ACK Requests     : 116881
+  >  Eventual ACK OP/s         : 1948.02
+  >  Outstanding at End        : 0
+  >  Failed Requests           : 0
+  >  Unresolved After Drain    : 0
+  >  Latency Dropped Samples   : 0
+  >  Backpressure Wait Count   : 25
+  >  Backpressure Wait Time    : 12562.51 ms
+  >  Max Observed Outstanding  : 1001
+  >  Catch-up Resets           : 24
+  >  Catch-up Records Skipped  : 4191
+  >  Max Schedule Lag          : 1492.01 ms
+  >  ACK Stall Count          : 1
+  >  ACK Stall Total          : 1 sec
+  >  ACK Stall Max            : 1 sec
+  > --------------------------------
+  > 
+  > --- [ Per-second Throughput & Latency ] ---
+  > Sec   0 | send=   920 | ack=   711 | no data
+  > Sec   1 | send=  2000 | ack=  2209 | no data
+  > Sec   2 | send=  2000 | ack=  2000 | no data
+  > Sec   3 | send=  2000 | ack=  2000 | no data
+  > Sec   4 | send=  2000 | ack=  2000 | no data
+  > Sec   5 | send=  2000 | ack=  2000 | no data
+  > Sec   6 | send=  2000 | ack=  2000 | no data
+  > Sec   7 | send=  2000 | ack=  2000 | no data
+  > Sec   8 | send=  2000 | ack=  2000 | no data
+  > Sec   9 | send=  2000 | ack=  2000 | no data
+  > Sec  10 | send=  2000 | ack=  2000 | no data
+  > Sec  11 | send=  2000 | ack=  2000 | no data
+  > Sec  12 | send=  2000 | ack=  2000 | no data
+  > Sec  13 | send=  2000 | ack=  2000 | no data
+  > Sec  14 | send=  2000 | ack=  2000 | no data
+  > Sec  15 | send=  2000 | ack=  2000 | no data
+  > Sec  16 | send=  2000 | ack=  2000 | no data
+  > Sec  17 | send=  2000 | ack=  2000 | no data
+  > Sec  18 | send=  2000 | ack=  2000 | no data
+  > Sec  19 | send=  2000 | ack=  2000 | no data
+  > Sec  20 | send=  2000 | ack=  2000 | p50=0.75 ms | p99=1.03 ms
+  > Sec  21 | send=  2000 | ack=  2000 | p50=0.71 ms | p99=1.65 ms
+  > Sec  22 | send=  2000 | ack=  2000 | p50=0.69 ms | p99=0.93 ms
+  > Sec  23 | send=  2000 | ack=  2000 | p50=0.69 ms | p99=6.60 ms
+  > Sec  24 | send=  2000 | ack=  2000 | p50=0.68 ms | p99=0.94 ms
+  > Sec  25 | send=  2000 | ack=  2000 | p50=0.67 ms | p99=0.93 ms
+  > Sec  26 | send=  2000 | ack=  2000 | p50=0.65 ms | p99=1.02 ms
+  > Sec  27 | send=  2000 | ack=  2000 | p50=0.64 ms | p99=1.10 ms
+  > Sec  28 | send=  2000 | ack=  2000 | p50=0.65 ms | p99=3.05 ms
+  > Sec  29 | send=  2000 | ack=  2000 | p50=0.63 ms | p99=0.94 ms
+  > Sec  30 | send=  2000 | ack=  2000 | p50=0.62 ms | p99=1.18 ms
+  > Sec  31 | send=  2000 | ack=  2000 | p50=0.62 ms | p99=1.15 ms
+  > Sec  32 | send=  2000 | ack=  1584 | p50=0.60 ms | p99=1.22 ms
+  > Sec  33 | send=  1862 | ack=  2276 | p50=185.34 ms | p99=1207.95 ms
+  > Sec  34 | send=  2000 | ack=  1094 | p50=0.51 ms | p99=2.85 ms
+  > Sec  35 | send=    92 | ack=     0 | no data
+  > Sec  36 | send=   927 | ack=  1921 | p50=1569.82 ms | p99=1991.60 ms
+  > Sec  37 | send=  2000 | ack=  2003 | p50=0.56 ms | p99=0.98 ms
+  > Sec  38 | send=  2000 | ack=  2000 | p50=0.55 ms | p99=4.46 ms
+  > Sec  39 | send=  2000 | ack=  1999 | p50=0.55 ms | p99=0.98 ms
+  > Sec  40 | send=  2000 | ack=  2001 | p50=0.54 ms | p99=1.03 ms
+  > Sec  41 | send=  2000 | ack=  1998 | p50=0.53 ms | p99=0.83 ms
+  > Sec  42 | send=  2000 | ack=  2002 | p50=0.53 ms | p99=0.87 ms
+  > Sec  43 | send=  2000 | ack=  2000 | p50=0.53 ms | p99=4.84 ms
+  > Sec  44 | send=  1999 | ack=  1998 | p50=0.54 ms | p99=0.86 ms
+  > Sec  45 | send=  2001 | ack=  2002 | p50=0.54 ms | p99=0.81 ms
+  > Sec  46 | send=  2000 | ack=  2000 | p50=0.53 ms | p99=0.81 ms
+  > Sec  47 | send=  2000 | ack=  2000 | p50=0.53 ms | p99=0.81 ms
+  > Sec  48 | send=  2000 | ack=  2000 | p50=0.53 ms | p99=5.39 ms
+  > Sec  49 | send=  2000 | ack=  2000 | p50=0.52 ms | p99=1.00 ms
+  > Sec  50 | send=  2000 | ack=  2000 | p50=0.52 ms | p99=0.80 ms
+  > Sec  51 | send=  2000 | ack=  2000 | p50=0.53 ms | p99=0.83 ms
+  > Sec  52 | send=  2000 | ack=  2000 | p50=0.52 ms | p99=0.80 ms
+  > Sec  53 | send=  2000 | ack=  2000 | p50=0.53 ms | p99=8.75 ms
+  > Sec  54 | send=  2000 | ack=  2000 | p50=0.52 ms | p99=0.81 ms
+  > Sec  55 | send=  2000 | ack=  2000 | p50=0.52 ms | p99=0.86 ms
+  > Sec  56 | send=  2000 | ack=  2000 | p50=0.52 ms | p99=0.81 ms
+  > Sec  57 | send=  2000 | ack=  2000 | p50=0.52 ms | p99=0.77 ms
+  > Sec  58 | send=  2000 | ack=  2000 | p50=0.52 ms | p99=4.47 ms
+  > Sec  59 | send=  2000 | ack=  2000 | p50=0.52 ms | p99=0.80 ms
+  > Sec  60 | send=  2000 | ack=  2000 | p50=0.52 ms | p99=0.79 ms
+  > Sec  61 | send=  2000 | ack=  2000 | p50=0.52 ms | p99=0.80 ms
+  > Sec  62 | send=  2000 | ack=  2000 | p50=0.52 ms | p99=1.17 ms
+  > Sec  63 | send=  2000 | ack=  2000 | p50=0.52 ms | p99=8.43 ms
+  > Sec  64 | send=  2000 | ack=  2000 | p50=0.51 ms | p99=0.81 ms
+  > Sec  65 | send=  2000 | ack=  2001 | p50=0.48 ms | p99=1.07 ms
+  > Sec  66 | send=  2000 | ack=  1999 | p50=0.48 ms | p99=1.01 ms
+  > Sec  67 | send=  2000 | ack=  2000 | p50=0.53 ms | p99=0.87 ms
+  > Sec  68 | send=  2000 | ack=  1488 | p50=0.59 ms | p99=541.53 ms
+  > Sec  69 | send=  2000 | ack=  2512 | p50=0.57 ms | p99=416.48 ms
+  > Sec  70 | send=  2000 | ack=  2000 | p50=0.53 ms | p99=0.84 ms
+  > Sec  71 | send=  2000 | ack=  2000 | p50=0.53 ms | p99=0.79 ms
+  > Sec  72 | send=  2000 | ack=  2000 | p50=0.53 ms | p99=0.79 ms
+  > Sec  73 | send=  2000 | ack=  2000 | p50=0.54 ms | p99=5.17 ms
+  > Sec  74 | send=  2000 | ack=  2000 | p50=0.54 ms | p99=0.80 ms
+  > Sec  75 | send=  2000 | ack=  2000 | p50=0.54 ms | p99=1.11 ms
+  > Sec  76 | send=  2000 | ack=  2000 | p50=0.53 ms | p99=0.81 ms
+  > Sec  77 | send=  2000 | ack=  2000 | p50=0.53 ms | p99=0.82 ms
+  > Sec  78 | send=  2000 | ack=  2000 | p50=0.54 ms | p99=4.68 ms
+  > Sec  79 | send=  2000 | ack=  2000 | p50=0.53 ms | p99=0.81 ms
+  > ------------------------------------------
+  > Req=116881 | Sent/ACKwin/Eventual=1948.0/1948.0/1948.0 OP/s | App-Avg=24.35ms | App-P99=1071.28ms | MapperUtil=14.37% | RawUtil=16.51% | iowait=3.12% | State=BACKPRESSURED | Valid=True
+[Service] Stopping Kafka KRaft broker ...
+[Success] JSON snapshot saved: results/kafka_fs_bench_20260906_102324/results_snapshot.json
+[Success] CSV saved: results/kafka_fs_bench_20260906_102324/csv/full_results.csv
+[Success] CSV saved: results/kafka_fs_bench_20260906_102324/csv/summary_by_fs_recordsize_scenario.csv
+[Success] Summary report saved: results/kafka_fs_bench_20260906_102324/summary_report.txt
+[Service] Stopping Kafka KRaft broker ...
+
+[Setup] Resetting FEMU ZNS and mounting ext4 through kafka-zns ...
+[DM] Created /dev/mapper/kafka-zns: 50331648 sectors (24.00 GiB, logical=75% max)
+NAME      MAJ:MIN RM SIZE RO TYPE MOUNTPOINTS
+kafka-zns 253:0    0  24G  0 dm   /result/kafka-logs
+/dev/mapper/kafka-zns on /result/kafka-logs type ext4 (rw,noatime,nodiratime)
+[Service] Starting Kafka in KRaft mode ...
+[Service] Recreating benchmark topic ...
+[latency/measure] EXT4 / scenario_b / 10240B -> target_ops=2000, fs_used=0.00%
+
+--- [MEASURE] EXT4 / scenario_b / 10240B / 2000 ops ---
+  > =====================================
+  >  Kafka Filesystem Benchmark (Java API)
+  > =====================================
+  >  - Record Size: 10240 Bytes
+  >  - Target OP/s (total): 2000
+  >  - Producers: 8
+  >  - Consumer Active: true
+  >  - Dynamic Topic Creation: false (rate=5/sec)
+  >  - Warmup: 20 sec / Measurement: 60 sec / Drain timeout: 180 sec
+  >  - Max outstanding records: 1000
+  >  - Catch-up limit: records=10, lag=100ms
+  >  - Fail-fast ACK stall: 60 sec
+  >  - Send mode: ASYNC (callback-based latency measurement)
+  > [Config] BUFFER_MEMORY per producer = 16 MB
+  > [Config] linger.ms=0, batch.size=10752
+  > [Run] Producers started. warmup=20s, measure=60s, total=80s
+  > [Consumer] consumed 158962 records
+  > 
+  > --- [ Latency Results (ms) ] ---
+  >  (App-level: send() call -> broker ACK; reaches OS page cache)
+  >  Total Requests : 120000
+  >  Average        : 2.23 ms
+  >  p50 (Median)   : 0.54 ms
+  >  p90            : 0.69 ms
+  >  p99            : 5.50 ms
+  >  p999           : 374.00 ms
+  >  Max            : 434.57 ms
+  > --------------------------------
+  > --- [ Throughput / Errors ] ---
+  >  Target OP/s         : 2000
+  >  Achieved OP/s       : 2000.00
+  >  Achieved/Target (%) : 100.0
+  >  Total Sent (incl. warmup) : 158962
+  >  Send Errors               : 0
+  >  Drain Time                : 0.04 sec
+  >  Drain Completed           : true
+  >  Sent Requests             : 120000
+  >  Sent OP/s                 : 2000.00
+  >  ACK Window Requests       : 120000
+  >  ACK Window OP/s           : 2000.00
+  >  Eventual ACK Requests     : 120000
+  >  Eventual ACK OP/s         : 2000.00
+  >  Outstanding at End        : 0
+  >  Failed Requests           : 0
+  >  Unresolved After Drain    : 0
+  >  Latency Dropped Samples   : 0
+  >  Backpressure Wait Count   : 0
+  >  Backpressure Wait Time    : 0.00 ms
+  >  Max Observed Outstanding  : 763
+  >  Catch-up Resets           : 8
+  >  Catch-up Records Skipped  : 1037
+  >  Max Schedule Lag          : 525.93 ms
+  >  ACK Stall Count          : 0
+  >  ACK Stall Total          : 0 sec
+  >  ACK Stall Max            : 0 sec
+  > --- [ Consumer Integrity ] ---
+  >  Consumer Records         : 158962
+  >  Producer ACKed Records   : 158962
+  >  Consumer Record Delta    : 0
+  >  Consumer Drain Completed : true
+  >  Malformed Headers        : 0
+  >  Payload CRC Errors       : 0
+  >  Sequence Gaps            : 0
+  >  Duplicate Records        : 0
+  >  Out-of-order Records     : 0
+  > --------------------------------
+  > --------------------------------
+  > 
+  > --- [ Per-second Throughput & Latency ] ---
+  > Sec   0 | send=   962 | ack=   535 | no data
+  > Sec   1 | send=  2000 | ack=  2105 | no data
+  > Sec   2 | send=  2000 | ack=  2322 | no data
+  > Sec   3 | send=  2000 | ack=  2000 | no data
+  > Sec   4 | send=  2000 | ack=  2000 | no data
+  > Sec   5 | send=  2000 | ack=  2000 | no data
+  > Sec   6 | send=  2000 | ack=  1796 | no data
+  > Sec   7 | send=  2000 | ack=  2203 | no data
+  > Sec   8 | send=  2000 | ack=  2001 | no data
+  > Sec   9 | send=  2000 | ack=  2000 | no data
+  > Sec  10 | send=  2000 | ack=  2000 | no data
+  > Sec  11 | send=  2000 | ack=  2000 | no data
+  > Sec  12 | send=  2000 | ack=  2000 | no data
+  > Sec  13 | send=  2000 | ack=  2000 | no data
+  > Sec  14 | send=  2000 | ack=  2000 | no data
+  > Sec  15 | send=  2000 | ack=  2000 | no data
+  > Sec  16 | send=  2000 | ack=  2000 | no data
+  > Sec  17 | send=  2000 | ack=  2000 | no data
+  > Sec  18 | send=  2000 | ack=  2000 | no data
+  > Sec  19 | send=  2000 | ack=  2000 | no data
+  > Sec  20 | send=  2000 | ack=  2000 | p50=0.58 ms | p99=0.88 ms
+  > Sec  21 | send=  2000 | ack=  2000 | p50=0.58 ms | p99=0.85 ms
+  > Sec  22 | send=  2000 | ack=  2000 | p50=0.57 ms | p99=0.89 ms
+  > Sec  23 | send=  2000 | ack=  2000 | p50=0.54 ms | p99=7.04 ms
+  > Sec  24 | send=  2000 | ack=  2000 | p50=0.54 ms | p99=0.80 ms
+  > Sec  25 | send=  2000 | ack=  2000 | p50=0.54 ms | p99=0.80 ms
+  > Sec  26 | send=  2000 | ack=  2000 | p50=0.54 ms | p99=0.83 ms
+  > Sec  27 | send=  2000 | ack=  2000 | p50=0.54 ms | p99=0.80 ms
+  > Sec  28 | send=  2000 | ack=  2000 | p50=0.52 ms | p99=2.87 ms
+  > Sec  29 | send=  2000 | ack=  2000 | p50=0.52 ms | p99=0.76 ms
+  > Sec  30 | send=  2000 | ack=  2000 | p50=0.52 ms | p99=0.78 ms
+  > Sec  31 | send=  2000 | ack=  2000 | p50=0.52 ms | p99=0.77 ms
+  > Sec  32 | send=  2000 | ack=  2000 | p50=0.52 ms | p99=0.80 ms
+  > Sec  33 | send=  2000 | ack=  2000 | p50=0.70 ms | p99=425.73 ms
+  > Sec  34 | send=  2000 | ack=  2000 | p50=0.56 ms | p99=0.83 ms
+  > Sec  35 | send=  2000 | ack=  2000 | p50=0.54 ms | p99=0.84 ms
+  > Sec  36 | send=  2000 | ack=  2000 | p50=0.53 ms | p99=0.78 ms
+  > Sec  37 | send=  2000 | ack=  2000 | p50=0.53 ms | p99=0.79 ms
+  > Sec  38 | send=  2000 | ack=  2000 | p50=0.49 ms | p99=6.12 ms
+  > Sec  39 | send=  2000 | ack=  2000 | p50=0.54 ms | p99=0.80 ms
+  > Sec  40 | send=  2000 | ack=  2000 | p50=0.53 ms | p99=0.78 ms
+  > Sec  41 | send=  2000 | ack=  2000 | p50=0.54 ms | p99=0.77 ms
+  > Sec  42 | send=  2000 | ack=  2000 | p50=0.52 ms | p99=0.76 ms
+  > Sec  43 | send=  2000 | ack=  2000 | p50=0.49 ms | p99=2.85 ms
+  > Sec  44 | send=  2000 | ack=  2000 | p50=0.52 ms | p99=0.79 ms
+  > Sec  45 | send=  2000 | ack=  2000 | p50=0.51 ms | p99=0.76 ms
+  > Sec  46 | send=  2000 | ack=  2000 | p50=0.52 ms | p99=0.81 ms
+  > Sec  47 | send=  2000 | ack=  2000 | p50=0.53 ms | p99=0.84 ms
+  > Sec  48 | send=  2000 | ack=  2000 | p50=0.53 ms | p99=7.00 ms
+  > Sec  49 | send=  2000 | ack=  2000 | p50=0.54 ms | p99=0.83 ms
+  > Sec  50 | send=  2000 | ack=  2000 | p50=0.52 ms | p99=0.78 ms
+  > Sec  51 | send=  2000 | ack=  2000 | p50=0.53 ms | p99=0.80 ms
+  > Sec  52 | send=  2000 | ack=  2000 | p50=0.53 ms | p99=0.78 ms
+  > Sec  53 | send=  2000 | ack=  2000 | p50=0.52 ms | p99=7.05 ms
+  > Sec  54 | send=  2000 | ack=  2000 | p50=0.52 ms | p99=0.77 ms
+  > Sec  55 | send=  2000 | ack=  2000 | p50=0.52 ms | p99=0.77 ms
+  > Sec  56 | send=  2000 | ack=  2000 | p50=0.53 ms | p99=0.81 ms
+  > Sec  57 | send=  2000 | ack=  2000 | p50=0.53 ms | p99=0.78 ms
+  > Sec  58 | send=  2000 | ack=  2000 | p50=0.52 ms | p99=5.69 ms
+  > Sec  59 | send=  2000 | ack=  2000 | p50=0.52 ms | p99=0.77 ms
+  > Sec  60 | send=  2000 | ack=  2000 | p50=0.53 ms | p99=0.83 ms
+  > Sec  61 | send=  2000 | ack=  2000 | p50=0.52 ms | p99=0.80 ms
+  > Sec  62 | send=  2000 | ack=  2000 | p50=0.53 ms | p99=0.78 ms
+  > Sec  63 | send=  2000 | ack=  2000 | p50=0.54 ms | p99=5.73 ms
+  > Sec  64 | send=  2000 | ack=  2000 | p50=0.49 ms | p99=1.06 ms
+  > Sec  65 | send=  2000 | ack=  2000 | p50=0.54 ms | p99=1.72 ms
+  > Sec  66 | send=  2000 | ack=  2000 | p50=0.54 ms | p99=0.83 ms
+  > Sec  67 | send=  2000 | ack=  2000 | p50=0.54 ms | p99=1.15 ms
+  > Sec  68 | send=  2000 | ack=  2000 | p50=0.56 ms | p99=6.44 ms
+  > Sec  69 | send=  2000 | ack=  2000 | p50=0.54 ms | p99=0.96 ms
+  > Sec  70 | send=  2000 | ack=  2000 | p50=0.54 ms | p99=1.06 ms
+  > Sec  71 | send=  2000 | ack=  2000 | p50=0.54 ms | p99=0.85 ms
+  > Sec  72 | send=  2000 | ack=  2000 | p50=0.55 ms | p99=2.10 ms
+  > Sec  73 | send=  2000 | ack=  2000 | p50=0.58 ms | p99=7.02 ms
+  > Sec  74 | send=  2000 | ack=  2000 | p50=0.55 ms | p99=0.85 ms
+  > Sec  75 | send=  2000 | ack=  2000 | p50=0.50 ms | p99=1.14 ms
+  > Sec  76 | send=  2000 | ack=  2000 | p50=0.53 ms | p99=1.12 ms
+  > Sec  77 | send=  2000 | ack=  2000 | p50=0.57 ms | p99=1.01 ms
+  > Sec  78 | send=  2000 | ack=  2000 | p50=0.58 ms | p99=6.48 ms
+  > Sec  79 | send=  2000 | ack=  2000 | p50=0.57 ms | p99=1.00 ms
+  > ------------------------------------------
+  > Req=120000 | Sent/ACKwin/Eventual=2000.0/2000.0/2000.0 OP/s | App-Avg=2.23ms | App-P99=5.50ms | MapperUtil=14.05% | RawUtil=13.52% | iowait=1.30% | State=NOT_SATURATED | Valid=True
+[Service] Stopping Kafka KRaft broker ...
+[Success] JSON snapshot saved: results/kafka_fs_bench_20260906_102324/results_snapshot.json
+[Success] CSV saved: results/kafka_fs_bench_20260906_102324/csv/full_results.csv
+[Success] CSV saved: results/kafka_fs_bench_20260906_102324/csv/summary_by_fs_recordsize_scenario.csv
+[Success] Summary report saved: results/kafka_fs_bench_20260906_102324/summary_report.txt
+[Service] Stopping Kafka KRaft broker ...
+
+[Setup] Resetting FEMU ZNS and mounting f2fs through kafka-zns ...
+[DM] Created /dev/mapper/kafka-zns: 50331648 sectors (24.00 GiB, logical=75% max)
+NAME      MAJ:MIN RM SIZE RO TYPE MOUNTPOINTS
+kafka-zns 253:0    0  24G  0 dm   /result/kafka-logs
+/dev/mapper/kafka-zns on /result/kafka-logs type f2fs (rw,noatime,nodiratime,lazytime,background_gc=on,nodiscard,no_heap,user_xattr,inline_xattr,acl,inline_data,inline_dentry,flush_merge,extent_cache,mode=adaptive,active_logs=6,alloc_mode=default,checkpoint_merge,fsync_mode=posix,discard_unit=block)
+[Service] Starting Kafka in KRaft mode ...
+[Service] Recreating benchmark topic ...
+[latency/measure] F2FS / scenario_a / 10240B -> target_ops=2000, fs_used=3.26%
+
+--- [MEASURE] F2FS / scenario_a / 10240B / 2000 ops ---
+  > =====================================
+  >  Kafka Filesystem Benchmark (Java API)
+  > =====================================
+  >  - Record Size: 10240 Bytes
+  >  - Target OP/s (total): 2000
+  >  - Producers: 8
+  >  - Consumer Active: false
+  >  - Dynamic Topic Creation: false (rate=5/sec)
+  >  - Warmup: 20 sec / Measurement: 60 sec / Drain timeout: 180 sec
+  >  - Max outstanding records: 1000
+  >  - Catch-up limit: records=10, lag=100ms
+  >  - Fail-fast ACK stall: 60 sec
+  >  - Send mode: ASYNC (callback-based latency measurement)
+  > [Config] BUFFER_MEMORY per producer = 16 MB
+  > [Config] linger.ms=0, batch.size=10752
+  > [Run] Producers started. warmup=20s, measure=60s, total=80s
+  > 
+  > --- [ Latency Results (ms) ] ---
+  >  (App-level: send() call -> broker ACK; reaches OS page cache)
+  >  Total Requests : 120000
+  >  Average        : 0.65 ms
+  >  p50 (Median)   : 0.63 ms
+  >  p90            : 0.80 ms
+  >  p99            : 0.99 ms
+  >  p999           : 7.80 ms
+  >  Max            : 12.48 ms
+  > --------------------------------
+  > --- [ Throughput / Errors ] ---
+  >  Target OP/s         : 2000
+  >  Achieved OP/s       : 2000.00
+  >  Achieved/Target (%) : 100.0
+  >  Total Sent (incl. warmup) : 158821
+  >  Send Errors               : 0
+  >  Drain Time                : 0.02 sec
+  >  Drain Completed           : true
+  >  Sent Requests             : 120000
+  >  Sent OP/s                 : 2000.00
+  >  ACK Window Requests       : 119995
+  >  ACK Window OP/s           : 1999.92
+  >  Eventual ACK Requests     : 120000
+  >  Eventual ACK OP/s         : 2000.00
+  >  Outstanding at End        : 0
+  >  Failed Requests           : 0
+  >  Unresolved After Drain    : 0
+  >  Latency Dropped Samples   : 0
+  >  Backpressure Wait Count   : 0
+  >  Backpressure Wait Time    : 0.00 ms
+  >  Max Observed Outstanding  : 187
+  >  Catch-up Resets           : 8
+  >  Catch-up Records Skipped  : 1176
+  >  Max Schedule Lag          : 591.82 ms
+  >  ACK Stall Count          : 0
+  >  ACK Stall Total          : 0 sec
+  >  ACK Stall Max            : 0 sec
+  > --------------------------------
+  > 
+  > --- [ Per-second Throughput & Latency ] ---
+  > Sec   0 | send=   820 | ack=   654 | no data
+  > Sec   1 | send=  2001 | ack=  2162 | no data
+  > Sec   2 | send=  2000 | ack=  2000 | no data
+  > Sec   3 | send=  2000 | ack=  2000 | no data
+  > Sec   4 | send=  2000 | ack=  2000 | no data
+  > Sec   5 | send=  2000 | ack=  2000 | no data
+  > Sec   6 | send=  2000 | ack=  2000 | no data
+  > Sec   7 | send=  2000 | ack=  1992 | no data
+  > Sec   8 | send=  2000 | ack=  2008 | no data
+  > Sec   9 | send=  2000 | ack=  2000 | no data
+  > Sec  10 | send=  2000 | ack=  2000 | no data
+  > Sec  11 | send=  2000 | ack=  2000 | no data
+  > Sec  12 | send=  2000 | ack=  2000 | no data
+  > Sec  13 | send=  2000 | ack=  2000 | no data
+  > Sec  14 | send=  2000 | ack=  2000 | no data
+  > Sec  15 | send=  2000 | ack=  2000 | no data
+  > Sec  16 | send=  2000 | ack=  2000 | no data
+  > Sec  17 | send=  2000 | ack=  2000 | no data
+  > Sec  18 | send=  2000 | ack=  2000 | no data
+  > Sec  19 | send=  2000 | ack=  2000 | no data
+  > Sec  20 | send=  2000 | ack=  2000 | p50=0.68 ms | p99=1.03 ms
+  > Sec  21 | send=  2000 | ack=  2000 | p50=0.73 ms | p99=1.06 ms
+  > Sec  22 | send=  2000 | ack=  2000 | p50=0.73 ms | p99=1.06 ms
+  > Sec  23 | send=  2000 | ack=  2000 | p50=0.72 ms | p99=1.14 ms
+  > Sec  24 | send=  2000 | ack=  2000 | p50=0.71 ms | p99=1.07 ms
+  > Sec  25 | send=  2000 | ack=  2000 | p50=0.69 ms | p99=1.10 ms
+  > Sec  26 | send=  2000 | ack=  2000 | p50=0.65 ms | p99=0.95 ms
+  > Sec  27 | send=  2000 | ack=  2000 | p50=0.66 ms | p99=0.99 ms
+  > Sec  28 | send=  2000 | ack=  2000 | p50=0.65 ms | p99=1.00 ms
+  > Sec  29 | send=  2000 | ack=  2000 | p50=0.66 ms | p99=0.97 ms
+  > Sec  30 | send=  2000 | ack=  2000 | p50=0.66 ms | p99=0.97 ms
+  > Sec  31 | send=  2000 | ack=  2000 | p50=0.65 ms | p99=1.00 ms
+  > Sec  32 | send=  2000 | ack=  2000 | p50=0.61 ms | p99=1.21 ms
+  > Sec  33 | send=  2000 | ack=  2000 | p50=0.60 ms | p99=0.99 ms
+  > Sec  34 | send=  2000 | ack=  2000 | p50=0.60 ms | p99=1.02 ms
+  > Sec  35 | send=  2000 | ack=  2000 | p50=0.60 ms | p99=1.03 ms
+  > Sec  36 | send=  2000 | ack=  2000 | p50=0.59 ms | p99=1.05 ms
+  > Sec  37 | send=  2000 | ack=  2000 | p50=0.60 ms | p99=4.84 ms
+  > Sec  38 | send=  2000 | ack=  2000 | p50=0.63 ms | p99=4.53 ms
+  > Sec  39 | send=  2000 | ack=  2000 | p50=0.62 ms | p99=0.92 ms
+  > Sec  40 | send=  2000 | ack=  2000 | p50=0.60 ms | p99=0.91 ms
+  > Sec  41 | send=  2000 | ack=  2000 | p50=0.61 ms | p99=0.91 ms
+  > Sec  42 | send=  2000 | ack=  2000 | p50=0.61 ms | p99=0.92 ms
+  > Sec  43 | send=  2000 | ack=  2000 | p50=0.62 ms | p99=4.39 ms
+  > Sec  44 | send=  2000 | ack=  2000 | p50=0.62 ms | p99=0.94 ms
+  > Sec  45 | send=  2000 | ack=  2000 | p50=0.63 ms | p99=0.91 ms
+  > Sec  46 | send=  2000 | ack=  2000 | p50=0.61 ms | p99=0.90 ms
+  > Sec  47 | send=  2000 | ack=  2000 | p50=0.62 ms | p99=0.91 ms
+  > Sec  48 | send=  2000 | ack=  2000 | p50=0.63 ms | p99=4.93 ms
+  > Sec  49 | send=  2000 | ack=  2000 | p50=0.62 ms | p99=0.92 ms
+  > Sec  50 | send=  2000 | ack=  2000 | p50=0.61 ms | p99=0.93 ms
+  > Sec  51 | send=  2000 | ack=  2000 | p50=0.62 ms | p99=1.00 ms
+  > Sec  52 | send=  2000 | ack=  2000 | p50=0.62 ms | p99=0.92 ms
+  > Sec  53 | send=  2000 | ack=  2000 | p50=0.62 ms | p99=4.20 ms
+  > Sec  54 | send=  2000 | ack=  2000 | p50=0.62 ms | p99=0.93 ms
+  > Sec  55 | send=  2000 | ack=  2000 | p50=0.63 ms | p99=0.93 ms
+  > Sec  56 | send=  2000 | ack=  2000 | p50=0.63 ms | p99=0.91 ms
+  > Sec  57 | send=  2000 | ack=  2000 | p50=0.64 ms | p99=0.93 ms
+  > Sec  58 | send=  2000 | ack=  2000 | p50=0.63 ms | p99=4.34 ms
+  > Sec  59 | send=  2000 | ack=  2000 | p50=0.62 ms | p99=0.91 ms
+  > Sec  60 | send=  2000 | ack=  2000 | p50=0.61 ms | p99=0.90 ms
+  > Sec  61 | send=  2000 | ack=  2000 | p50=0.61 ms | p99=0.92 ms
+  > Sec  62 | send=  2000 | ack=  2000 | p50=0.62 ms | p99=0.90 ms
+  > Sec  63 | send=  2000 | ack=  2000 | p50=0.63 ms | p99=0.96 ms
+  > Sec  64 | send=  2000 | ack=  2000 | p50=0.63 ms | p99=0.97 ms
+  > Sec  65 | send=  2000 | ack=  2000 | p50=0.62 ms | p99=0.92 ms
+  > Sec  66 | send=  2000 | ack=  2000 | p50=0.62 ms | p99=0.90 ms
+  > Sec  67 | send=  2000 | ack=  2000 | p50=0.63 ms | p99=0.97 ms
+  > Sec  68 | send=  2000 | ack=  2000 | p50=0.63 ms | p99=8.04 ms
+  > Sec  69 | send=  2000 | ack=  2000 | p50=0.61 ms | p99=0.89 ms
+  > Sec  70 | send=  2000 | ack=  2000 | p50=0.60 ms | p99=0.89 ms
+  > Sec  71 | send=  1999 | ack=  2000 | p50=0.62 ms | p99=0.92 ms
+  > Sec  72 | send=  2001 | ack=  2000 | p50=0.62 ms | p99=0.93 ms
+  > Sec  73 | send=  1999 | ack=  2000 | p50=0.62 ms | p99=1.08 ms
+  > Sec  74 | send=  2001 | ack=  2000 | p50=0.62 ms | p99=0.91 ms
+  > Sec  75 | send=  2000 | ack=  2000 | p50=0.61 ms | p99=0.89 ms
+  > Sec  76 | send=  2000 | ack=  2000 | p50=0.62 ms | p99=0.91 ms
+  > Sec  77 | send=  2000 | ack=  2000 | p50=0.61 ms | p99=0.89 ms
+  > Sec  78 | send=  2000 | ack=  2000 | p50=0.61 ms | p99=5.63 ms
+  > Sec  79 | send=  2000 | ack=  2000 | p50=0.60 ms | p99=0.90 ms
+  > ------------------------------------------
+  > Req=120000 | Sent/ACKwin/Eventual=2000.0/1999.9/2000.0 OP/s | App-Avg=0.65ms | App-P99=0.99ms | MapperUtil=9.48% | RawUtil=10.17% | iowait=1.17% | State=NOT_SATURATED | Valid=True
+[Service] Stopping Kafka KRaft broker ...
+[Success] JSON snapshot saved: results/kafka_fs_bench_20260906_102324/results_snapshot.json
+[Success] CSV saved: results/kafka_fs_bench_20260906_102324/csv/full_results.csv
+[Success] CSV saved: results/kafka_fs_bench_20260906_102324/csv/summary_by_fs_recordsize_scenario.csv
+[Success] Summary report saved: results/kafka_fs_bench_20260906_102324/summary_report.txt
+[Service] Stopping Kafka KRaft broker ...
+
+[Setup] Resetting FEMU ZNS and mounting f2fs through kafka-zns ...
+[DM] Created /dev/mapper/kafka-zns: 50331648 sectors (24.00 GiB, logical=75% max)
+NAME      MAJ:MIN RM SIZE RO TYPE MOUNTPOINTS
+kafka-zns 253:0    0  24G  0 dm   /result/kafka-logs
+/dev/mapper/kafka-zns on /result/kafka-logs type f2fs (rw,noatime,nodiratime,lazytime,background_gc=on,nodiscard,no_heap,user_xattr,inline_xattr,acl,inline_data,inline_dentry,flush_merge,extent_cache,mode=adaptive,active_logs=6,alloc_mode=default,checkpoint_merge,fsync_mode=posix,discard_unit=block)
+[Service] Starting Kafka in KRaft mode ...
+[Service] Recreating benchmark topic ...
+[latency/measure] F2FS / scenario_b / 10240B -> target_ops=2000, fs_used=3.26%
+
+--- [MEASURE] F2FS / scenario_b / 10240B / 2000 ops ---
+  > =====================================
+  >  Kafka Filesystem Benchmark (Java API)
+  > =====================================
+  >  - Record Size: 10240 Bytes
+  >  - Target OP/s (total): 2000
+  >  - Producers: 8
+  >  - Consumer Active: true
+  >  - Dynamic Topic Creation: false (rate=5/sec)
+  >  - Warmup: 20 sec / Measurement: 60 sec / Drain timeout: 180 sec
+  >  - Max outstanding records: 1000
+  >  - Catch-up limit: records=10, lag=100ms
+  >  - Fail-fast ACK stall: 60 sec
+  >  - Send mode: ASYNC (callback-based latency measurement)
+  > [Config] BUFFER_MEMORY per producer = 16 MB
+  > [Config] linger.ms=0, batch.size=10752
+  > [Run] Producers started. warmup=20s, measure=60s, total=80s
+  > [Consumer] consumed 158872 records
+  > 
+  > --- [ Latency Results (ms) ] ---
+  >  (App-level: send() call -> broker ACK; reaches OS page cache)
+  >  Total Requests : 120000
+  >  Average        : 0.59 ms
+  >  p50 (Median)   : 0.57 ms
+  >  p90            : 0.72 ms
+  >  p99            : 0.88 ms
+  >  p999           : 8.41 ms
+  >  Max            : 19.25 ms
+  > --------------------------------
+  > --- [ Throughput / Errors ] ---
+  >  Target OP/s         : 2000
+  >  Achieved OP/s       : 2000.00
+  >  Achieved/Target (%) : 100.0
+  >  Total Sent (incl. warmup) : 158872
+  >  Send Errors               : 0
+  >  Drain Time                : 0.02 sec
+  >  Drain Completed           : true
+  >  Sent Requests             : 120000
+  >  Sent OP/s                 : 2000.00
+  >  ACK Window Requests       : 119999
+  >  ACK Window OP/s           : 1999.98
+  >  Eventual ACK Requests     : 120000
+  >  Eventual ACK OP/s         : 2000.00
+  >  Outstanding at End        : 0
+  >  Failed Requests           : 0
+  >  Unresolved After Drain    : 0
+  >  Latency Dropped Samples   : 0
+  >  Backpressure Wait Count   : 0
+  >  Backpressure Wait Time    : 0.00 ms
+  >  Max Observed Outstanding  : 563
+  >  Catch-up Resets           : 8
+  >  Catch-up Records Skipped  : 1128
+  >  Max Schedule Lag          : 566.60 ms
+  >  ACK Stall Count          : 0
+  >  ACK Stall Total          : 0 sec
+  >  ACK Stall Max            : 0 sec
+  > --- [ Consumer Integrity ] ---
+  >  Consumer Records         : 158872
+  >  Producer ACKed Records   : 158872
+  >  Consumer Record Delta    : 0
+  >  Consumer Drain Completed : true
+  >  Malformed Headers        : 0
+  >  Payload CRC Errors       : 0
+  >  Sequence Gaps            : 0
+  >  Duplicate Records        : 0
+  >  Out-of-order Records     : 0
+  > --------------------------------
+  > --------------------------------
+  > 
+  > --- [ Per-second Throughput & Latency ] ---
+  > Sec   0 | send=   872 | ack=   494 | no data
+  > Sec   1 | send=  1996 | ack=  2103 | no data
+  > Sec   2 | send=  2004 | ack=  2274 | no data
+  > Sec   3 | send=  1999 | ack=  1999 | no data
+  > Sec   4 | send=  2001 | ack=  2001 | no data
+  > Sec   5 | send=  2000 | ack=  2000 | no data
+  > Sec   6 | send=  2000 | ack=  2000 | no data
+  > Sec   7 | send=  2000 | ack=  2000 | no data
+  > Sec   8 | send=  2000 | ack=  2000 | no data
+  > Sec   9 | send=  2000 | ack=  2000 | no data
+  > Sec  10 | send=  2000 | ack=  2000 | no data
+  > Sec  11 | send=  2000 | ack=  2000 | no data
+  > Sec  12 | send=  2000 | ack=  2000 | no data
+  > Sec  13 | send=  2000 | ack=  2000 | no data
+  > Sec  14 | send=  2000 | ack=  2000 | no data
+  > Sec  15 | send=  2000 | ack=  2000 | no data
+  > Sec  16 | send=  2000 | ack=  2000 | no data
+  > Sec  17 | send=  2000 | ack=  2000 | no data
+  > Sec  18 | send=  2000 | ack=  2000 | no data
+  > Sec  19 | send=  2000 | ack=  2000 | no data
+  > Sec  20 | send=  2000 | ack=  2000 | p50=0.64 ms | p99=1.03 ms
+  > Sec  21 | send=  2000 | ack=  2000 | p50=0.63 ms | p99=1.70 ms
+  > Sec  22 | send=  2000 | ack=  2000 | p50=0.57 ms | p99=0.83 ms
+  > Sec  23 | send=  2000 | ack=  2000 | p50=0.56 ms | p99=10.37 ms
+  > Sec  24 | send=  2000 | ack=  2000 | p50=0.56 ms | p99=0.83 ms
+  > Sec  25 | send=  2000 | ack=  2000 | p50=0.56 ms | p99=0.81 ms
+  > Sec  26 | send=  2000 | ack=  2000 | p50=0.56 ms | p99=0.83 ms
+  > Sec  27 | send=  2000 | ack=  2000 | p50=0.56 ms | p99=0.85 ms
+  > Sec  28 | send=  2000 | ack=  2000 | p50=0.57 ms | p99=2.18 ms
+  > Sec  29 | send=  2000 | ack=  2000 | p50=0.56 ms | p99=0.83 ms
+  > Sec  30 | send=  2000 | ack=  2000 | p50=0.57 ms | p99=0.84 ms
+  > Sec  31 | send=  2000 | ack=  2000 | p50=0.57 ms | p99=0.84 ms
+  > Sec  32 | send=  2000 | ack=  2000 | p50=0.56 ms | p99=0.89 ms
+  > Sec  33 | send=  2000 | ack=  2000 | p50=0.59 ms | p99=4.93 ms
+  > Sec  34 | send=  2000 | ack=  2000 | p50=0.59 ms | p99=0.98 ms
+  > Sec  35 | send=  2000 | ack=  2000 | p50=0.56 ms | p99=0.84 ms
+  > Sec  36 | send=  2000 | ack=  2000 | p50=0.56 ms | p99=0.84 ms
+  > Sec  37 | send=  2000 | ack=  2000 | p50=0.54 ms | p99=2.29 ms
+  > Sec  38 | send=  2000 | ack=  2000 | p50=0.57 ms | p99=0.87 ms
+  > Sec  39 | send=  2000 | ack=  2000 | p50=0.56 ms | p99=0.84 ms
+  > Sec  40 | send=  2000 | ack=  2000 | p50=0.57 ms | p99=0.83 ms
+  > Sec  41 | send=  2000 | ack=  2000 | p50=0.55 ms | p99=4.67 ms
+  > Sec  42 | send=  2000 | ack=  2000 | p50=0.56 ms | p99=0.83 ms
+  > Sec  43 | send=  2000 | ack=  2000 | p50=0.58 ms | p99=2.69 ms
+  > Sec  44 | send=  2000 | ack=  2000 | p50=0.58 ms | p99=0.84 ms
+  > Sec  45 | send=  2000 | ack=  2000 | p50=0.57 ms | p99=0.86 ms
+  > Sec  46 | send=  2000 | ack=  2000 | p50=0.57 ms | p99=0.93 ms
+  > Sec  47 | send=  2000 | ack=  2000 | p50=0.56 ms | p99=0.83 ms
+  > Sec  48 | send=  2000 | ack=  2000 | p50=0.57 ms | p99=2.31 ms
+  > Sec  49 | send=  2000 | ack=  2000 | p50=0.56 ms | p99=0.82 ms
+  > Sec  50 | send=  2000 | ack=  2000 | p50=0.57 ms | p99=0.83 ms
+  > Sec  51 | send=  2000 | ack=  2000 | p50=0.57 ms | p99=0.86 ms
+  > Sec  52 | send=  2000 | ack=  2000 | p50=0.58 ms | p99=0.83 ms
+  > Sec  53 | send=  2000 | ack=  2000 | p50=0.57 ms | p99=2.51 ms
+  > Sec  54 | send=  2000 | ack=  2000 | p50=0.57 ms | p99=0.83 ms
+  > Sec  55 | send=  2000 | ack=  2000 | p50=0.58 ms | p99=0.82 ms
+  > Sec  56 | send=  2000 | ack=  2000 | p50=0.57 ms | p99=0.82 ms
+  > Sec  57 | send=  2000 | ack=  2000 | p50=0.57 ms | p99=0.83 ms
+  > Sec  58 | send=  2000 | ack=  2000 | p50=0.58 ms | p99=2.59 ms
+  > Sec  59 | send=  2000 | ack=  2000 | p50=0.57 ms | p99=0.90 ms
+  > Sec  60 | send=  2000 | ack=  2000 | p50=0.57 ms | p99=0.82 ms
+  > Sec  61 | send=  2000 | ack=  2000 | p50=0.57 ms | p99=0.87 ms
+  > Sec  62 | send=  2000 | ack=  2000 | p50=0.56 ms | p99=0.82 ms
+  > Sec  63 | send=  2000 | ack=  2000 | p50=0.57 ms | p99=3.33 ms
+  > Sec  64 | send=  2000 | ack=  2000 | p50=0.57 ms | p99=0.82 ms
+  > Sec  65 | send=  2000 | ack=  2000 | p50=0.56 ms | p99=0.83 ms
+  > Sec  66 | send=  2000 | ack=  2000 | p50=0.56 ms | p99=0.82 ms
+  > Sec  67 | send=  2000 | ack=  2000 | p50=0.57 ms | p99=0.85 ms
+  > Sec  68 | send=  2000 | ack=  2000 | p50=0.56 ms | p99=5.79 ms
+  > Sec  69 | send=  2000 | ack=  2000 | p50=0.57 ms | p99=0.85 ms
+  > Sec  70 | send=  2000 | ack=  2000 | p50=0.56 ms | p99=0.81 ms
+  > Sec  71 | send=  2000 | ack=  2000 | p50=0.57 ms | p99=1.29 ms
+  > Sec  72 | send=  2000 | ack=  2000 | p50=0.56 ms | p99=0.82 ms
+  > Sec  73 | send=  2000 | ack=  2000 | p50=0.57 ms | p99=2.62 ms
+  > Sec  74 | send=  2000 | ack=  2000 | p50=0.57 ms | p99=0.81 ms
+  > Sec  75 | send=  2000 | ack=  2000 | p50=0.56 ms | p99=0.82 ms
+  > Sec  76 | send=  2000 | ack=  2000 | p50=0.56 ms | p99=0.83 ms
+  > Sec  77 | send=  2000 | ack=  2000 | p50=0.58 ms | p99=0.85 ms
+  > Sec  78 | send=  2000 | ack=  2000 | p50=0.57 ms | p99=3.03 ms
+  > Sec  79 | send=  2000 | ack=  2000 | p50=0.57 ms | p99=0.85 ms
+  > ------------------------------------------
+  > Req=120000 | Sent/ACKwin/Eventual=2000.0/2000.0/2000.0 OP/s | App-Avg=0.59ms | App-P99=0.88ms | MapperUtil=8.95% | RawUtil=8.33% | iowait=1.62% | State=NOT_SATURATED | Valid=True
+[Service] Stopping Kafka KRaft broker ...
+[Success] JSON snapshot saved: results/kafka_fs_bench_20260906_102324/results_snapshot.json
+[Success] CSV saved: results/kafka_fs_bench_20260906_102324/csv/full_results.csv
+[Success] CSV saved: results/kafka_fs_bench_20260906_102324/csv/summary_by_fs_recordsize_scenario.csv
+[Success] Summary report saved: results/kafka_fs_bench_20260906_102324/summary_report.txt
+[Service] Stopping Kafka KRaft broker ...
+
+[Setup] Resetting FEMU ZNS and mounting ext4 through kafka-zns ...
+[DM] Created /dev/mapper/kafka-zns: 50331648 sectors (24.00 GiB, logical=75% max)
+NAME      MAJ:MIN RM SIZE RO TYPE MOUNTPOINTS
+kafka-zns 253:0    0  24G  0 dm   /result/kafka-logs
+/dev/mapper/kafka-zns on /result/kafka-logs type ext4 (rw,noatime,nodiratime)
+[Service] Starting Kafka in KRaft mode ...
+[Service] Recreating benchmark topic ...
+[latency/measure] EXT4 / scenario_a / 102400B -> target_ops=200, fs_used=0.00%
+
+--- [MEASURE] EXT4 / scenario_a / 102400B / 200 ops ---
+  > =====================================
+  >  Kafka Filesystem Benchmark (Java API)
+  > =====================================
+  >  - Record Size: 102400 Bytes
+  >  - Target OP/s (total): 200
+  >  - Producers: 8
+  >  - Consumer Active: false
+  >  - Dynamic Topic Creation: false (rate=5/sec)
+  >  - Warmup: 20 sec / Measurement: 60 sec / Drain timeout: 180 sec
+  >  - Max outstanding records: 1000
+  >  - Catch-up limit: records=10, lag=100ms
+  >  - Fail-fast ACK stall: 60 sec
+  >  - Send mode: ASYNC (callback-based latency measurement)
+  > [Config] BUFFER_MEMORY per producer = 32 MB
+  > [Config] linger.ms=0, batch.size=102912
+  > [Run] Producers started. warmup=20s, measure=60s, total=80s
+  > 
+  > --- [ Latency Results (ms) ] ---
+  >  (App-level: send() call -> broker ACK; reaches OS page cache)
+  >  Total Requests : 12000
+  >  Average        : 52.13 ms
+  >  p50 (Median)   : 1.46 ms
+  >  p90            : 2.35 ms
+  >  p99            : 1731.52 ms
+  >  p999           : 2266.92 ms
+  >  Max            : 2305.58 ms
+  > --------------------------------
+  > --- [ Throughput / Errors ] ---
+  >  Target OP/s         : 200
+  >  Achieved OP/s       : 200.00
+  >  Achieved/Target (%) : 100.0
+  >  Total Sent (incl. warmup) : 15896
+  >  Send Errors               : 0
+  >  Drain Time                : 0.05 sec
+  >  Drain Completed           : true
+  >  Sent Requests             : 12000
+  >  Sent OP/s                 : 200.00
+  >  ACK Window Requests       : 12000
+  >  ACK Window OP/s           : 200.00
+  >  Eventual ACK Requests     : 12000
+  >  Eventual ACK OP/s         : 200.00
+  >  Outstanding at End        : 0
+  >  Failed Requests           : 0
+  >  Unresolved After Drain    : 0
+  >  Latency Dropped Samples   : 0
+  >  Backpressure Wait Count   : 0
+  >  Backpressure Wait Time    : 0.00 ms
+  >  Max Observed Outstanding  : 464
+  >  Catch-up Resets           : 8
+  >  Catch-up Records Skipped  : 104
+  >  Max Schedule Lag          : 539.37 ms
+  >  ACK Stall Count          : 1
+  >  ACK Stall Total          : 2 sec
+  >  ACK Stall Max            : 2 sec
+  > --------------------------------
+  > 
+  > --- [ Per-second Throughput & Latency ] ---
+  > Sec   0 | send=    96 | ack=    96 | no data
+  > Sec   1 | send=   200 | ack=   200 | no data
+  > Sec   2 | send=   200 | ack=   200 | no data
+  > Sec   3 | send=   200 | ack=   200 | no data
+  > Sec   4 | send=   200 | ack=   200 | no data
+  > Sec   5 | send=   200 | ack=   200 | no data
+  > Sec   6 | send=   200 | ack=   200 | no data
+  > Sec   7 | send=   200 | ack=   200 | no data
+  > Sec   8 | send=   200 | ack=   200 | no data
+  > Sec   9 | send=   200 | ack=   200 | no data
+  > Sec  10 | send=   200 | ack=   200 | no data
+  > Sec  11 | send=   200 | ack=   200 | no data
+  > Sec  12 | send=   200 | ack=   200 | no data
+  > Sec  13 | send=   200 | ack=   200 | no data
+  > Sec  14 | send=   200 | ack=   200 | no data
+  > Sec  15 | send=   200 | ack=   200 | no data
+  > Sec  16 | send=   200 | ack=   200 | no data
+  > Sec  17 | send=   200 | ack=   200 | no data
+  > Sec  18 | send=   200 | ack=   200 | no data
+  > Sec  19 | send=   200 | ack=   200 | no data
+  > Sec  20 | send=   200 | ack=   200 | p50=2.08 ms | p99=2.99 ms
+  > Sec  21 | send=   200 | ack=   200 | p50=2.03 ms | p99=11.23 ms
+  > Sec  22 | send=   200 | ack=   200 | p50=2.05 ms | p99=3.05 ms
+  > Sec  23 | send=   200 | ack=   200 | p50=2.02 ms | p99=2.76 ms
+  > Sec  24 | send=   200 | ack=   200 | p50=1.97 ms | p99=6.74 ms
+  > Sec  25 | send=   200 | ack=   200 | p50=1.71 ms | p99=2.95 ms
+  > Sec  26 | send=   200 | ack=   200 | p50=1.71 ms | p99=2.41 ms
+  > Sec  27 | send=   200 | ack=   200 | p50=1.91 ms | p99=2.95 ms
+  > Sec  28 | send=   200 | ack=   200 | p50=1.75 ms | p99=4.03 ms
+  > Sec  29 | send=   200 | ack=   200 | p50=1.53 ms | p99=2.33 ms
+  > Sec  30 | send=   200 | ack=   200 | p50=1.51 ms | p99=2.30 ms
+  > Sec  31 | send=   200 | ack=   200 | p50=1.48 ms | p99=2.35 ms
+  > Sec  32 | send=   200 | ack=   164 | p50=1.71 ms | p99=5.27 ms
+  > Sec  33 | send=   200 | ack=   236 | p50=2.15 ms | p99=1014.85 ms
+  > Sec  34 | send=   200 | ack=     0 | no data
+  > Sec  35 | send=   200 | ack=     0 | no data
+  > Sec  36 | send=   200 | ack=   600 | p50=881.77 ms | p99=2303.77 ms
+  > Sec  37 | send=   200 | ack=   200 | p50=1.91 ms | p99=2.83 ms
+  > Sec  38 | send=   200 | ack=   200 | p50=1.82 ms | p99=2.82 ms
+  > Sec  39 | send=   200 | ack=   200 | p50=1.69 ms | p99=3.46 ms
+  > Sec  40 | send=   200 | ack=   200 | p50=1.78 ms | p99=2.90 ms
+  > Sec  41 | send=   200 | ack=   200 | p50=1.87 ms | p99=2.84 ms
+  > Sec  42 | send=   200 | ack=   200 | p50=1.82 ms | p99=2.72 ms
+  > Sec  43 | send=   200 | ack=   200 | p50=1.79 ms | p99=2.63 ms
+  > Sec  44 | send=   200 | ack=   200 | p50=1.79 ms | p99=3.78 ms
+  > Sec  45 | send=   200 | ack=   200 | p50=1.77 ms | p99=2.72 ms
+  > Sec  46 | send=   200 | ack=   200 | p50=1.71 ms | p99=2.67 ms
+  > Sec  47 | send=   200 | ack=   200 | p50=1.69 ms | p99=2.50 ms
+  > Sec  48 | send=   200 | ack=   200 | p50=1.69 ms | p99=14.46 ms
+  > Sec  49 | send=   200 | ack=   200 | p50=1.71 ms | p99=2.79 ms
+  > Sec  50 | send=   200 | ack=   200 | p50=1.57 ms | p99=2.49 ms
+  > Sec  51 | send=   200 | ack=   200 | p50=1.35 ms | p99=6.62 ms
+  > Sec  52 | send=   200 | ack=   200 | p50=1.19 ms | p99=1.92 ms
+  > Sec  53 | send=   200 | ack=   200 | p50=1.25 ms | p99=1.95 ms
+  > Sec  54 | send=   200 | ack=   200 | p50=1.27 ms | p99=1.91 ms
+  > Sec  55 | send=   200 | ack=   200 | p50=1.24 ms | p99=1.74 ms
+  > Sec  56 | send=   200 | ack=   200 | p50=1.26 ms | p99=1.90 ms
+  > Sec  57 | send=   200 | ack=   200 | p50=1.30 ms | p99=1.94 ms
+  > Sec  58 | send=   200 | ack=   200 | p50=1.22 ms | p99=1.84 ms
+  > Sec  59 | send=   200 | ack=   200 | p50=1.21 ms | p99=2.08 ms
+  > Sec  60 | send=   200 | ack=   200 | p50=1.16 ms | p99=1.98 ms
+  > Sec  61 | send=   200 | ack=   200 | p50=1.20 ms | p99=1.81 ms
+  > Sec  62 | send=   200 | ack=   200 | p50=1.26 ms | p99=2.22 ms
+  > Sec  63 | send=   200 | ack=   200 | p50=1.10 ms | p99=1.90 ms
+  > Sec  64 | send=   200 | ack=   200 | p50=1.17 ms | p99=2.09 ms
+  > Sec  65 | send=   200 | ack=   200 | p50=1.21 ms | p99=2.13 ms
+  > Sec  66 | send=   200 | ack=   200 | p50=1.11 ms | p99=2.19 ms
+  > Sec  67 | send=   200 | ack=   200 | p50=1.15 ms | p99=2.11 ms
+  > Sec  68 | send=   200 | ack=   200 | p50=1.39 ms | p99=403.94 ms
+  > Sec  69 | send=   200 | ack=   200 | p50=1.19 ms | p99=2.11 ms
+  > Sec  70 | send=   200 | ack=   200 | p50=1.14 ms | p99=1.71 ms
+  > Sec  71 | send=   200 | ack=   200 | p50=1.14 ms | p99=1.69 ms
+  > Sec  72 | send=   200 | ack=   200 | p50=1.13 ms | p99=2.28 ms
+  > Sec  73 | send=   200 | ack=   200 | p50=1.19 ms | p99=1.88 ms
+  > Sec  74 | send=   200 | ack=   200 | p50=1.20 ms | p99=1.73 ms
+  > Sec  75 | send=   200 | ack=   200 | p50=1.10 ms | p99=1.61 ms
+  > Sec  76 | send=   200 | ack=   200 | p50=1.17 ms | p99=1.82 ms
+  > Sec  77 | send=   200 | ack=   200 | p50=1.26 ms | p99=1.93 ms
+  > Sec  78 | send=   200 | ack=   200 | p50=1.24 ms | p99=5.60 ms
+  > Sec  79 | send=   200 | ack=   200 | p50=1.13 ms | p99=1.64 ms
+  > ------------------------------------------
+  > Req=12000 | Sent/ACKwin/Eventual=200.0/200.0/200.0 OP/s | App-Avg=52.13ms | App-P99=1731.52ms | MapperUtil=10.53% | RawUtil=14.13% | iowait=3.70% | State=STALLED | Valid=True
+[Service] Stopping Kafka KRaft broker ...
+[Success] JSON snapshot saved: results/kafka_fs_bench_20260906_102324/results_snapshot.json
+[Success] CSV saved: results/kafka_fs_bench_20260906_102324/csv/full_results.csv
+[Success] CSV saved: results/kafka_fs_bench_20260906_102324/csv/summary_by_fs_recordsize_scenario.csv
+[Success] Summary report saved: results/kafka_fs_bench_20260906_102324/summary_report.txt
+[Service] Stopping Kafka KRaft broker ...
+
+[Setup] Resetting FEMU ZNS and mounting ext4 through kafka-zns ...
+[DM] Created /dev/mapper/kafka-zns: 50331648 sectors (24.00 GiB, logical=75% max)
+NAME      MAJ:MIN RM SIZE RO TYPE MOUNTPOINTS
+kafka-zns 253:0    0  24G  0 dm   /result/kafka-logs
+/dev/mapper/kafka-zns on /result/kafka-logs type ext4 (rw,noatime,nodiratime)
+[Service] Starting Kafka in KRaft mode ...
+[Service] Recreating benchmark topic ...
+[latency/measure] EXT4 / scenario_b / 102400B -> target_ops=200, fs_used=0.00%
+
+--- [MEASURE] EXT4 / scenario_b / 102400B / 200 ops ---
+  > =====================================
+  >  Kafka Filesystem Benchmark (Java API)
+  > =====================================
+  >  - Record Size: 102400 Bytes
+  >  - Target OP/s (total): 200
+  >  - Producers: 8
+  >  - Consumer Active: true
+  >  - Dynamic Topic Creation: false (rate=5/sec)
+  >  - Warmup: 20 sec / Measurement: 60 sec / Drain timeout: 180 sec
+  >  - Max outstanding records: 1000
+  >  - Catch-up limit: records=10, lag=100ms
+  >  - Fail-fast ACK stall: 60 sec
+  >  - Send mode: ASYNC (callback-based latency measurement)
+  > [Config] BUFFER_MEMORY per producer = 32 MB
+  > [Config] linger.ms=0, batch.size=102912
+  > [Run] Producers started. warmup=20s, measure=60s, total=80s
+  > [Consumer] consumed 15896 records
+  > 
+  > --- [ Latency Results (ms) ] ---
+  >  (App-level: send() call -> broker ACK; reaches OS page cache)
+  >  Total Requests : 12000
+  >  Average        : 58.22 ms
+  >  p50 (Median)   : 1.34 ms
+  >  p90            : 2.15 ms
+  >  p99            : 2160.36 ms
+  >  p999           : 2854.96 ms
+  >  Max            : 2926.75 ms
+  > --------------------------------
+  > --- [ Throughput / Errors ] ---
+  >  Target OP/s         : 200
+  >  Achieved OP/s       : 200.00
+  >  Achieved/Target (%) : 100.0
+  >  Total Sent (incl. warmup) : 15896
+  >  Send Errors               : 0
+  >  Drain Time                : 0.03 sec
+  >  Drain Completed           : true
+  >  Sent Requests             : 12000
+  >  Sent OP/s                 : 200.00
+  >  ACK Window Requests       : 12000
+  >  ACK Window OP/s           : 200.00
+  >  Eventual ACK Requests     : 12000
+  >  Eventual ACK OP/s         : 200.00
+  >  Outstanding at End        : 0
+  >  Failed Requests           : 0
+  >  Unresolved After Drain    : 0
+  >  Latency Dropped Samples   : 0
+  >  Backpressure Wait Count   : 0
+  >  Backpressure Wait Time    : 0.00 ms
+  >  Max Observed Outstanding  : 466
+  >  Catch-up Resets           : 8
+  >  Catch-up Records Skipped  : 104
+  >  Max Schedule Lag          : 539.00 ms
+  >  ACK Stall Count          : 0
+  >  ACK Stall Total          : 0 sec
+  >  ACK Stall Max            : 0 sec
+  > --- [ Consumer Integrity ] ---
+  >  Consumer Records         : 15896
+  >  Producer ACKed Records   : 15896
+  >  Consumer Record Delta    : 0
+  >  Consumer Drain Completed : true
+  >  Malformed Headers        : 0
+  >  Payload CRC Errors       : 0
+  >  Sequence Gaps            : 0
+  >  Duplicate Records        : 0
+  >  Out-of-order Records     : 0
+  > --------------------------------
+  > --------------------------------
+  > 
+  > --- [ Per-second Throughput & Latency ] ---
+  > Sec   0 | send=    96 | ack=    96 | no data
+  > Sec   1 | send=   200 | ack=   200 | no data
+  > Sec   2 | send=   200 | ack=   200 | no data
+  > Sec   3 | send=   200 | ack=   200 | no data
+  > Sec   4 | send=   200 | ack=   200 | no data
+  > Sec   5 | send=   200 | ack=   200 | no data
+  > Sec   6 | send=   200 | ack=   200 | no data
+  > Sec   7 | send=   200 | ack=   200 | no data
+  > Sec   8 | send=   200 | ack=   200 | no data
+  > Sec   9 | send=   200 | ack=   200 | no data
+  > Sec  10 | send=   200 | ack=   200 | no data
+  > Sec  11 | send=   200 | ack=   200 | no data
+  > Sec  12 | send=   200 | ack=   200 | no data
+  > Sec  13 | send=   200 | ack=   200 | no data
+  > Sec  14 | send=   200 | ack=   200 | no data
+  > Sec  15 | send=   200 | ack=   200 | no data
+  > Sec  16 | send=   200 | ack=   200 | no data
+  > Sec  17 | send=   200 | ack=   200 | no data
+  > Sec  18 | send=   200 | ack=   200 | no data
+  > Sec  19 | send=   200 | ack=   200 | no data
+  > Sec  20 | send=   200 | ack=   200 | p50=1.69 ms | p99=2.77 ms
+  > Sec  21 | send=   200 | ack=   200 | p50=1.64 ms | p99=2.70 ms
+  > Sec  22 | send=   200 | ack=   200 | p50=1.65 ms | p99=2.66 ms
+  > Sec  23 | send=   200 | ack=   200 | p50=1.64 ms | p99=2.79 ms
+  > Sec  24 | send=   200 | ack=   200 | p50=1.66 ms | p99=4.08 ms
+  > Sec  25 | send=   200 | ack=   200 | p50=1.70 ms | p99=2.66 ms
+  > Sec  26 | send=   200 | ack=   200 | p50=1.60 ms | p99=2.55 ms
+  > Sec  27 | send=   200 | ack=   200 | p50=1.99 ms | p99=3.59 ms
+  > Sec  28 | send=   200 | ack=   200 | p50=1.92 ms | p99=3.76 ms
+  > Sec  29 | send=   200 | ack=   200 | p50=1.71 ms | p99=3.03 ms
+  > Sec  30 | send=   200 | ack=   200 | p50=1.68 ms | p99=3.05 ms
+  > Sec  31 | send=   200 | ack=   200 | p50=1.78 ms | p99=3.12 ms
+  > Sec  32 | send=   200 | ack=   200 | p50=1.85 ms | p99=3.42 ms
+  > Sec  33 | send=   200 | ack=   200 | p50=1.65 ms | p99=3.12 ms
+  > Sec  34 | send=   200 | ack=   200 | p50=1.47 ms | p99=8.95 ms
+  > Sec  35 | send=   200 | ack=   200 | p50=1.19 ms | p99=2.28 ms
+  > Sec  36 | send=   200 | ack=   200 | p50=1.16 ms | p99=1.99 ms
+  > Sec  37 | send=   200 | ack=   200 | p50=1.32 ms | p99=2.74 ms
+  > Sec  38 | send=   200 | ack=    80 | p50=1.26 ms | p99=2.19 ms
+  > Sec  39 | send=   200 | ack=    50 | p50=1.34 ms | p99=1.64 ms
+  > Sec  40 | send=   200 | ack=    36 | p50=1.37 ms | p99=1.59 ms
+  > Sec  41 | send=   200 | ack=   634 | p50=931.92 ms | p99=2889.43 ms
+  > Sec  42 | send=   200 | ack=   200 | p50=1.37 ms | p99=2.28 ms
+  > Sec  43 | send=   200 | ack=   200 | p50=1.41 ms | p99=2.31 ms
+  > Sec  44 | send=   200 | ack=   200 | p50=1.38 ms | p99=2.30 ms
+  > Sec  45 | send=   200 | ack=   200 | p50=1.30 ms | p99=2.33 ms
+  > Sec  46 | send=   200 | ack=   200 | p50=1.38 ms | p99=2.43 ms
+  > Sec  47 | send=   200 | ack=   200 | p50=1.36 ms | p99=14.55 ms
+  > Sec  48 | send=   200 | ack=   200 | p50=1.39 ms | p99=2.32 ms
+  > Sec  49 | send=   200 | ack=   200 | p50=1.33 ms | p99=2.65 ms
+  > Sec  50 | send=   200 | ack=   200 | p50=1.21 ms | p99=2.14 ms
+  > Sec  51 | send=   200 | ack=   200 | p50=1.23 ms | p99=2.10 ms
+  > Sec  52 | send=   200 | ack=   200 | p50=1.49 ms | p99=2.35 ms
+  > Sec  53 | send=   200 | ack=   200 | p50=1.53 ms | p99=2.59 ms
+  > Sec  54 | send=   200 | ack=   200 | p50=1.37 ms | p99=2.47 ms
+  > Sec  55 | send=   200 | ack=   200 | p50=1.14 ms | p99=2.02 ms
+  > Sec  56 | send=   200 | ack=   200 | p50=1.10 ms | p99=1.88 ms
+  > Sec  57 | send=   200 | ack=   200 | p50=1.06 ms | p99=1.74 ms
+  > Sec  58 | send=   200 | ack=   200 | p50=1.14 ms | p99=2.31 ms
+  > Sec  59 | send=   200 | ack=   200 | p50=1.12 ms | p99=11.56 ms
+  > Sec  60 | send=   200 | ack=   200 | p50=1.06 ms | p99=1.73 ms
+  > Sec  61 | send=   200 | ack=   200 | p50=1.15 ms | p99=1.90 ms
+  > Sec  62 | send=   200 | ack=   200 | p50=1.08 ms | p99=1.75 ms
+  > Sec  63 | send=   200 | ack=   200 | p50=1.18 ms | p99=2.04 ms
+  > Sec  64 | send=   200 | ack=   200 | p50=1.08 ms | p99=2.03 ms
+  > Sec  65 | send=   200 | ack=   200 | p50=1.07 ms | p99=2.10 ms
+  > Sec  66 | send=   200 | ack=   200 | p50=1.07 ms | p99=1.88 ms
+  > Sec  67 | send=   200 | ack=   200 | p50=1.08 ms | p99=1.66 ms
+  > Sec  68 | send=   200 | ack=   200 | p50=1.10 ms | p99=2.80 ms
+  > Sec  69 | send=   200 | ack=   200 | p50=1.09 ms | p99=1.96 ms
+  > Sec  70 | send=   200 | ack=   200 | p50=1.07 ms | p99=1.76 ms
+  > Sec  71 | send=   200 | ack=   200 | p50=1.10 ms | p99=3.05 ms
+  > Sec  72 | send=   200 | ack=   200 | p50=1.06 ms | p99=1.70 ms
+  > Sec  73 | send=   200 | ack=   200 | p50=1.08 ms | p99=1.96 ms
+  > Sec  74 | send=   200 | ack=   200 | p50=1.06 ms | p99=1.83 ms
+  > Sec  75 | send=   200 | ack=   200 | p50=1.21 ms | p99=2.09 ms
+  > Sec  76 | send=   200 | ack=   200 | p50=1.43 ms | p99=2.24 ms
+  > Sec  77 | send=   200 | ack=   200 | p50=1.25 ms | p99=7.39 ms
+  > Sec  78 | send=   200 | ack=   200 | p50=1.10 ms | p99=1.92 ms
+  > Sec  79 | send=   200 | ack=   200 | p50=1.08 ms | p99=1.75 ms
+  > ------------------------------------------
+  > Req=12000 | Sent/ACKwin/Eventual=200.0/200.0/200.0 OP/s | App-Avg=58.22ms | App-P99=2160.36ms | MapperUtil=14.56% | RawUtil=13.84% | iowait=4.82% | State=NOT_SATURATED | Valid=True
+[Service] Stopping Kafka KRaft broker ...
+[Success] JSON snapshot saved: results/kafka_fs_bench_20260906_102324/results_snapshot.json
+[Success] CSV saved: results/kafka_fs_bench_20260906_102324/csv/full_results.csv
+[Success] CSV saved: results/kafka_fs_bench_20260906_102324/csv/summary_by_fs_recordsize_scenario.csv
+[Success] Summary report saved: results/kafka_fs_bench_20260906_102324/summary_report.txt
+[Service] Stopping Kafka KRaft broker ...
+
+[Setup] Resetting FEMU ZNS and mounting f2fs through kafka-zns ...
+[DM] Created /dev/mapper/kafka-zns: 50331648 sectors (24.00 GiB, logical=75% max)
+NAME      MAJ:MIN RM SIZE RO TYPE MOUNTPOINTS
+kafka-zns 253:0    0  24G  0 dm   /result/kafka-logs
+/dev/mapper/kafka-zns on /result/kafka-logs type f2fs (rw,noatime,nodiratime,lazytime,background_gc=on,nodiscard,no_heap,user_xattr,inline_xattr,acl,inline_data,inline_dentry,flush_merge,extent_cache,mode=adaptive,active_logs=6,alloc_mode=default,checkpoint_merge,fsync_mode=posix,discard_unit=block)
+[Service] Starting Kafka in KRaft mode ...
+[Service] Recreating benchmark topic ...
+[latency/measure] F2FS / scenario_a / 102400B -> target_ops=200, fs_used=3.26%
+
+--- [MEASURE] F2FS / scenario_a / 102400B / 200 ops ---
+  > =====================================
+  >  Kafka Filesystem Benchmark (Java API)
+  > =====================================
+  >  - Record Size: 102400 Bytes
+  >  - Target OP/s (total): 200
+  >  - Producers: 8
+  >  - Consumer Active: false
+  >  - Dynamic Topic Creation: false (rate=5/sec)
+  >  - Warmup: 20 sec / Measurement: 60 sec / Drain timeout: 180 sec
+  >  - Max outstanding records: 1000
+  >  - Catch-up limit: records=10, lag=100ms
+  >  - Fail-fast ACK stall: 60 sec
+  >  - Send mode: ASYNC (callback-based latency measurement)
+  > [Config] BUFFER_MEMORY per producer = 32 MB
+  > [Config] linger.ms=0, batch.size=102912
+  > [Run] Producers started. warmup=20s, measure=60s, total=80s
+  > 
+  > --- [ Latency Results (ms) ] ---
+  >  (App-level: send() call -> broker ACK; reaches OS page cache)
+  >  Total Requests : 12000
+  >  Average        : 1.16 ms
+  >  p50 (Median)   : 1.09 ms
+  >  p90            : 1.54 ms
+  >  p99            : 2.04 ms
+  >  p999           : 7.30 ms
+  >  Max            : 14.75 ms
+  > --------------------------------
+  > --- [ Throughput / Errors ] ---
+  >  Target OP/s         : 200
+  >  Achieved OP/s       : 200.00
+  >  Achieved/Target (%) : 100.0
+  >  Total Sent (incl. warmup) : 15912
+  >  Send Errors               : 0
+  >  Drain Time                : 0.05 sec
+  >  Drain Completed           : true
+  >  Sent Requests             : 12000
+  >  Sent OP/s                 : 200.00
+  >  ACK Window Requests       : 12000
+  >  ACK Window OP/s           : 200.00
+  >  Eventual ACK Requests     : 12000
+  >  Eventual ACK OP/s         : 200.00
+  >  Outstanding at End        : 0
+  >  Failed Requests           : 0
+  >  Unresolved After Drain    : 0
+  >  Latency Dropped Samples   : 0
+  >  Backpressure Wait Count   : 0
+  >  Backpressure Wait Time    : 0.00 ms
+  >  Max Observed Outstanding  : 24
+  >  Catch-up Resets           : 8
+  >  Catch-up Records Skipped  : 88
+  >  Max Schedule Lag          : 475.07 ms
+  >  ACK Stall Count          : 0
+  >  ACK Stall Total          : 0 sec
+  >  ACK Stall Max            : 0 sec
+  > --------------------------------
+  > 
+  > --- [ Per-second Throughput & Latency ] ---
+  > Sec   0 | send=   112 | ack=   107 | no data
+  > Sec   1 | send=   200 | ack=   205 | no data
+  > Sec   2 | send=   200 | ack=   199 | no data
+  > Sec   3 | send=   200 | ack=   201 | no data
+  > Sec   4 | send=   200 | ack=   200 | no data
+  > Sec   5 | send=   200 | ack=   200 | no data
+  > Sec   6 | send=   200 | ack=   200 | no data
+  > Sec   7 | send=   200 | ack=   200 | no data
+  > Sec   8 | send=   200 | ack=   200 | no data
+  > Sec   9 | send=   200 | ack=   200 | no data
+  > Sec  10 | send=   200 | ack=   200 | no data
+  > Sec  11 | send=   200 | ack=   200 | no data
+  > Sec  12 | send=   200 | ack=   200 | no data
+  > Sec  13 | send=   200 | ack=   200 | no data
+  > Sec  14 | send=   200 | ack=   200 | no data
+  > Sec  15 | send=   200 | ack=   200 | no data
+  > Sec  16 | send=   200 | ack=   200 | no data
+  > Sec  17 | send=   200 | ack=   200 | no data
+  > Sec  18 | send=   200 | ack=   200 | no data
+  > Sec  19 | send=   200 | ack=   200 | no data
+  > Sec  20 | send=   200 | ack=   200 | p50=1.58 ms | p99=2.17 ms
+  > Sec  21 | send=   200 | ack=   200 | p50=1.55 ms | p99=2.11 ms
+  > Sec  22 | send=   200 | ack=   200 | p50=1.51 ms | p99=6.58 ms
+  > Sec  23 | send=   200 | ack=   200 | p50=1.46 ms | p99=2.00 ms
+  > Sec  24 | send=   200 | ack=   200 | p50=1.63 ms | p99=2.41 ms
+  > Sec  25 | send=   200 | ack=   200 | p50=1.40 ms | p99=2.04 ms
+  > Sec  26 | send=   200 | ack=   200 | p50=1.38 ms | p99=1.98 ms
+  > Sec  27 | send=   200 | ack=   200 | p50=1.45 ms | p99=7.39 ms
+  > Sec  28 | send=   200 | ack=   200 | p50=1.22 ms | p99=2.17 ms
+  > Sec  29 | send=   200 | ack=   200 | p50=1.09 ms | p99=1.80 ms
+  > Sec  30 | send=   200 | ack=   200 | p50=1.22 ms | p99=8.62 ms
+  > Sec  31 | send=   200 | ack=   200 | p50=1.18 ms | p99=1.58 ms
+  > Sec  32 | send=   200 | ack=   200 | p50=1.21 ms | p99=1.97 ms
+  > Sec  33 | send=   200 | ack=   200 | p50=1.13 ms | p99=2.00 ms
+  > Sec  34 | send=   200 | ack=   200 | p50=1.07 ms | p99=1.49 ms
+  > Sec  35 | send=   200 | ack=   200 | p50=1.09 ms | p99=1.64 ms
+  > Sec  36 | send=   200 | ack=   200 | p50=1.09 ms | p99=1.52 ms
+  > Sec  37 | send=   200 | ack=   200 | p50=1.21 ms | p99=1.72 ms
+  > Sec  38 | send=   200 | ack=   200 | p50=1.25 ms | p99=1.99 ms
+  > Sec  39 | send=   200 | ack=   200 | p50=1.24 ms | p99=1.75 ms
+  > Sec  40 | send=   200 | ack=   200 | p50=1.24 ms | p99=1.87 ms
+  > Sec  41 | send=   200 | ack=   200 | p50=1.20 ms | p99=1.74 ms
+  > Sec  42 | send=   200 | ack=   200 | p50=1.18 ms | p99=1.79 ms
+  > Sec  43 | send=   200 | ack=   200 | p50=1.23 ms | p99=2.05 ms
+  > Sec  44 | send=   200 | ack=   200 | p50=1.12 ms | p99=1.74 ms
+  > Sec  45 | send=   200 | ack=   200 | p50=1.18 ms | p99=1.69 ms
+  > Sec  46 | send=   200 | ack=   200 | p50=1.14 ms | p99=1.69 ms
+  > Sec  47 | send=   200 | ack=   200 | p50=1.14 ms | p99=1.89 ms
+  > Sec  48 | send=   200 | ack=   200 | p50=1.18 ms | p99=1.76 ms
+  > Sec  49 | send=   200 | ack=   200 | p50=1.15 ms | p99=1.79 ms
+  > Sec  50 | send=   200 | ack=   200 | p50=1.15 ms | p99=1.60 ms
+  > Sec  51 | send=   200 | ack=   200 | p50=1.13 ms | p99=5.35 ms
+  > Sec  52 | send=   200 | ack=   200 | p50=0.98 ms | p99=1.54 ms
+  > Sec  53 | send=   200 | ack=   200 | p50=0.98 ms | p99=1.40 ms
+  > Sec  54 | send=   200 | ack=   200 | p50=1.03 ms | p99=1.51 ms
+  > Sec  55 | send=   200 | ack=   200 | p50=0.99 ms | p99=1.47 ms
+  > Sec  56 | send=   200 | ack=   200 | p50=0.99 ms | p99=1.61 ms
+  > Sec  57 | send=   200 | ack=   200 | p50=1.00 ms | p99=1.44 ms
+  > Sec  58 | send=   200 | ack=   200 | p50=1.00 ms | p99=1.43 ms
+  > Sec  59 | send=   200 | ack=   200 | p50=0.96 ms | p99=1.39 ms
+  > Sec  60 | send=   200 | ack=   200 | p50=1.01 ms | p99=1.49 ms
+  > Sec  61 | send=   200 | ack=   200 | p50=1.00 ms | p99=1.64 ms
+  > Sec  62 | send=   200 | ack=   200 | p50=0.98 ms | p99=1.39 ms
+  > Sec  63 | send=   200 | ack=   200 | p50=0.95 ms | p99=1.46 ms
+  > Sec  64 | send=   200 | ack=   200 | p50=0.97 ms | p99=1.44 ms
+  > Sec  65 | send=   200 | ack=   200 | p50=1.00 ms | p99=1.56 ms
+  > Sec  66 | send=   200 | ack=   200 | p50=0.98 ms | p99=1.48 ms
+  > Sec  67 | send=   200 | ack=   200 | p50=1.01 ms | p99=1.85 ms
+  > Sec  68 | send=   200 | ack=   200 | p50=0.95 ms | p99=1.34 ms
+  > Sec  69 | send=   200 | ack=   200 | p50=1.03 ms | p99=1.69 ms
+  > Sec  70 | send=   200 | ack=   200 | p50=1.01 ms | p99=1.65 ms
+  > Sec  71 | send=   200 | ack=   200 | p50=0.98 ms | p99=1.44 ms
+  > Sec  72 | send=   200 | ack=   200 | p50=0.97 ms | p99=3.41 ms
+  > Sec  73 | send=   200 | ack=   200 | p50=0.96 ms | p99=1.46 ms
+  > Sec  74 | send=   200 | ack=   200 | p50=0.93 ms | p99=1.33 ms
+  > Sec  75 | send=   200 | ack=   200 | p50=0.92 ms | p99=1.44 ms
+  > Sec  76 | send=   200 | ack=   200 | p50=0.93 ms | p99=1.48 ms
+  > Sec  77 | send=   200 | ack=   200 | p50=0.93 ms | p99=1.58 ms
+  > Sec  78 | send=   200 | ack=   200 | p50=0.96 ms | p99=4.72 ms
+  > Sec  79 | send=   200 | ack=   200 | p50=0.86 ms | p99=1.73 ms
+  > ------------------------------------------
+  > Req=12000 | Sent/ACKwin/Eventual=200.0/200.0/200.0 OP/s | App-Avg=1.16ms | App-P99=2.04ms | MapperUtil=7.09% | RawUtil=8.11% | iowait=0.73% | State=NOT_SATURATED | Valid=True
+[Service] Stopping Kafka KRaft broker ...
+[Success] JSON snapshot saved: results/kafka_fs_bench_20260906_102324/results_snapshot.json
+[Success] CSV saved: results/kafka_fs_bench_20260906_102324/csv/full_results.csv
+[Success] CSV saved: results/kafka_fs_bench_20260906_102324/csv/summary_by_fs_recordsize_scenario.csv
+[Success] Summary report saved: results/kafka_fs_bench_20260906_102324/summary_report.txt
+[Service] Stopping Kafka KRaft broker ...
+
+[Setup] Resetting FEMU ZNS and mounting f2fs through kafka-zns ...
+[DM] Created /dev/mapper/kafka-zns: 50331648 sectors (24.00 GiB, logical=75% max)
+NAME      MAJ:MIN RM SIZE RO TYPE MOUNTPOINTS
+kafka-zns 253:0    0  24G  0 dm   /result/kafka-logs
+/dev/mapper/kafka-zns on /result/kafka-logs type f2fs (rw,noatime,nodiratime,lazytime,background_gc=on,nodiscard,no_heap,user_xattr,inline_xattr,acl,inline_data,inline_dentry,flush_merge,extent_cache,mode=adaptive,active_logs=6,alloc_mode=default,checkpoint_merge,fsync_mode=posix,discard_unit=block)
+[Service] Starting Kafka in KRaft mode ...
+[Service] Recreating benchmark topic ...
+[latency/measure] F2FS / scenario_b / 102400B -> target_ops=200, fs_used=3.26%
+
+--- [MEASURE] F2FS / scenario_b / 102400B / 200 ops ---
+  > =====================================
+  >  Kafka Filesystem Benchmark (Java API)
+  > =====================================
+  >  - Record Size: 102400 Bytes
+  >  - Target OP/s (total): 200
+  >  - Producers: 8
+  >  - Consumer Active: true
+  >  - Dynamic Topic Creation: false (rate=5/sec)
+  >  - Warmup: 20 sec / Measurement: 60 sec / Drain timeout: 180 sec
+  >  - Max outstanding records: 1000
+  >  - Catch-up limit: records=10, lag=100ms
+  >  - Fail-fast ACK stall: 60 sec
+  >  - Send mode: ASYNC (callback-based latency measurement)
+  > [Config] BUFFER_MEMORY per producer = 32 MB
+  > [Config] linger.ms=0, batch.size=102912
+  > [Run] Producers started. warmup=20s, measure=60s, total=80s
+  > [Consumer] consumed 15904 records
+  > 
+  > --- [ Latency Results (ms) ] ---
+  >  (App-level: send() call -> broker ACK; reaches OS page cache)
+  >  Total Requests : 12000
+  >  Average        : 1.15 ms
+  >  p50 (Median)   : 1.06 ms
+  >  p90            : 1.58 ms
+  >  p99            : 2.26 ms
+  >  p999           : 11.32 ms
+  >  Max            : 16.32 ms
+  > --------------------------------
+  > --- [ Throughput / Errors ] ---
+  >  Target OP/s         : 200
+  >  Achieved OP/s       : 200.00
+  >  Achieved/Target (%) : 100.0
+  >  Total Sent (incl. warmup) : 15904
+  >  Send Errors               : 0
+  >  Drain Time                : 0.05 sec
+  >  Drain Completed           : true
+  >  Sent Requests             : 12000
+  >  Sent OP/s                 : 200.00
+  >  ACK Window Requests       : 12000
+  >  ACK Window OP/s           : 200.00
+  >  Eventual ACK Requests     : 12000
+  >  Eventual ACK OP/s         : 200.00
+  >  Outstanding at End        : 0
+  >  Failed Requests           : 0
+  >  Unresolved After Drain    : 0
+  >  Latency Dropped Samples   : 0
+  >  Backpressure Wait Count   : 0
+  >  Backpressure Wait Time    : 0.00 ms
+  >  Max Observed Outstanding  : 29
+  >  Catch-up Resets           : 8
+  >  Catch-up Records Skipped  : 96
+  >  Max Schedule Lag          : 504.67 ms
+  >  ACK Stall Count          : 0
+  >  ACK Stall Total          : 0 sec
+  >  ACK Stall Max            : 0 sec
+  > --- [ Consumer Integrity ] ---
+  >  Consumer Records         : 15904
+  >  Producer ACKed Records   : 15904
+  >  Consumer Record Delta    : 0
+  >  Consumer Drain Completed : true
+  >  Malformed Headers        : 0
+  >  Payload CRC Errors       : 0
+  >  Sequence Gaps            : 0
+  >  Duplicate Records        : 0
+  >  Out-of-order Records     : 0
+  > --------------------------------
+  > --------------------------------
+  > 
+  > --- [ Per-second Throughput & Latency ] ---
+  > Sec   0 | send=   104 | ack=   104 | no data
+  > Sec   1 | send=   200 | ack=   200 | no data
+  > Sec   2 | send=   200 | ack=   200 | no data
+  > Sec   3 | send=   200 | ack=   200 | no data
+  > Sec   4 | send=   200 | ack=   200 | no data
+  > Sec   5 | send=   200 | ack=   200 | no data
+  > Sec   6 | send=   200 | ack=   200 | no data
+  > Sec   7 | send=   200 | ack=   200 | no data
+  > Sec   8 | send=   200 | ack=   200 | no data
+  > Sec   9 | send=   200 | ack=   200 | no data
+  > Sec  10 | send=   200 | ack=   200 | no data
+  > Sec  11 | send=   200 | ack=   200 | no data
+  > Sec  12 | send=   200 | ack=   200 | no data
+  > Sec  13 | send=   200 | ack=   200 | no data
+  > Sec  14 | send=   200 | ack=   200 | no data
+  > Sec  15 | send=   200 | ack=   200 | no data
+  > Sec  16 | send=   200 | ack=   200 | no data
+  > Sec  17 | send=   200 | ack=   200 | no data
+  > Sec  18 | send=   200 | ack=   200 | no data
+  > Sec  19 | send=   200 | ack=   200 | no data
+  > Sec  20 | send=   200 | ack=   200 | p50=1.31 ms | p99=1.98 ms
+  > Sec  21 | send=   200 | ack=   200 | p50=1.30 ms | p99=1.83 ms
+  > Sec  22 | send=   200 | ack=   200 | p50=1.26 ms | p99=2.96 ms
+  > Sec  23 | send=   200 | ack=   200 | p50=1.16 ms | p99=2.29 ms
+  > Sec  24 | send=   200 | ack=   200 | p50=1.37 ms | p99=14.47 ms
+  > Sec  25 | send=   200 | ack=   200 | p50=1.33 ms | p99=2.46 ms
+  > Sec  26 | send=   200 | ack=   200 | p50=1.42 ms | p99=1.99 ms
+  > Sec  27 | send=   200 | ack=   200 | p50=1.38 ms | p99=2.42 ms
+  > Sec  28 | send=   200 | ack=   200 | p50=1.34 ms | p99=2.38 ms
+  > Sec  29 | send=   200 | ack=   200 | p50=1.30 ms | p99=2.18 ms
+  > Sec  30 | send=   200 | ack=   200 | p50=1.10 ms | p99=1.75 ms
+  > Sec  31 | send=   200 | ack=   200 | p50=1.08 ms | p99=1.67 ms
+  > Sec  32 | send=   200 | ack=   200 | p50=1.12 ms | p99=1.65 ms
+  > Sec  33 | send=   200 | ack=   200 | p50=1.13 ms | p99=2.23 ms
+  > Sec  34 | send=   200 | ack=   200 | p50=1.02 ms | p99=1.49 ms
+  > Sec  35 | send=   200 | ack=   200 | p50=1.01 ms | p99=1.62 ms
+  > Sec  36 | send=   200 | ack=   200 | p50=1.02 ms | p99=1.67 ms
+  > Sec  37 | send=   200 | ack=   200 | p50=1.00 ms | p99=1.60 ms
+  > Sec  38 | send=   200 | ack=   200 | p50=1.01 ms | p99=1.69 ms
+  > Sec  39 | send=   200 | ack=   200 | p50=0.96 ms | p99=1.42 ms
+  > Sec  40 | send=   200 | ack=   200 | p50=0.98 ms | p99=1.49 ms
+  > Sec  41 | send=   200 | ack=   200 | p50=0.97 ms | p99=1.46 ms
+  > Sec  42 | send=   200 | ack=   200 | p50=0.98 ms | p99=1.52 ms
+  > Sec  43 | send=   200 | ack=   200 | p50=1.03 ms | p99=1.80 ms
+  > Sec  44 | send=   200 | ack=   200 | p50=1.12 ms | p99=1.87 ms
+  > Sec  45 | send=   200 | ack=   200 | p50=1.10 ms | p99=1.70 ms
+  > Sec  46 | send=   200 | ack=   200 | p50=1.10 ms | p99=1.95 ms
+  > Sec  47 | send=   200 | ack=   200 | p50=1.11 ms | p99=1.80 ms
+  > Sec  48 | send=   200 | ack=   200 | p50=1.11 ms | p99=1.84 ms
+  > Sec  49 | send=   200 | ack=   200 | p50=1.10 ms | p99=1.79 ms
+  > Sec  50 | send=   200 | ack=   200 | p50=1.07 ms | p99=1.72 ms
+  > Sec  51 | send=   200 | ack=   200 | p50=0.98 ms | p99=1.65 ms
+  > Sec  52 | send=   200 | ack=   200 | p50=0.96 ms | p99=1.44 ms
+  > Sec  53 | send=   200 | ack=   200 | p50=0.94 ms | p99=1.51 ms
+  > Sec  54 | send=   200 | ack=   200 | p50=0.94 ms | p99=1.54 ms
+  > Sec  55 | send=   200 | ack=   200 | p50=0.94 ms | p99=1.45 ms
+  > Sec  56 | send=   200 | ack=   200 | p50=0.92 ms | p99=1.48 ms
+  > Sec  57 | send=   200 | ack=   200 | p50=0.95 ms | p99=1.37 ms
+  > Sec  58 | send=   200 | ack=   200 | p50=0.95 ms | p99=1.53 ms
+  > Sec  59 | send=   200 | ack=   200 | p50=0.97 ms | p99=1.35 ms
+  > Sec  60 | send=   200 | ack=   200 | p50=0.96 ms | p99=1.50 ms
+  > Sec  61 | send=   200 | ack=   200 | p50=0.95 ms | p99=1.44 ms
+  > Sec  62 | send=   200 | ack=   200 | p50=0.97 ms | p99=1.37 ms
+  > Sec  63 | send=   200 | ack=   200 | p50=0.97 ms | p99=16.17 ms
+  > Sec  64 | send=   200 | ack=   200 | p50=0.86 ms | p99=1.41 ms
+  > Sec  65 | send=   200 | ack=   200 | p50=0.89 ms | p99=1.50 ms
+  > Sec  66 | send=   200 | ack=   200 | p50=0.89 ms | p99=1.94 ms
+  > Sec  67 | send=   200 | ack=   200 | p50=0.88 ms | p99=1.49 ms
+  > Sec  68 | send=   200 | ack=   200 | p50=0.99 ms | p99=3.80 ms
+  > Sec  69 | send=   200 | ack=   200 | p50=0.97 ms | p99=1.71 ms
+  > Sec  70 | send=   200 | ack=   200 | p50=0.98 ms | p99=1.71 ms
+  > Sec  71 | send=   200 | ack=   200 | p50=1.00 ms | p99=2.32 ms
+  > Sec  72 | send=   200 | ack=   200 | p50=1.05 ms | p99=4.37 ms
+  > Sec  73 | send=   200 | ack=   200 | p50=1.22 ms | p99=2.36 ms
+  > Sec  74 | send=   200 | ack=   200 | p50=1.19 ms | p99=1.94 ms
+  > Sec  75 | send=   200 | ack=   200 | p50=1.18 ms | p99=10.92 ms
+  > Sec  76 | send=   200 | ack=   200 | p50=1.17 ms | p99=2.26 ms
+  > Sec  77 | send=   200 | ack=   200 | p50=1.14 ms | p99=6.13 ms
+  > Sec  78 | send=   200 | ack=   200 | p50=1.16 ms | p99=1.74 ms
+  > Sec  79 | send=   200 | ack=   200 | p50=1.14 ms | p99=1.81 ms
+  > ------------------------------------------
+  > Req=12000 | Sent/ACKwin/Eventual=200.0/200.0/200.0 OP/s | App-Avg=1.15ms | App-P99=2.26ms | MapperUtil=16.65% | RawUtil=17.92% | iowait=0.90% | State=NOT_SATURATED | Valid=True
+[Service] Stopping Kafka KRaft broker ...
+[Success] JSON snapshot saved: results/kafka_fs_bench_20260906_102324/results_snapshot.json
+[Success] CSV saved: results/kafka_fs_bench_20260906_102324/csv/full_results.csv
+[Success] CSV saved: results/kafka_fs_bench_20260906_102324/csv/summary_by_fs_recordsize_scenario.csv
+[Success] Summary report saved: results/kafka_fs_bench_20260906_102324/summary_report.txt
+[Service] Stopping Kafka KRaft broker ...
+
+[Setup] Resetting FEMU ZNS and mounting ext4 through kafka-zns ...
+[DM] Created /dev/mapper/kafka-zns: 50331648 sectors (24.00 GiB, logical=75% max)
+NAME      MAJ:MIN RM SIZE RO TYPE MOUNTPOINTS
+kafka-zns 253:0    0  24G  0 dm   /result/kafka-logs
+/dev/mapper/kafka-zns on /result/kafka-logs type ext4 (rw,noatime,nodiratime)
+[Service] Starting Kafka in KRaft mode ...
+[Service] Recreating benchmark topic ...
+[latency/measure] EXT4 / scenario_a / 1024000B -> target_ops=20, fs_used=0.00%
+
+--- [MEASURE] EXT4 / scenario_a / 1024000B / 20 ops ---
+  > =====================================
+  >  Kafka Filesystem Benchmark (Java API)
+  > =====================================
+  >  - Record Size: 1024000 Bytes
+  >  - Target OP/s (total): 20
+  >  - Producers: 8
+  >  - Consumer Active: false
+  >  - Dynamic Topic Creation: false (rate=5/sec)
+  >  - Warmup: 20 sec / Measurement: 60 sec / Drain timeout: 180 sec
+  >  - Max outstanding records: 1000
+  >  - Catch-up limit: records=10, lag=100ms
+  >  - Fail-fast ACK stall: 60 sec
+  >  - Send mode: ASYNC (callback-based latency measurement)
+  > [Config] BUFFER_MEMORY per producer = 64 MB
+  > [Config] linger.ms=0, batch.size=1024512
+  > [Run] Producers started. warmup=20s, measure=60s, total=80s
+  > 
+  > --- [ Latency Results (ms) ] ---
+  >  (App-level: send() call -> broker ACK; reaches OS page cache)
+  >  Total Requests : 1200
+  >  Average        : 16.13 ms
+  >  p50 (Median)   : 6.59 ms
+  >  p90            : 10.52 ms
+  >  p99            : 224.48 ms
+  >  p999           : 1322.26 ms
+  >  Max            : 1329.92 ms
+  > --------------------------------
+  > --- [ Throughput / Errors ] ---
+  >  Target OP/s         : 20
+  >  Achieved OP/s       : 20.00
+  >  Achieved/Target (%) : 100.0
+  >  Total Sent (incl. warmup) : 1600
+  >  Send Errors               : 0
+  >  Drain Time                : 0.15 sec
+  >  Drain Completed           : true
+  >  Sent Requests             : 1200
+  >  Sent OP/s                 : 20.00
+  >  ACK Window Requests       : 1200
+  >  ACK Window OP/s           : 20.00
+  >  Eventual ACK Requests     : 1200
+  >  Eventual ACK OP/s         : 20.00
+  >  Outstanding at End        : 0
+  >  Failed Requests           : 0
+  >  Unresolved After Drain    : 0
+  >  Latency Dropped Samples   : 0
+  >  Backpressure Wait Count   : 0
+  >  Backpressure Wait Time    : 0.00 ms
+  >  Max Observed Outstanding  : 16
+  >  Catch-up Resets           : 4
+  >  Catch-up Records Skipped  : 4
+  >  Max Schedule Lag          : 152.74 ms
+  >  ACK Stall Count          : 0
+  >  ACK Stall Total          : 0 sec
+  >  ACK Stall Max            : 0 sec
+  > --------------------------------
+  > 
+  > --- [ Per-second Throughput & Latency ] ---
+  > Sec   0 | send=    20 | ack=    20 | no data
+  > Sec   1 | send=    20 | ack=    20 | no data
+  > Sec   2 | send=    20 | ack=    20 | no data
+  > Sec   3 | send=    20 | ack=    20 | no data
+  > Sec   4 | send=    20 | ack=    20 | no data
+  > Sec   5 | send=    20 | ack=    20 | no data
+  > Sec   6 | send=    20 | ack=    20 | no data
+  > Sec   7 | send=    20 | ack=    20 | no data
+  > Sec   8 | send=    20 | ack=    20 | no data
+  > Sec   9 | send=    20 | ack=    20 | no data
+  > Sec  10 | send=    20 | ack=    20 | no data
+  > Sec  11 | send=    20 | ack=    20 | no data
+  > Sec  12 | send=    20 | ack=    20 | no data
+  > Sec  13 | send=    20 | ack=    20 | no data
+  > Sec  14 | send=    20 | ack=    20 | no data
+  > Sec  15 | send=    20 | ack=    20 | no data
+  > Sec  16 | send=    20 | ack=    20 | no data
+  > Sec  17 | send=    20 | ack=    20 | no data
+  > Sec  18 | send=    20 | ack=    20 | no data
+  > Sec  19 | send=    20 | ack=    20 | no data
+  > Sec  20 | send=    20 | ack=    20 | p50=8.99 ms | p99=12.64 ms
+  > Sec  21 | send=    20 | ack=    20 | p50=8.62 ms | p99=12.80 ms
+  > Sec  22 | send=    20 | ack=    20 | p50=7.63 ms | p99=12.83 ms
+  > Sec  23 | send=    20 | ack=    20 | p50=8.17 ms | p99=18.62 ms
+  > Sec  24 | send=    20 | ack=    20 | p50=8.83 ms | p99=10.96 ms
+  > Sec  25 | send=    20 | ack=    20 | p50=8.79 ms | p99=16.46 ms
+  > Sec  26 | send=    20 | ack=    20 | p50=7.84 ms | p99=10.91 ms
+  > Sec  27 | send=    20 | ack=    20 | p50=9.42 ms | p99=14.13 ms
+  > Sec  28 | send=    20 | ack=    20 | p50=9.20 ms | p99=11.99 ms
+  > Sec  29 | send=    20 | ack=    20 | p50=8.68 ms | p99=12.28 ms
+  > Sec  30 | send=    20 | ack=    20 | p50=9.59 ms | p99=13.54 ms
+  > Sec  31 | send=    20 | ack=    20 | p50=9.74 ms | p99=14.02 ms
+  > Sec  32 | send=    20 | ack=    16 | p50=8.52 ms | p99=11.27 ms
+  > Sec  33 | send=    20 | ack=    24 | p50=12.17 ms | p99=1329.92 ms
+  > Sec  34 | send=    20 | ack=    20 | p50=7.67 ms | p99=10.78 ms
+  > Sec  35 | send=    20 | ack=    20 | p50=8.20 ms | p99=11.25 ms
+  > Sec  36 | send=    20 | ack=    20 | p50=7.47 ms | p99=12.04 ms
+  > Sec  37 | send=    20 | ack=    20 | p50=9.01 ms | p99=175.73 ms
+  > Sec  38 | send=    20 | ack=    20 | p50=7.34 ms | p99=9.85 ms
+  > Sec  39 | send=    20 | ack=    20 | p50=6.23 ms | p99=9.34 ms
+  > Sec  40 | send=    20 | ack=    20 | p50=6.29 ms | p99=10.99 ms
+  > Sec  41 | send=    20 | ack=    20 | p50=6.53 ms | p99=9.56 ms
+  > Sec  42 | send=    20 | ack=    20 | p50=7.50 ms | p99=10.52 ms
+  > Sec  43 | send=    20 | ack=    20 | p50=7.01 ms | p99=15.99 ms
+  > Sec  44 | send=    20 | ack=    20 | p50=6.81 ms | p99=9.77 ms
+  > Sec  45 | send=    20 | ack=    20 | p50=6.34 ms | p99=9.60 ms
+  > Sec  46 | send=    20 | ack=    20 | p50=7.19 ms | p99=14.59 ms
+  > Sec  47 | send=    20 | ack=    20 | p50=5.52 ms | p99=7.22 ms
+  > Sec  48 | send=    20 | ack=    20 | p50=5.65 ms | p99=16.92 ms
+  > Sec  49 | send=    20 | ack=    20 | p50=5.15 ms | p99=7.35 ms
+  > Sec  50 | send=    20 | ack=    20 | p50=5.69 ms | p99=8.66 ms
+  > Sec  51 | send=    20 | ack=    20 | p50=5.95 ms | p99=8.77 ms
+  > Sec  52 | send=    20 | ack=    20 | p50=5.80 ms | p99=9.09 ms
+  > Sec  53 | send=    20 | ack=    20 | p50=5.55 ms | p99=7.67 ms
+  > Sec  54 | send=    20 | ack=    20 | p50=5.38 ms | p99=7.53 ms
+  > Sec  55 | send=    20 | ack=    20 | p50=4.90 ms | p99=6.78 ms
+  > Sec  56 | send=    20 | ack=    20 | p50=5.65 ms | p99=14.50 ms
+  > Sec  57 | send=    20 | ack=    20 | p50=5.74 ms | p99=8.63 ms
+  > Sec  58 | send=    20 | ack=    20 | p50=5.68 ms | p99=16.33 ms
+  > Sec  59 | send=    20 | ack=    20 | p50=5.49 ms | p99=7.36 ms
+  > Sec  60 | send=    20 | ack=    20 | p50=5.26 ms | p99=7.27 ms
+  > Sec  61 | send=    20 | ack=    20 | p50=5.39 ms | p99=7.33 ms
+  > Sec  62 | send=    20 | ack=    20 | p50=5.34 ms | p99=7.04 ms
+  > Sec  63 | send=    20 | ack=    20 | p50=5.21 ms | p99=7.54 ms
+  > Sec  64 | send=    20 | ack=    20 | p50=5.59 ms | p99=8.09 ms
+  > Sec  65 | send=    20 | ack=    20 | p50=6.09 ms | p99=12.27 ms
+  > Sec  66 | send=    20 | ack=    20 | p50=5.06 ms | p99=7.72 ms
+  > Sec  67 | send=    20 | ack=    20 | p50=6.43 ms | p99=13.58 ms
+  > Sec  68 | send=    20 | ack=    16 | p50=5.30 ms | p99=6.92 ms
+  > Sec  69 | send=    20 | ack=    24 | p50=7.70 ms | p99=405.67 ms
+  > Sec  70 | send=    20 | ack=    20 | p50=5.22 ms | p99=7.04 ms
+  > Sec  71 | send=    20 | ack=    20 | p50=5.12 ms | p99=7.64 ms
+  > Sec  72 | send=    20 | ack=    20 | p50=5.11 ms | p99=9.73 ms
+  > Sec  73 | send=    20 | ack=    20 | p50=6.16 ms | p99=12.13 ms
+  > Sec  74 | send=    20 | ack=    20 | p50=5.71 ms | p99=9.11 ms
+  > Sec  75 | send=    20 | ack=    20 | p50=6.91 ms | p99=12.38 ms
+  > Sec  76 | send=    20 | ack=    20 | p50=5.30 ms | p99=9.36 ms
+  > Sec  77 | send=    20 | ack=    20 | p50=5.65 ms | p99=8.83 ms
+  > Sec  78 | send=    20 | ack=    20 | p50=5.19 ms | p99=15.43 ms
+  > Sec  79 | send=    20 | ack=    20 | p50=5.55 ms | p99=8.82 ms
+  > ------------------------------------------
+  > Req=1200 | Sent/ACKwin/Eventual=20.0/20.0/20.0 OP/s | App-Avg=16.13ms | App-P99=224.48ms | MapperUtil=11.38% | RawUtil=16.38% | iowait=2.07% | State=NOT_SATURATED | Valid=True
+[Service] Stopping Kafka KRaft broker ...
+[Success] JSON snapshot saved: results/kafka_fs_bench_20260906_102324/results_snapshot.json
+[Success] CSV saved: results/kafka_fs_bench_20260906_102324/csv/full_results.csv
+[Success] CSV saved: results/kafka_fs_bench_20260906_102324/csv/summary_by_fs_recordsize_scenario.csv
+[Success] Summary report saved: results/kafka_fs_bench_20260906_102324/summary_report.txt
+[Service] Stopping Kafka KRaft broker ...
+
+[Setup] Resetting FEMU ZNS and mounting ext4 through kafka-zns ...
+[DM] Created /dev/mapper/kafka-zns: 50331648 sectors (24.00 GiB, logical=75% max)
+NAME      MAJ:MIN RM SIZE RO TYPE MOUNTPOINTS
+kafka-zns 253:0    0  24G  0 dm   /result/kafka-logs
+/dev/mapper/kafka-zns on /result/kafka-logs type ext4 (rw,noatime,nodiratime)
+[Service] Starting Kafka in KRaft mode ...
+[Service] Recreating benchmark topic ...
+[latency/measure] EXT4 / scenario_b / 1024000B -> target_ops=20, fs_used=0.00%
+
+--- [MEASURE] EXT4 / scenario_b / 1024000B / 20 ops ---
+  > =====================================
+  >  Kafka Filesystem Benchmark (Java API)
+  > =====================================
+  >  - Record Size: 1024000 Bytes
+  >  - Target OP/s (total): 20
+  >  - Producers: 8
+  >  - Consumer Active: true
+  >  - Dynamic Topic Creation: false (rate=5/sec)
+  >  - Warmup: 20 sec / Measurement: 60 sec / Drain timeout: 180 sec
+  >  - Max outstanding records: 1000
+  >  - Catch-up limit: records=10, lag=100ms
+  >  - Fail-fast ACK stall: 60 sec
+  >  - Send mode: ASYNC (callback-based latency measurement)
+  > [Config] BUFFER_MEMORY per producer = 64 MB
+  > [Config] linger.ms=0, batch.size=1024512
+  > [Run] Producers started. warmup=20s, measure=60s, total=80s
+  > [Consumer] consumed 1600 records
+  > 
+  > --- [ Latency Results (ms) ] ---
+  >  (App-level: send() call -> broker ACK; reaches OS page cache)
+  >  Total Requests : 1200
+  >  Average        : 46.84 ms
+  >  p50 (Median)   : 6.16 ms
+  >  p90            : 9.31 ms
+  >  p99            : 1255.84 ms
+  >  p999           : 1749.95 ms
+  >  Max            : 1755.32 ms
+  > --------------------------------
+  > --- [ Throughput / Errors ] ---
+  >  Target OP/s         : 20
+  >  Achieved OP/s       : 20.00
+  >  Achieved/Target (%) : 100.0
+  >  Total Sent (incl. warmup) : 1600
+  >  Send Errors               : 0
+  >  Drain Time                : 0.16 sec
+  >  Drain Completed           : true
+  >  Sent Requests             : 1200
+  >  Sent OP/s                 : 20.00
+  >  ACK Window Requests       : 1200
+  >  ACK Window OP/s           : 20.00
+  >  Eventual ACK Requests     : 1200
+  >  Eventual ACK OP/s         : 20.00
+  >  Outstanding at End        : 0
+  >  Failed Requests           : 0
+  >  Unresolved After Drain    : 0
+  >  Latency Dropped Samples   : 0
+  >  Backpressure Wait Count   : 0
+  >  Backpressure Wait Time    : 0.00 ms
+  >  Max Observed Outstanding  : 28
+  >  Catch-up Resets           : 4
+  >  Catch-up Records Skipped  : 4
+  >  Max Schedule Lag          : 163.71 ms
+  >  ACK Stall Count          : 0
+  >  ACK Stall Total          : 0 sec
+  >  ACK Stall Max            : 0 sec
+  > --- [ Consumer Integrity ] ---
+  >  Consumer Records         : 1600
+  >  Producer ACKed Records   : 1600
+  >  Consumer Record Delta    : 0
+  >  Consumer Drain Completed : true
+  >  Malformed Headers        : 0
+  >  Payload CRC Errors       : 0
+  >  Sequence Gaps            : 0
+  >  Duplicate Records        : 0
+  >  Out-of-order Records     : 0
+  > --------------------------------
+  > --------------------------------
+  > 
+  > --- [ Per-second Throughput & Latency ] ---
+  > Sec   0 | send=    20 | ack=    20 | no data
+  > Sec   1 | send=    20 | ack=    20 | no data
+  > Sec   2 | send=    20 | ack=    20 | no data
+  > Sec   3 | send=    20 | ack=    20 | no data
+  > Sec   4 | send=    20 | ack=    20 | no data
+  > Sec   5 | send=    20 | ack=    20 | no data
+  > Sec   6 | send=    20 | ack=    20 | no data
+  > Sec   7 | send=    20 | ack=    20 | no data
+  > Sec   8 | send=    20 | ack=    20 | no data
+  > Sec   9 | send=    20 | ack=    20 | no data
+  > Sec  10 | send=    20 | ack=    20 | no data
+  > Sec  11 | send=    20 | ack=    20 | no data
+  > Sec  12 | send=    20 | ack=    20 | no data
+  > Sec  13 | send=    20 | ack=    20 | no data
+  > Sec  14 | send=    20 | ack=    20 | no data
+  > Sec  15 | send=    20 | ack=    20 | no data
+  > Sec  16 | send=    20 | ack=    20 | no data
+  > Sec  17 | send=    20 | ack=    20 | no data
+  > Sec  18 | send=    20 | ack=    20 | no data
+  > Sec  19 | send=    20 | ack=    20 | no data
+  > Sec  20 | send=    20 | ack=    20 | p50=6.19 ms | p99=11.66 ms
+  > Sec  21 | send=    20 | ack=    20 | p50=6.29 ms | p99=9.94 ms
+  > Sec  22 | send=    20 | ack=    20 | p50=6.40 ms | p99=8.91 ms
+  > Sec  23 | send=    20 | ack=    20 | p50=5.76 ms | p99=8.98 ms
+  > Sec  24 | send=    20 | ack=    20 | p50=6.00 ms | p99=8.30 ms
+  > Sec  25 | send=    20 | ack=    20 | p50=6.41 ms | p99=9.29 ms
+  > Sec  26 | send=    20 | ack=    20 | p50=6.31 ms | p99=13.33 ms
+  > Sec  27 | send=    20 | ack=    20 | p50=5.66 ms | p99=7.01 ms
+  > Sec  28 | send=    20 | ack=    20 | p50=5.98 ms | p99=8.28 ms
+  > Sec  29 | send=    20 | ack=    20 | p50=5.66 ms | p99=7.85 ms
+  > Sec  30 | send=    20 | ack=    20 | p50=5.65 ms | p99=9.08 ms
+  > Sec  31 | send=    20 | ack=    20 | p50=6.62 ms | p99=10.43 ms
+  > Sec  32 | send=    20 | ack=    19 | p50=5.83 ms | p99=8.24 ms
+  > Sec  33 | send=    20 | ack=     9 | p50=5.20 ms | p99=849.49 ms
+  > Sec  34 | send=    20 | ack=    13 | p50=490.80 ms | p99=1149.56 ms
+  > Sec  35 | send=    20 | ack=    39 | p50=75.80 ms | p99=1554.74 ms
+  > Sec  36 | send=    20 | ack=    20 | p50=6.05 ms | p99=10.51 ms
+  > Sec  37 | send=    20 | ack=    20 | p50=6.06 ms | p99=8.66 ms
+  > Sec  38 | send=    20 | ack=    20 | p50=6.97 ms | p99=9.08 ms
+  > Sec  39 | send=    20 | ack=    20 | p50=5.86 ms | p99=13.38 ms
+  > Sec  40 | send=    20 | ack=    20 | p50=5.36 ms | p99=7.30 ms
+  > Sec  41 | send=    20 | ack=    20 | p50=5.63 ms | p99=7.69 ms
+  > Sec  42 | send=    20 | ack=    20 | p50=5.91 ms | p99=9.64 ms
+  > Sec  43 | send=    20 | ack=    20 | p50=6.25 ms | p99=8.00 ms
+  > Sec  44 | send=    20 | ack=    20 | p50=5.94 ms | p99=12.42 ms
+  > Sec  45 | send=    20 | ack=    20 | p50=5.90 ms | p99=7.02 ms
+  > Sec  46 | send=    20 | ack=    20 | p50=5.88 ms | p99=9.05 ms
+  > Sec  47 | send=    20 | ack=    20 | p50=5.64 ms | p99=7.34 ms
+  > Sec  48 | send=    20 | ack=    20 | p50=6.01 ms | p99=7.62 ms
+  > Sec  49 | send=    20 | ack=    20 | p50=5.69 ms | p99=9.01 ms
+  > Sec  50 | send=    20 | ack=    20 | p50=5.51 ms | p99=7.33 ms
+  > Sec  51 | send=    20 | ack=    20 | p50=5.49 ms | p99=9.08 ms
+  > Sec  52 | send=    20 | ack=    20 | p50=5.26 ms | p99=7.33 ms
+  > Sec  53 | send=    20 | ack=    20 | p50=5.36 ms | p99=7.18 ms
+  > Sec  54 | send=    20 | ack=    20 | p50=5.18 ms | p99=11.28 ms
+  > Sec  55 | send=    20 | ack=    20 | p50=5.87 ms | p99=9.32 ms
+  > Sec  56 | send=    20 | ack=    20 | p50=5.24 ms | p99=6.93 ms
+  > Sec  57 | send=    20 | ack=    20 | p50=4.78 ms | p99=7.40 ms
+  > Sec  58 | send=    20 | ack=    20 | p50=5.96 ms | p99=7.57 ms
+  > Sec  59 | send=    20 | ack=    20 | p50=5.79 ms | p99=12.53 ms
+  > Sec  60 | send=    20 | ack=    20 | p50=5.99 ms | p99=8.27 ms
+  > Sec  61 | send=    20 | ack=    20 | p50=6.20 ms | p99=10.57 ms
+  > Sec  62 | send=    20 | ack=    20 | p50=5.60 ms | p99=8.18 ms
+  > Sec  63 | send=    20 | ack=    20 | p50=7.66 ms | p99=19.48 ms
+  > Sec  64 | send=    20 | ack=    20 | p50=5.60 ms | p99=7.24 ms
+  > Sec  65 | send=    20 | ack=    20 | p50=6.30 ms | p99=8.76 ms
+  > Sec  66 | send=    20 | ack=    20 | p50=6.90 ms | p99=12.00 ms
+  > Sec  67 | send=    20 | ack=    20 | p50=6.60 ms | p99=8.66 ms
+  > Sec  68 | send=    20 | ack=    14 | p50=6.86 ms | p99=11.48 ms
+  > Sec  69 | send=    20 | ack=     9 | p50=6.39 ms | p99=9.22 ms
+  > Sec  70 | send=    20 | ack=    37 | p50=266.70 ms | p99=1755.32 ms
+  > Sec  71 | send=    20 | ack=    20 | p50=7.05 ms | p99=14.33 ms
+  > Sec  72 | send=    20 | ack=    20 | p50=7.59 ms | p99=16.32 ms
+  > Sec  73 | send=    20 | ack=    20 | p50=6.52 ms | p99=9.71 ms
+  > Sec  74 | send=    20 | ack=    20 | p50=5.80 ms | p99=7.95 ms
+  > Sec  75 | send=    20 | ack=    20 | p50=6.24 ms | p99=7.69 ms
+  > Sec  76 | send=    20 | ack=    20 | p50=5.88 ms | p99=9.70 ms
+  > Sec  77 | send=    20 | ack=    20 | p50=6.04 ms | p99=9.34 ms
+  > Sec  78 | send=    20 | ack=    20 | p50=5.81 ms | p99=8.75 ms
+  > Sec  79 | send=    20 | ack=    20 | p50=6.23 ms | p99=9.02 ms
+  > ------------------------------------------
+  > Req=1200 | Sent/ACKwin/Eventual=20.0/20.0/20.0 OP/s | App-Avg=46.84ms | App-P99=1255.84ms | MapperUtil=15.74% | RawUtil=17.41% | iowait=4.67% | State=NOT_SATURATED | Valid=True
+[Service] Stopping Kafka KRaft broker ...
+[Success] JSON snapshot saved: results/kafka_fs_bench_20260906_102324/results_snapshot.json
+[Success] CSV saved: results/kafka_fs_bench_20260906_102324/csv/full_results.csv
+[Success] CSV saved: results/kafka_fs_bench_20260906_102324/csv/summary_by_fs_recordsize_scenario.csv
+[Success] Summary report saved: results/kafka_fs_bench_20260906_102324/summary_report.txt
+[Service] Stopping Kafka KRaft broker ...
+
+[Setup] Resetting FEMU ZNS and mounting f2fs through kafka-zns ...
+[DM] Created /dev/mapper/kafka-zns: 50331648 sectors (24.00 GiB, logical=75% max)
+NAME      MAJ:MIN RM SIZE RO TYPE MOUNTPOINTS
+kafka-zns 253:0    0  24G  0 dm   /result/kafka-logs
+/dev/mapper/kafka-zns on /result/kafka-logs type f2fs (rw,noatime,nodiratime,lazytime,background_gc=on,nodiscard,no_heap,user_xattr,inline_xattr,acl,inline_data,inline_dentry,flush_merge,extent_cache,mode=adaptive,active_logs=6,alloc_mode=default,checkpoint_merge,fsync_mode=posix,discard_unit=block)
+[Service] Starting Kafka in KRaft mode ...
+[Service] Recreating benchmark topic ...
+[latency/measure] F2FS / scenario_a / 1024000B -> target_ops=20, fs_used=3.26%
+
+--- [MEASURE] F2FS / scenario_a / 1024000B / 20 ops ---
+  > =====================================
+  >  Kafka Filesystem Benchmark (Java API)
+  > =====================================
+  >  - Record Size: 1024000 Bytes
+  >  - Target OP/s (total): 20
+  >  - Producers: 8
+  >  - Consumer Active: false
+  >  - Dynamic Topic Creation: false (rate=5/sec)
+  >  - Warmup: 20 sec / Measurement: 60 sec / Drain timeout: 180 sec
+  >  - Max outstanding records: 1000
+  >  - Catch-up limit: records=10, lag=100ms
+  >  - Fail-fast ACK stall: 60 sec
+  >  - Send mode: ASYNC (callback-based latency measurement)
+  > [Config] BUFFER_MEMORY per producer = 64 MB
+  > [Config] linger.ms=0, batch.size=1024512
+  > [Run] Producers started. warmup=20s, measure=60s, total=80s
+  > 
+  > --- [ Latency Results (ms) ] ---
+  >  (App-level: send() call -> broker ACK; reaches OS page cache)
+  >  Total Requests : 1200
+  >  Average        : 6.68 ms
+  >  p50 (Median)   : 5.17 ms
+  >  p90            : 7.62 ms
+  >  p99            : 13.02 ms
+  >  p999           : 200.01 ms
+  >  Max            : 201.15 ms
+  > --------------------------------
+  > --- [ Throughput / Errors ] ---
+  >  Target OP/s         : 20
+  >  Achieved OP/s       : 20.00
+  >  Achieved/Target (%) : 100.0
+  >  Total Sent (incl. warmup) : 1600
+  >  Send Errors               : 0
+  >  Drain Time                : 0.22 sec
+  >  Drain Completed           : true
+  >  Sent Requests             : 1200
+  >  Sent OP/s                 : 20.00
+  >  ACK Window Requests       : 1200
+  >  ACK Window OP/s           : 20.00
+  >  Eventual ACK Requests     : 1200
+  >  Eventual ACK OP/s         : 20.00
+  >  Outstanding at End        : 0
+  >  Failed Requests           : 0
+  >  Unresolved After Drain    : 0
+  >  Latency Dropped Samples   : 0
+  >  Backpressure Wait Count   : 0
+  >  Backpressure Wait Time    : 0.00 ms
+  >  Max Observed Outstanding  : 16
+  >  Catch-up Resets           : 4
+  >  Catch-up Records Skipped  : 4
+  >  Max Schedule Lag          : 216.94 ms
+  >  ACK Stall Count          : 0
+  >  ACK Stall Total          : 0 sec
+  >  ACK Stall Max            : 0 sec
+  > --------------------------------
+  > 
+  > --- [ Per-second Throughput & Latency ] ---
+  > Sec   0 | send=    20 | ack=    20 | no data
+  > Sec   1 | send=    20 | ack=    20 | no data
+  > Sec   2 | send=    20 | ack=    20 | no data
+  > Sec   3 | send=    20 | ack=    20 | no data
+  > Sec   4 | send=    20 | ack=    20 | no data
+  > Sec   5 | send=    20 | ack=    20 | no data
+  > Sec   6 | send=    20 | ack=    20 | no data
+  > Sec   7 | send=    20 | ack=    20 | no data
+  > Sec   8 | send=    20 | ack=    20 | no data
+  > Sec   9 | send=    20 | ack=    20 | no data
+  > Sec  10 | send=    20 | ack=    20 | no data
+  > Sec  11 | send=    20 | ack=    20 | no data
+  > Sec  12 | send=    20 | ack=    20 | no data
+  > Sec  13 | send=    20 | ack=    20 | no data
+  > Sec  14 | send=    20 | ack=    20 | no data
+  > Sec  15 | send=    20 | ack=    20 | no data
+  > Sec  16 | send=    20 | ack=    20 | no data
+  > Sec  17 | send=    20 | ack=    20 | no data
+  > Sec  18 | send=    20 | ack=    20 | no data
+  > Sec  19 | send=    20 | ack=    20 | no data
+  > Sec  20 | send=    20 | ack=    20 | p50=7.00 ms | p99=10.58 ms
+  > Sec  21 | send=    20 | ack=    20 | p50=7.66 ms | p99=9.24 ms
+  > Sec  22 | send=    20 | ack=    20 | p50=7.41 ms | p99=10.66 ms
+  > Sec  23 | send=    20 | ack=    20 | p50=6.62 ms | p99=8.52 ms
+  > Sec  24 | send=    20 | ack=    20 | p50=6.23 ms | p99=9.59 ms
+  > Sec  25 | send=    20 | ack=    20 | p50=6.55 ms | p99=10.07 ms
+  > Sec  26 | send=    20 | ack=    20 | p50=6.08 ms | p99=7.94 ms
+  > Sec  27 | send=    20 | ack=    20 | p50=5.71 ms | p99=9.90 ms
+  > Sec  28 | send=    20 | ack=    20 | p50=6.74 ms | p99=10.97 ms
+  > Sec  29 | send=    20 | ack=    20 | p50=6.06 ms | p99=7.92 ms
+  > Sec  30 | send=    20 | ack=    20 | p50=6.22 ms | p99=7.95 ms
+  > Sec  31 | send=    20 | ack=    20 | p50=6.29 ms | p99=9.88 ms
+  > Sec  32 | send=    20 | ack=    20 | p50=5.81 ms | p99=9.80 ms
+  > Sec  33 | send=    20 | ack=    20 | p50=6.09 ms | p99=9.70 ms
+  > Sec  34 | send=    20 | ack=    20 | p50=6.47 ms | p99=9.03 ms
+  > Sec  35 | send=    20 | ack=    20 | p50=5.93 ms | p99=8.13 ms
+  > Sec  36 | send=    20 | ack=    20 | p50=6.51 ms | p99=8.69 ms
+  > Sec  37 | send=    20 | ack=    20 | p50=6.61 ms | p99=9.32 ms
+  > Sec  38 | send=    20 | ack=    20 | p50=6.35 ms | p99=8.71 ms
+  > Sec  39 | send=    20 | ack=    20 | p50=6.70 ms | p99=18.57 ms
+  > Sec  40 | send=    20 | ack=    20 | p50=4.76 ms | p99=6.44 ms
+  > Sec  41 | send=    20 | ack=    20 | p50=4.75 ms | p99=6.57 ms
+  > Sec  42 | send=    20 | ack=    20 | p50=5.05 ms | p99=13.02 ms
+  > Sec  43 | send=    20 | ack=    20 | p50=4.86 ms | p99=6.64 ms
+  > Sec  44 | send=    20 | ack=    20 | p50=4.91 ms | p99=6.54 ms
+  > Sec  45 | send=    20 | ack=    20 | p50=4.63 ms | p99=6.35 ms
+  > Sec  46 | send=    20 | ack=    20 | p50=4.61 ms | p99=7.57 ms
+  > Sec  47 | send=    20 | ack=    20 | p50=5.43 ms | p99=201.15 ms
+  > Sec  48 | send=    20 | ack=    20 | p50=4.67 ms | p99=6.41 ms
+  > Sec  49 | send=    20 | ack=    20 | p50=5.12 ms | p99=10.43 ms
+  > Sec  50 | send=    20 | ack=    20 | p50=4.68 ms | p99=6.44 ms
+  > Sec  51 | send=    20 | ack=    20 | p50=4.13 ms | p99=5.69 ms
+  > Sec  52 | send=    20 | ack=    20 | p50=4.29 ms | p99=6.37 ms
+  > Sec  53 | send=    20 | ack=    20 | p50=4.40 ms | p99=7.27 ms
+  > Sec  54 | send=    20 | ack=    20 | p50=4.51 ms | p99=5.57 ms
+  > Sec  55 | send=    20 | ack=    20 | p50=5.06 ms | p99=6.64 ms
+  > Sec  56 | send=    20 | ack=    20 | p50=4.79 ms | p99=5.70 ms
+  > Sec  57 | send=    20 | ack=    20 | p50=4.47 ms | p99=5.71 ms
+  > Sec  58 | send=    20 | ack=    20 | p50=4.60 ms | p99=13.02 ms
+  > Sec  59 | send=    20 | ack=    20 | p50=4.49 ms | p99=5.83 ms
+  > Sec  60 | send=    20 | ack=    20 | p50=4.38 ms | p99=6.02 ms
+  > Sec  61 | send=    20 | ack=    20 | p50=4.36 ms | p99=6.87 ms
+  > Sec  62 | send=    20 | ack=    20 | p50=4.50 ms | p99=6.54 ms
+  > Sec  63 | send=    20 | ack=    20 | p50=4.85 ms | p99=8.37 ms
+  > Sec  64 | send=    20 | ack=    20 | p50=5.00 ms | p99=9.82 ms
+  > Sec  65 | send=    20 | ack=    20 | p50=4.88 ms | p99=6.99 ms
+  > Sec  66 | send=    20 | ack=    20 | p50=4.85 ms | p99=6.85 ms
+  > Sec  67 | send=    20 | ack=    20 | p50=5.13 ms | p99=12.74 ms
+  > Sec  68 | send=    20 | ack=    20 | p50=5.01 ms | p99=12.40 ms
+  > Sec  69 | send=    20 | ack=    20 | p50=5.04 ms | p99=7.14 ms
+  > Sec  70 | send=    20 | ack=    20 | p50=4.60 ms | p99=7.10 ms
+  > Sec  71 | send=    20 | ack=    20 | p50=4.70 ms | p99=7.08 ms
+  > Sec  72 | send=    20 | ack=    20 | p50=4.68 ms | p99=7.72 ms
+  > Sec  73 | send=    20 | ack=    20 | p50=4.61 ms | p99=7.43 ms
+  > Sec  74 | send=    20 | ack=    20 | p50=4.65 ms | p99=5.67 ms
+  > Sec  75 | send=    20 | ack=    20 | p50=4.27 ms | p99=6.03 ms
+  > Sec  76 | send=    20 | ack=    20 | p50=4.03 ms | p99=7.14 ms
+  > Sec  77 | send=    20 | ack=    20 | p50=4.34 ms | p99=10.79 ms
+  > Sec  78 | send=    20 | ack=    20 | p50=4.31 ms | p99=5.83 ms
+  > Sec  79 | send=    20 | ack=    20 | p50=4.08 ms | p99=5.49 ms
+  > ------------------------------------------
+  > Req=1200 | Sent/ACKwin/Eventual=20.0/20.0/20.0 OP/s | App-Avg=6.68ms | App-P99=13.02ms | MapperUtil=8.85% | RawUtil=8.31% | iowait=1.87% | State=NOT_SATURATED | Valid=True
+[Service] Stopping Kafka KRaft broker ...
+[Success] JSON snapshot saved: results/kafka_fs_bench_20260906_102324/results_snapshot.json
+[Success] CSV saved: results/kafka_fs_bench_20260906_102324/csv/full_results.csv
+[Success] CSV saved: results/kafka_fs_bench_20260906_102324/csv/summary_by_fs_recordsize_scenario.csv
+[Success] Summary report saved: results/kafka_fs_bench_20260906_102324/summary_report.txt
+[Service] Stopping Kafka KRaft broker ...
+
+[Setup] Resetting FEMU ZNS and mounting f2fs through kafka-zns ...
+[DM] Created /dev/mapper/kafka-zns: 50331648 sectors (24.00 GiB, logical=75% max)
+NAME      MAJ:MIN RM SIZE RO TYPE MOUNTPOINTS
+kafka-zns 253:0    0  24G  0 dm   /result/kafka-logs
+/dev/mapper/kafka-zns on /result/kafka-logs type f2fs (rw,noatime,nodiratime,lazytime,background_gc=on,nodiscard,no_heap,user_xattr,inline_xattr,acl,inline_data,inline_dentry,flush_merge,extent_cache,mode=adaptive,active_logs=6,alloc_mode=default,checkpoint_merge,fsync_mode=posix,discard_unit=block)
+[Service] Starting Kafka in KRaft mode ...
+[Service] Recreating benchmark topic ...
+[latency/measure] F2FS / scenario_b / 1024000B -> target_ops=20, fs_used=3.26%
+
+--- [MEASURE] F2FS / scenario_b / 1024000B / 20 ops ---
+  > =====================================
+  >  Kafka Filesystem Benchmark (Java API)
+  > =====================================
+  >  - Record Size: 1024000 Bytes
+  >  - Target OP/s (total): 20
+  >  - Producers: 8
+  >  - Consumer Active: true
+  >  - Dynamic Topic Creation: false (rate=5/sec)
+  >  - Warmup: 20 sec / Measurement: 60 sec / Drain timeout: 180 sec
+  >  - Max outstanding records: 1000
+  >  - Catch-up limit: records=10, lag=100ms
+  >  - Fail-fast ACK stall: 60 sec
+  >  - Send mode: ASYNC (callback-based latency measurement)
+  > [Config] BUFFER_MEMORY per producer = 64 MB
+  > [Config] linger.ms=0, batch.size=1024512
+  > [Run] Producers started. warmup=20s, measure=60s, total=80s
+  > [Consumer] consumed 1600 records
+  > 
+  > --- [ Latency Results (ms) ] ---
+  >  (App-level: send() call -> broker ACK; reaches OS page cache)
+  >  Total Requests : 1200
+  >  Average        : 4.82 ms
+  >  p50 (Median)   : 4.43 ms
+  >  p90            : 5.62 ms
+  >  p99            : 12.30 ms
+  >  p999           : 16.32 ms
+  >  Max            : 17.01 ms
+  > --------------------------------
+  > --- [ Throughput / Errors ] ---
+  >  Target OP/s         : 20
+  >  Achieved OP/s       : 20.00
+  >  Achieved/Target (%) : 100.0
+  >  Total Sent (incl. warmup) : 1600
+  >  Send Errors               : 0
+  >  Drain Time                : 0.19 sec
+  >  Drain Completed           : true
+  >  Sent Requests             : 1200
+  >  Sent OP/s                 : 20.00
+  >  ACK Window Requests       : 1200
+  >  ACK Window OP/s           : 20.00
+  >  Eventual ACK Requests     : 1200
+  >  Eventual ACK OP/s         : 20.00
+  >  Outstanding at End        : 0
+  >  Failed Requests           : 0
+  >  Unresolved After Drain    : 0
+  >  Latency Dropped Samples   : 0
+  >  Backpressure Wait Count   : 0
+  >  Backpressure Wait Time    : 0.00 ms
+  >  Max Observed Outstanding  : 16
+  >  Catch-up Resets           : 4
+  >  Catch-up Records Skipped  : 4
+  >  Max Schedule Lag          : 196.06 ms
+  >  ACK Stall Count          : 0
+  >  ACK Stall Total          : 0 sec
+  >  ACK Stall Max            : 0 sec
+  > --- [ Consumer Integrity ] ---
+  >  Consumer Records         : 1600
+  >  Producer ACKed Records   : 1600
+  >  Consumer Record Delta    : 0
+  >  Consumer Drain Completed : true
+  >  Malformed Headers        : 0
+  >  Payload CRC Errors       : 0
+  >  Sequence Gaps            : 0
+  >  Duplicate Records        : 0
+  >  Out-of-order Records     : 0
+  > --------------------------------
+  > --------------------------------
+  > 
+  > --- [ Per-second Throughput & Latency ] ---
+  > Sec   0 | send=    20 | ack=    20 | no data
+  > Sec   1 | send=    20 | ack=    20 | no data
+  > Sec   2 | send=    20 | ack=    20 | no data
+  > Sec   3 | send=    20 | ack=    20 | no data
+  > Sec   4 | send=    20 | ack=    20 | no data
+  > Sec   5 | send=    20 | ack=    20 | no data
+  > Sec   6 | send=    20 | ack=    20 | no data
+  > Sec   7 | send=    20 | ack=    20 | no data
+  > Sec   8 | send=    20 | ack=    20 | no data
+  > Sec   9 | send=    20 | ack=    20 | no data
+  > Sec  10 | send=    20 | ack=    20 | no data
+  > Sec  11 | send=    20 | ack=    20 | no data
+  > Sec  12 | send=    20 | ack=    20 | no data
+  > Sec  13 | send=    20 | ack=    20 | no data
+  > Sec  14 | send=    20 | ack=    20 | no data
+  > Sec  15 | send=    20 | ack=    20 | no data
+  > Sec  16 | send=    20 | ack=    20 | no data
+  > Sec  17 | send=    20 | ack=    20 | no data
+  > Sec  18 | send=    20 | ack=    20 | no data
+  > Sec  19 | send=    20 | ack=    20 | no data
+  > Sec  20 | send=    20 | ack=    20 | p50=5.09 ms | p99=6.29 ms
+  > Sec  21 | send=    20 | ack=    20 | p50=4.86 ms | p99=7.01 ms
+  > Sec  22 | send=    20 | ack=    20 | p50=4.60 ms | p99=6.25 ms
+  > Sec  23 | send=    20 | ack=    20 | p50=4.57 ms | p99=12.83 ms
+  > Sec  24 | send=    20 | ack=    20 | p50=4.76 ms | p99=5.86 ms
+  > Sec  25 | send=    20 | ack=    20 | p50=5.46 ms | p99=11.33 ms
+  > Sec  26 | send=    20 | ack=    20 | p50=4.72 ms | p99=6.62 ms
+  > Sec  27 | send=    20 | ack=    20 | p50=4.36 ms | p99=8.33 ms
+  > Sec  28 | send=    20 | ack=    20 | p50=4.46 ms | p99=5.71 ms
+  > Sec  29 | send=    20 | ack=    20 | p50=4.51 ms | p99=5.74 ms
+  > Sec  30 | send=    20 | ack=    20 | p50=4.35 ms | p99=5.99 ms
+  > Sec  31 | send=    20 | ack=    20 | p50=4.30 ms | p99=8.60 ms
+  > Sec  32 | send=    20 | ack=    20 | p50=4.27 ms | p99=6.26 ms
+  > Sec  33 | send=    20 | ack=    20 | p50=4.18 ms | p99=12.30 ms
+  > Sec  34 | send=    20 | ack=    20 | p50=4.50 ms | p99=5.24 ms
+  > Sec  35 | send=    20 | ack=    20 | p50=4.56 ms | p99=11.34 ms
+  > Sec  36 | send=    20 | ack=    20 | p50=4.46 ms | p99=5.52 ms
+  > Sec  37 | send=    20 | ack=    20 | p50=4.59 ms | p99=6.90 ms
+  > Sec  38 | send=    20 | ack=    20 | p50=4.74 ms | p99=12.79 ms
+  > Sec  39 | send=    20 | ack=    20 | p50=4.48 ms | p99=6.54 ms
+  > Sec  40 | send=    20 | ack=    20 | p50=4.52 ms | p99=5.50 ms
+  > Sec  41 | send=    20 | ack=    20 | p50=4.41 ms | p99=5.90 ms
+  > Sec  42 | send=    20 | ack=    20 | p50=4.81 ms | p99=7.14 ms
+  > Sec  43 | send=    20 | ack=    20 | p50=4.33 ms | p99=17.01 ms
+  > Sec  44 | send=    20 | ack=    20 | p50=4.44 ms | p99=11.95 ms
+  > Sec  45 | send=    20 | ack=    20 | p50=4.34 ms | p99=5.44 ms
+  > Sec  46 | send=    20 | ack=    20 | p50=4.41 ms | p99=5.92 ms
+  > Sec  47 | send=    20 | ack=    20 | p50=4.27 ms | p99=5.68 ms
+  > Sec  48 | send=    20 | ack=    20 | p50=4.51 ms | p99=12.14 ms
+  > Sec  49 | send=    20 | ack=    20 | p50=4.28 ms | p99=5.41 ms
+  > Sec  50 | send=    20 | ack=    20 | p50=4.22 ms | p99=5.50 ms
+  > Sec  51 | send=    20 | ack=    20 | p50=4.28 ms | p99=5.41 ms
+  > Sec  52 | send=    20 | ack=    20 | p50=4.60 ms | p99=5.54 ms
+  > Sec  53 | send=    20 | ack=    20 | p50=5.49 ms | p99=14.04 ms
+  > Sec  54 | send=    20 | ack=    20 | p50=4.32 ms | p99=5.28 ms
+  > Sec  55 | send=    20 | ack=    20 | p50=4.26 ms | p99=5.30 ms
+  > Sec  56 | send=    20 | ack=    20 | p50=4.21 ms | p99=4.96 ms
+  > Sec  57 | send=    20 | ack=    20 | p50=4.57 ms | p99=5.51 ms
+  > Sec  58 | send=    20 | ack=    20 | p50=4.43 ms | p99=12.98 ms
+  > Sec  59 | send=    20 | ack=    20 | p50=4.22 ms | p99=5.22 ms
+  > Sec  60 | send=    20 | ack=    20 | p50=4.08 ms | p99=4.98 ms
+  > Sec  61 | send=    20 | ack=    20 | p50=4.48 ms | p99=6.06 ms
+  > Sec  62 | send=    20 | ack=    20 | p50=4.37 ms | p99=10.47 ms
+  > Sec  63 | send=    20 | ack=    20 | p50=4.62 ms | p99=16.32 ms
+  > Sec  64 | send=    20 | ack=    20 | p50=4.14 ms | p99=5.35 ms
+  > Sec  65 | send=    20 | ack=    20 | p50=4.16 ms | p99=5.19 ms
+  > Sec  66 | send=    20 | ack=    20 | p50=4.18 ms | p99=5.39 ms
+  > Sec  67 | send=    20 | ack=    20 | p50=4.23 ms | p99=5.09 ms
+  > Sec  68 | send=    20 | ack=    20 | p50=4.19 ms | p99=5.39 ms
+  > Sec  69 | send=    20 | ack=    20 | p50=4.30 ms | p99=5.59 ms
+  > Sec  70 | send=    20 | ack=    20 | p50=4.43 ms | p99=6.19 ms
+  > Sec  71 | send=    20 | ack=    20 | p50=4.25 ms | p99=5.60 ms
+  > Sec  72 | send=    20 | ack=    20 | p50=4.30 ms | p99=10.85 ms
+  > Sec  73 | send=    20 | ack=    20 | p50=4.24 ms | p99=5.13 ms
+  > Sec  74 | send=    20 | ack=    20 | p50=4.17 ms | p99=5.08 ms
+  > Sec  75 | send=    20 | ack=    20 | p50=4.27 ms | p99=5.59 ms
+  > Sec  76 | send=    20 | ack=    20 | p50=4.13 ms | p99=5.82 ms
+  > Sec  77 | send=    20 | ack=    20 | p50=4.28 ms | p99=5.84 ms
+  > Sec  78 | send=    20 | ack=    20 | p50=4.24 ms | p99=11.92 ms
+  > Sec  79 | send=    20 | ack=    20 | p50=4.24 ms | p99=8.49 ms
+  > ------------------------------------------
+  > Req=1200 | Sent/ACKwin/Eventual=20.0/20.0/20.0 OP/s | App-Avg=4.82ms | App-P99=12.30ms | MapperUtil=7.48% | RawUtil=9.24% | iowait=0.77% | State=NOT_SATURATED | Valid=True
+[Service] Stopping Kafka KRaft broker ...
+[Success] JSON snapshot saved: results/kafka_fs_bench_20260906_102324/results_snapshot.json
+[Success] CSV saved: results/kafka_fs_bench_20260906_102324/csv/full_results.csv
+[Success] CSV saved: results/kafka_fs_bench_20260906_102324/csv/summary_by_fs_recordsize_scenario.csv
+[Success] Summary report saved: results/kafka_fs_bench_20260906_102324/summary_report.txt

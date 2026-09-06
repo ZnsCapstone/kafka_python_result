@@ -1,0 +1,212 @@
+### Date
+2026-09-06T10:57:48.743845
+
+### uname -a
+Linux zns-guest 5.15.0-186-generic #196-Ubuntu SMP Sat Jun 20 16:09:34 UTC 2026 x86_64 x86_64 x86_64 GNU/Linux
+
+### /etc/os-release
+PRETTY_NAME="Ubuntu 22.04.5 LTS"
+NAME="Ubuntu"
+VERSION_ID="22.04"
+VERSION="22.04.5 LTS (Jammy Jellyfish)"
+VERSION_CODENAME=jammy
+ID=ubuntu
+ID_LIKE=debian
+HOME_URL="https://www.ubuntu.com/"
+SUPPORT_URL="https://help.ubuntu.com/"
+BUG_REPORT_URL="https://bugs.launchpad.net/ubuntu/"
+PRIVACY_POLICY_URL="https://www.ubuntu.com/legal/terms-and-policies/privacy-policy"
+UBUNTU_CODENAME=jammy
+
+### CPU info (lscpu)
+Architecture:                            x86_64
+CPU op-mode(s):                          32-bit, 64-bit
+Address sizes:                           46 bits physical, 48 bits virtual
+Byte Order:                              Little Endian
+CPU(s):                                  8
+On-line CPU(s) list:                     0-7
+Vendor ID:                               GenuineIntel
+Model name:                              Intel(R) Xeon(R) CPU E5-2699 v3 @ 2.30GHz
+CPU family:                              6
+Model:                                   63
+Thread(s) per core:                      1
+Core(s) per socket:                      8
+Socket(s):                               1
+Stepping:                                2
+BogoMIPS:                                4599.99
+Flags:                                   fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush mmx fxsr sse sse2 ss ht syscall nx pdpe1gb rdtscp lm constant_tsc arch_perfmon rep_good nopl xtopology cpuid tsc_known_freq pni pclmulqdq vmx ssse3 fma cx16 pdcm pcid sse4_1 sse4_2 x2apic movbe popcnt tsc_deadline_timer aes xsave avx f16c rdrand hypervisor lahf_lm abm cpuid_fault invpcid_single pti ssbd ibrs ibpb stibp tpr_shadow vnmi flexpriority ept vpid ept_ad fsgsbase tsc_adjust bmi1 avx2 smep bmi2 erms invpcid xsaveopt arat umip md_clear flush_l1d
+Virtualization:                          VT-x
+Hypervisor vendor:                       KVM
+Virtualization type:                     full
+L1d cache:                               256 KiB (8 instances)
+L1i cache:                               256 KiB (8 instances)
+L2 cache:                                32 MiB (8 instances)
+L3 cache:                                16 MiB (1 instance)
+NUMA node(s):                            1
+NUMA node0 CPU(s):                       0-7
+Vulnerability Gather data sampling:      Not affected
+Vulnerability Indirect target selection: Mitigation; Aligned branch/return thunks
+Vulnerability Itlb multihit:             KVM: Mitigation: VMX disabled
+Vulnerability L1tf:                      Mitigation; PTE Inversion; VMX conditional cache flushes, SMT disabled
+Vulnerability Mds:                       Mitigation; Clear CPU buffers; SMT Host state unknown
+Vulnerability Meltdown:                  Mitigation; PTI
+Vulnerability Mmio stale data:           Mitigation; Clear CPU buffers; SMT Host state unknown
+Vulnerability Reg file data sampling:    Not affected
+Vulnerability Retbleed:                  Not affected
+Vulnerability Spec rstack overflow:      Not affected
+Vulnerability Spec store bypass:         Mitigation; Speculative Store Bypass disabled via prctl and seccomp
+Vulnerability Spectre v1:                Mitigation; usercopy/swapgs barriers and __user pointer sanitization
+Vulnerability Spectre v2:                Mitigation; Retpolines; IBPB conditional; IBRS_FW; STIBP disabled; RSB filling; PBRSB-eIBRS Not affected; BHI Retpoline
+Vulnerability Srbds:                     Not affected
+Vulnerability Tsa:                       Not affected
+Vulnerability Tsx async abort:           Not affected
+Vulnerability Vmscape:                   Not affected
+
+### Memory (free -h)
+total        used        free      shared  buff/cache   available
+Mem:            15Gi       222Mi        15Gi       0.0Ki       200Mi        15Gi
+Swap:             0B          0B          0B
+
+### Disk (lsblk)
+NAME    MAJ:MIN RM   SIZE RO TYPE MOUNTPOINTS
+fd0       2:0    1     4K  0 disk 
+loop0     7:0    0    74M  1 loop /snap/core22/2411
+loop1     7:1    0    74M  1 loop /snap/core22/2437
+loop2     7:2    0 115.3M  1 loop /snap/lxd/40338
+loop3     7:3    0 115.3M  1 loop /snap/lxd/40575
+loop4     7:4    0  50.1M  1 loop /snap/snapd/27591
+loop5     7:5    0  50.1M  1 loop /snap/snapd/27710
+sda       8:0    0    40G  0 disk 
+├─sda1    8:1    0  39.9G  0 part /
+├─sda14   8:14   0     4M  0 part 
+└─sda15   8:15   0   106M  0 part /boot/efi
+nvme0n1 259:0    0    32G  0 disk
+
+### Disk (df -h)
+Filesystem      Size  Used Avail Use% Mounted on
+tmpfs           1.6G 1008K  1.6G   1% /run
+/dev/sda1        39G   12G   28G  30% /
+tmpfs           7.9G     0  7.9G   0% /dev/shm
+tmpfs           5.0M     0  5.0M   0% /run/lock
+/dev/sda15      105M  6.1M   99M   6% /boot/efi
+tmpfs           1.6G  4.0K  1.6G   1% /run/user/1000
+
+### Kernel cmdline
+BOOT_IMAGE=/boot/vmlinuz-5.15.0-186-generic root=UUID=2b77e9e3-ec85-4637-aa91-84e2cd81ebab ro console=tty1 console=ttyS0
+
+### vm.dirty_ratio
+vm.dirty_ratio = 20
+
+### vm.dirty_background_ratio
+vm.dirty_background_ratio = 10
+
+### vm.swappiness
+vm.swappiness = 60
+
+### iostat version
+sysstat version 12.5.2
+
+### vmstat version
+vmstat from procps-ng 3.3.17
+
+### mkfs.ext4 version
+mke2fs 1.46.5 (30-Dec-2021)
+
+### mkfs.f2fs version
+mkfs.f2fs 1.14.0 (2020-08-24)
+
+### Java version
+openjdk version "17.0.20" 2026-07-21
+OpenJDK Runtime Environment (build 17.0.20+8-1-22.04-Ubuntu)
+OpenJDK 64-Bit Server VM (build 17.0.20+8-1-22.04-Ubuntu, mixed mode, sharing)
+
+### Java benchmark JAR
+/home/zns/Kafka-benchmark/build/libs/kafka-benchmark-1.0.jar
+
+### Java benchmark SHA-256
+3805f76368729e4371bcdcfb962cf9dab4c493c28820ba3e988ca764c100ea5f  /home/zns/Kafka-benchmark/build/libs/kafka-benchmark-1.0.jar
+
+### Benchmark profile
+latency
+
+### Profile config
+{'ops_by_record_size': {1024: 20000, 10240: 2000, 102400: 200, 1024000: 20}, 'max_in_flight_records': 1000, 'max_catch_up_records': 10, 'max_schedule_lag_ms': 100}
+
+### Scenario group
+baseline
+
+### Workload mode
+occupancy
+
+### Occupancy points
+(20, 40, 60, 80)
+
+### Kafka path
+/home/zns/kafka-4.2.0-src
+
+### Kafka config
+# Licensed to the Apache Software Foundation (ASF) under one or more
+# contributor license agreements.  See the NOTICE file distributed with
+# this work for additional information regarding copyright ownership.
+# The ASF licenses this file to You under the Apache License, Version 2.0
+# (the "License"); you may not use this file except in compliance with
+# the License.  You may obtain a copy of the License at
+#
+#    http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+############################# Server Basics #############################
+
+# The role of this server. Setting this puts us in KRaft mode
+process.roles=broker,controller
+
+# The node id associated with this instance's roles
+node.id=1
+
+# List of controller endpoints used connect to the controller cluster
+controller.quorum.bootstrap.servers=localhost:9093
+
+############################# Socket Server Settings #############################
+
+# The address the socket server listens on.
+# Combined nodes (i.e. those with `process.roles=broker,controller`) must list the controller listener here at a minimum.
+# If the broker listener is not defined, the default listener will use a host name that is equal to the value of java.net.InetAddress.getCanonicalHostName(),
+# with PLAINTEXT listener name, and port 9092.
+#   FORMAT:
+#     listeners = listener_name://host_name:port
+#   EXAMPLE:
+#     listeners = PLAINTEXT://your.host.name:9092
+listeners=PLAINTEXT://:9092,CONTROLLER://:9093
+
+# Name of listener used for communication between brokers.
+inter.broker.listener.name=PLAINTEXT
+
+# Listener name, hostname and port the broker or the controller will advertise to clients.
+# If not set, it uses the value for "listeners".
+advertised.listeners=PLAINTEXT://localhost:9092,CONTROLLER://localhost:9093
+
+# A comma-separated list of the names of the listeners used by the controller.
+# If no explicit mapping set in `listener.security.protocol.map`, default will be using PLAINTEXT protocol
+# This is required if running in KRaft mode.
+controller.listener.names=CONTROLLER
+
+### Raw ZNS device
+/dev/nvme0n1
+
+### DM device
+/dev/mapper/kafka-zns
+
+### DM module
+/home/zns/dm-zns-base/src/dm-zns-base.ko
+
+### DM implementation
+dynamic allocation (MJ)
+
+### DM table
+device-mapper: table ioctl on kafka-zns  failed: No such device or address
+Command failed.
