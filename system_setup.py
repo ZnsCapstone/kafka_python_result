@@ -1,7 +1,8 @@
-"""FEMU ZNS, filesystem, Kafka KRaft, and reproducibility setup."""
+"""Storage, filesystem, Kafka KRaft, and reproducibility setup."""
 
 import datetime
 import os
+import stat
 import subprocess
 import sys
 import time
@@ -37,12 +38,16 @@ def capture_environment():
         ("Occupancy points", str(cfg.OCCUPANCY_POINTS)),
         ("Kafka path", cfg.KAFKA_PATH),
         ("Kafka config", run_cmd_quiet(f"cat {cfg.EXPERIMENT_KRAFT_CONFIG} | head -50")),
-        ("Raw ZNS device", cfg.RAW_ZNS_DEVICE),
-        ("DM device", cfg.FS_DEVICE),
-        ("DM module", cfg.DM_MODULE_PATH),
-        ("DM implementation", cfg.DM_IMPLEMENTATION_LABELS[cfg.DM_IMPLEMENTATION]),
-        ("DM table", run_cmd_quiet(f"sudo dmsetup table {cfg.DM_NAME} 2>&1 || true")),
+        ("Storage backend", cfg.storage_label()),
+        ("Filesystem device", cfg.FS_DEVICE),
     ]
+    if cfg.STORAGE_BACKEND == "dm-zns":
+        sections.extend([
+            ("Raw ZNS device", cfg.RAW_ZNS_DEVICE),
+            ("DM module", cfg.DM_MODULE_PATH),
+            ("DM implementation", cfg.DM_IMPLEMENTATION_LABELS[cfg.DM_IMPLEMENTATION]),
+            ("DM table", run_cmd_quiet(f"sudo dmsetup table {cfg.DM_NAME} 2>&1 || true")),
+        ])
     content = "\n".join(f"### {name}\n{value}\n" for name, value in sections)
     path = f"{cfg.ENV_DIR}/system_info.txt"
     write_text(path, content)
@@ -56,10 +61,12 @@ def dm_module_name():
 def unmount_log_device(strict=True):
     last_result = None
     for attempt in range(1, 6):
+        if not os.path.ismount(cfg.MOUNT_POINT):
+            return
         result = subprocess.run(
             f"sudo umount {cfg.MOUNT_POINT}", shell=True, capture_output=True, text=True
         )
-        if result.returncode == 0 or "not mounted" in result.stderr.lower():
+        if result.returncode == 0 or not os.path.ismount(cfg.MOUNT_POINT):
             return
         last_result = result
         if attempt < 5:
@@ -74,6 +81,8 @@ def unmount_log_device(strict=True):
 
 
 def remove_dm_stack(strict=True):
+    if cfg.STORAGE_BACKEND != "dm-zns":
+        return
     result = run_cmd_full(f"sudo dmsetup remove {cfg.DM_NAME}")
     if result.returncode != 0 and not any(
         text in result.stderr.lower() for text in ("no such device", "not found")
@@ -171,19 +180,54 @@ def stop_stale_kafka_processes():
         run_cmd_quiet(f"pkill -9 -f '{process_class}' || true")
 
 
+def validate_cns_device():
+    """Reject missing, zoned, or mounted devices before destructive setup."""
+    device = cfg.FS_DEVICE
+    if not device.startswith("/dev/"):
+        raise RuntimeError(f"CNS device must resolve below /dev: {device}")
+    try:
+        mode = os.stat(device).st_mode
+    except OSError as exc:
+        raise RuntimeError(f"cannot access CNS device {device}: {exc}") from exc
+    if not stat.S_ISBLK(mode):
+        raise RuntimeError(f"CNS target is not a block device: {device}")
+
+    mounts = run_cmd_quiet(f"lsblk -nrpo MOUNTPOINTS {device}")
+    mounted = [line.strip() for line in mounts.splitlines() if line.strip()]
+    if mounted:
+        raise RuntimeError(
+            f"refusing to format {device}; it or a child device is mounted at: "
+            + ", ".join(mounted)
+        )
+
+    zoned_path = f"/sys/class/block/{cfg.RAW_DEVICE_BASENAME}/queue/zoned"
+    try:
+        with open(zoned_path, encoding="utf-8") as file:
+            zoned = file.read().strip()
+    except OSError as exc:
+        raise RuntimeError(f"cannot read zoned mode for {device}: {exc}") from exc
+    if zoned != "none":
+        raise RuntimeError(
+            f"CNS mode requires a conventional block device (zoned=none); "
+            f"{device} reports zoned={zoned!r}"
+        )
+
+
 def setup_filesystem(fs_type):
     if fs_type not in cfg.FILESYSTEMS:
         raise ValueError(f"Unsupported filesystem: {fs_type}")
-    print(f"\n[Setup] Resetting FEMU ZNS and mounting {fs_type} through {cfg.DM_NAME} ...")
+    print(f"\n[Setup] Resetting {cfg.storage_label()} and mounting {fs_type} ...")
     stop_stale_kafka_processes()
     time.sleep(2)
     unmount_log_device()
-    remove_dm_stack()
-
-    result = run_cmd_full(f"sudo blkzone reset {cfg.RAW_ZNS_DEVICE}")
-    if result.returncode != 0:
-        raise RuntimeError(f"zone reset failed:\n{result.stdout}\n{result.stderr}")
-    create_dm_target()
+    if cfg.STORAGE_BACKEND == "cns":
+        validate_cns_device()
+    if cfg.STORAGE_BACKEND == "dm-zns":
+        remove_dm_stack()
+        result = run_cmd_full(f"sudo blkzone reset {cfg.RAW_ZNS_DEVICE}")
+        if result.returncode != 0:
+            raise RuntimeError(f"zone reset failed:\n{result.stdout}\n{result.stderr}")
+        create_dm_target()
     result = run_cmd_full(f"sudo wipefs -a {cfg.FS_DEVICE}")
     if result.returncode != 0:
         raise RuntimeError(f"wipefs failed:\n{result.stdout}\n{result.stderr}")
@@ -204,7 +248,7 @@ def setup_filesystem(fs_type):
     run_cmd_quiet(f"sudo rm -rf {cfg.MOUNT_POINT}/lost+found")
     run_cmd_quiet(f"sudo chmod 777 {cfg.MOUNT_POINT}")
     print(run_cmd_quiet(f"lsblk {cfg.FS_DEVICE}"))
-    print(run_cmd_quiet(f"mount | grep {cfg.DM_NAME}"))
+    print(run_cmd_quiet(f"findmnt {cfg.MOUNT_POINT}"))
     run_cmd_quiet("sudo sync")
     run_cmd_quiet("echo 3 | sudo tee /proc/sys/vm/drop_caches")
     if cfg.SEPARATE_METADATA_DIR:

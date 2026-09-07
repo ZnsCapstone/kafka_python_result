@@ -14,10 +14,14 @@ from bench_utils import gzip_file, run_cmd_streaming, safe_float, safe_mean, wri
 def start_monitors(prefix):
     paths = {"iostat": f"{prefix}_iostat.txt", "vmstat": f"{prefix}_vmstat.txt"}
     files = {name: open(path, "w", encoding="utf-8") for name, path in paths.items()}
-    mapper_kernel_name = os.path.basename(os.path.realpath(cfg.FS_DEVICE))
+    devices = [cfg.RAW_DEVICE_BASENAME]
+    if cfg.STORAGE_BACKEND == "dm-zns":
+        mapper_kernel_name = os.path.basename(os.path.realpath(cfg.FS_DEVICE))
+        if mapper_kernel_name not in devices:
+            devices.append(mapper_kernel_name)
     processes = {
         "iostat": subprocess.Popen(
-            f"iostat -N -y -dxm 1 {cfg.RAW_DEVICE_BASENAME} {mapper_kernel_name}", shell=True,
+            f"iostat -N -y -dxm 1 {' '.join(devices)}", shell=True,
             stdout=files["iostat"], stderr=subprocess.STDOUT, text=True,
             preexec_fn=os.setsid,
         ),
@@ -359,11 +363,11 @@ def run_benchmark_once(fs_type, scenario_key, config, round_idx, phase_tag="meas
     skip = config.get("warmup_sec", 0) + cfg.MONITOR_LEAD_SECONDS
     metrics = parse_java_metrics(output)
     measure_samples = config["measure_sec"]
-    mapper_kernel_name = os.path.basename(os.path.realpath(cfg.FS_DEVICE))
-    for prefix_name, device_name in (
-        ("raw", cfg.RAW_DEVICE_BASENAME),
-        ("mapper", (cfg.DM_NAME, mapper_kernel_name)),
-    ):
+    monitored_devices = [("raw", cfg.RAW_DEVICE_BASENAME)]
+    if cfg.STORAGE_BACKEND == "dm-zns":
+        mapper_kernel_name = os.path.basename(os.path.realpath(cfg.FS_DEVICE))
+        monitored_devices.append(("mapper", (cfg.DM_NAME, mapper_kernel_name)))
+    for prefix_name, device_name in monitored_devices:
         device_metrics = parse_iostat_file(
             monitors["paths"]["iostat"], device_name, skip,
             max_samples=measure_samples,
@@ -387,7 +391,7 @@ def run_benchmark_once(fs_type, scenario_key, config, round_idx, phase_tag="meas
         f"{metrics.get('eventual_ack_ops', 0.0):.1f} OP/s | "
         f"App-Avg={metrics.get('avg_ms', 0.0):.2f}ms | "
         f"App-P99={metrics.get('p99_ms', 0.0):.2f}ms | "
-        f"MapperUtil={metrics.get('mapper_util_avg', 0.0):.2f}% | "
+        f"StorageUtil={metrics.get('mapper_util_avg', metrics.get('raw_util_avg', 0.0)):.2f}% | "
         f"RawUtil={metrics.get('raw_util_avg', 0.0):.2f}% | "
         f"iowait={metrics.get('cpu_wa_avg', 0.0):.2f}% | "
         f"State={validity['state']} | Valid={validity['valid']}"

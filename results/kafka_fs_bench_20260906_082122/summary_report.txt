@@ -1,0 +1,237 @@
+============================================================
+  KAFKA FILESYSTEM PERFORMANCE EXPERIMENT REPORT (M1-#1)
+============================================================
+Start Time : 2026-09-06 08:21:22
+Current Round Completed : 1
+End Time   : 2026-09-06 10:57:56
+
+Latency Layers
+  - App-level   : producer.send → broker ACK (Kafka client latency)
+  - Block-level : iostat await (block queue entry → completion)
+
+Experiment Scope
+- Kafka 4.2 (KRaft single broker, replication=1)
+- metadata.log.dir separated: True
+- Filesystems: ext4, f2fs on /dev/sdb
+- Storage backend: CNS direct (/dev/sdb)
+- Benchmark profile: latency
+- Scenario group: baseline
+- Raw device: /dev/sdb
+- Record sizes: [1024, 10240, 102400, 1024000]
+- Dynamic topic rate (/sec): 5
+- Measure: 60s (warmup 20s)
+- Drain timeout: 180s
+- Fail-fast ACK stall: 60s (0 disables)
+- FIXED_OPS_BY_RECORD_SIZE: {1024: 20000, 10240: 2000, 102400: 200, 1024000: 20}
+
+################ FILESYSTEM: EXT4 ################
+
+[Record Size: 1024 Bytes]
+  [scenario_a] valid: 4/4; states: BACKPRESSURED, BACKPRESSURED, BACKPRESSURED, BACKPRESSURED
+    target/sent ops     : 20000.00 / 2488.95
+    ACK window/eventual : 2472.32 / 2488.95 OP/s
+    outstanding at end : 356.50
+    drain time/completed: 0.29 sec / 4/4
+    app avg / stdev     : 401.04 / 25.97 ms (CV=6.5%)
+    app p50 / p90       : 241.02 / 1080.72 ms
+    app p99 / stdev     : 1607.17 / 226.30 ms (CV=14.1%)
+    app max             : 2023.63 ms
+    storage util / await: 4.48 % / 4.62 ms
+    raw util / await    : 4.48 % / 4.62 ms
+    cpu iowait          : 0.40 %
+  [scenario_b] valid: 4/4; states: BACKPRESSURED, BACKPRESSURED, BACKPRESSURED, BACKPRESSURED
+    target/sent ops     : 20000.00 / 2676.99
+    ACK window/eventual : 2660.38 / 2676.99 OP/s
+    outstanding at end : 493.50
+    drain time/completed: 0.55 sec / 4/4
+    app avg / stdev     : 372.98 / 7.98 ms (CV=2.1%)
+    app p50 / p90       : 212.70 / 985.35 ms
+    app p99 / stdev     : 1506.24 / 222.14 ms (CV=14.7%)
+    app max             : 1921.75 ms
+    storage util / await: 3.62 % / 3.76 ms
+    raw util / await    : 3.62 % / 3.76 ms
+    cpu iowait          : 0.40 %
+
+[Record Size: 10240 Bytes]
+  [scenario_a] valid: 4/4; states: BACKPRESSURED, BACKPRESSURED, BACKPRESSURED, BACKPRESSURED
+    target/sent ops     : 2000.00 / 1912.82
+    ACK window/eventual : 1909.16 / 1912.82 OP/s
+    outstanding at end : 0.00
+    drain time/completed: 0.00 sec / 4/4
+    app avg / stdev     : 150.72 / 28.69 ms (CV=19.0%)
+    app p50 / p90       : 30.94 / 501.35 ms
+    app p99 / stdev     : 1143.48 / 156.61 ms (CV=13.7%)
+    app max             : 1566.14 ms
+    storage util / await: 14.27 % / 8.25 ms
+    raw util / await    : 14.27 % / 8.25 ms
+    cpu iowait          : 0.79 %
+  [scenario_b] valid: 4/4; states: BACKPRESSURED, BACKPRESSURED, BACKPRESSURED, BACKPRESSURED
+    target/sent ops     : 2000.00 / 1940.91
+    ACK window/eventual : 1938.66 / 1940.91 OP/s
+    outstanding at end : 6.75
+    drain time/completed: 0.05 sec / 4/4
+    app avg / stdev     : 78.10 / 15.86 ms (CV=20.3%)
+    app p50 / p90       : 16.34 / 224.75 ms
+    app p99 / stdev     : 973.01 / 70.09 ms (CV=7.2%)
+    app max             : 1278.46 ms
+    storage util / await: 10.48 % / 6.02 ms
+    raw util / await    : 10.48 % / 6.02 ms
+    cpu iowait          : 0.62 %
+
+[Record Size: 102400 Bytes]
+  [scenario_a] valid: 4/4; states: NOT_SATURATED, NOT_SATURATED, NOT_SATURATED, NOT_SATURATED
+    target/sent ops     : 200.00 / 199.83
+    ACK window/eventual : 199.83 / 199.83 OP/s
+    outstanding at end : 0.00
+    drain time/completed: 0.00 sec / 4/4
+    app avg / stdev     : 6.85 / 0.37 ms (CV=5.4%)
+    app p50 / p90       : 4.77 / 15.16 ms
+    app p99 / stdev     : 31.80 / 2.96 ms (CV=9.3%)
+    app max             : 82.98 ms
+    storage util / await: 8.10 % / 2.96 ms
+    raw util / await    : 8.10 % / 2.96 ms
+    cpu iowait          : 0.28 %
+  [scenario_b] valid: 4/4; states: NOT_SATURATED, NOT_SATURATED, NOT_SATURATED, NOT_SATURATED
+    target/sent ops     : 200.00 / 199.87
+    ACK window/eventual : 199.84 / 199.87 OP/s
+    outstanding at end : 0.00
+    drain time/completed: 0.00 sec / 4/4
+    app avg / stdev     : 6.26 / 0.10 ms (CV=1.6%)
+    app p50 / p90       : 4.38 / 13.77 ms
+    app p99 / stdev     : 28.59 / 1.97 ms (CV=6.9%)
+    app max             : 116.88 ms
+    storage util / await: 6.14 % / 2.45 ms
+    raw util / await    : 6.14 % / 2.45 ms
+    cpu iowait          : 0.19 %
+
+[Record Size: 1024000 Bytes]
+  [scenario_a] valid: 4/4; states: NOT_SATURATED, NOT_SATURATED, NOT_SATURATED, NOT_SATURATED
+    target/sent ops     : 20.00 / 20.00
+    ACK window/eventual : 20.00 / 20.00 OP/s
+    outstanding at end : 0.00
+    drain time/completed: 0.01 sec / 4/4
+    app avg / stdev     : 14.33 / 1.13 ms (CV=7.9%)
+    app p50 / p90       : 11.52 / 25.09 ms
+    app p99 / stdev     : 58.28 / 2.24 ms (CV=3.8%)
+    app max             : 130.37 ms
+    storage util / await: 5.27 % / 1.73 ms
+    raw util / await    : 5.27 % / 1.73 ms
+    cpu iowait          : 0.12 %
+  [scenario_b] valid: 4/4; states: NOT_SATURATED, NOT_SATURATED, NOT_SATURATED, NOT_SATURATED
+    target/sent ops     : 20.00 / 20.00
+    ACK window/eventual : 20.00 / 20.00 OP/s
+    outstanding at end : 0.00
+    drain time/completed: 0.04 sec / 4/4
+    app avg / stdev     : 14.64 / 0.13 ms (CV=0.9%)
+    app p50 / p90       : 11.89 / 25.54 ms
+    app p99 / stdev     : 54.49 / 3.42 ms (CV=6.3%)
+    app max             : 118.92 ms
+    storage util / await: 7.15 % / 1.57 ms
+    raw util / await    : 7.15 % / 1.57 ms
+    cpu iowait          : 0.12 %
+
+################ FILESYSTEM: F2FS ################
+
+[Record Size: 1024 Bytes]
+  [scenario_a] valid: 4/4; states: BACKPRESSURED, BACKPRESSURED, BACKPRESSURED, BACKPRESSURED
+    target/sent ops     : 20000.00 / 2506.53
+    ACK window/eventual : 2489.89 / 2506.53 OP/s
+    outstanding at end : 314.75
+    drain time/completed: 0.22 sec / 4/4
+    app avg / stdev     : 398.21 / 32.07 ms (CV=8.1%)
+    app p50 / p90       : 218.65 / 1013.14 ms
+    app p99 / stdev     : 1504.12 / 366.39 ms (CV=24.4%)
+    app max             : 1719.80 ms
+    storage util / await: 1.44 % / 2.00 ms
+    raw util / await    : 1.44 % / 2.00 ms
+    cpu iowait          : 0.28 %
+  [scenario_b] valid: 4/4; states: BACKPRESSURED, BACKPRESSURED, BACKPRESSURED, BACKPRESSURED
+    target/sent ops     : 20000.00 / 2659.15
+    ACK window/eventual : 2642.58 / 2659.15 OP/s
+    outstanding at end : 415.25
+    drain time/completed: 0.31 sec / 4/4
+    app avg / stdev     : 374.21 / 6.40 ms (CV=1.7%)
+    app p50 / p90       : 245.93 / 963.24 ms
+    app p99 / stdev     : 1325.26 / 101.15 ms (CV=7.6%)
+    app max             : 1633.07 ms
+    storage util / await: 2.07 % / 1.95 ms
+    raw util / await    : 2.07 % / 1.95 ms
+    cpu iowait          : 0.23 %
+
+[Record Size: 10240 Bytes]
+  [scenario_a] valid: 4/4; states: BACKPRESSURED, BACKPRESSURED, BACKPRESSURED, BACKPRESSURED
+    target/sent ops     : 2000.00 / 1960.61
+    ACK window/eventual : 1960.06 / 1960.61 OP/s
+    outstanding at end : 0.00
+    drain time/completed: 0.00 sec / 4/4
+    app avg / stdev     : 99.26 / 19.86 ms (CV=20.0%)
+    app p50 / p90       : 28.59 / 277.42 ms
+    app p99 / stdev     : 939.18 / 128.61 ms (CV=13.7%)
+    app max             : 1405.64 ms
+    storage util / await: 10.98 % / 5.38 ms
+    raw util / await    : 10.98 % / 5.38 ms
+    cpu iowait          : 0.47 %
+  [scenario_b] valid: 4/4; states: BACKPRESSURED, BACKPRESSURED, BACKPRESSURED, BACKPRESSURED
+    target/sent ops     : 2000.00 / 1967.52
+    ACK window/eventual : 1963.33 / 1967.52 OP/s
+    outstanding at end : 100.25
+    drain time/completed: 0.07 sec / 4/4
+    app avg / stdev     : 61.42 / 7.94 ms (CV=12.9%)
+    app p50 / p90       : 16.32 / 102.43 ms
+    app p99 / stdev     : 786.91 / 129.28 ms (CV=16.4%)
+    app max             : 1160.20 ms
+    storage util / await: 9.61 % / 4.05 ms
+    raw util / await    : 9.61 % / 4.05 ms
+    cpu iowait          : 0.40 %
+
+[Record Size: 102400 Bytes]
+  [scenario_a] valid: 4/4; states: NOT_SATURATED, NOT_SATURATED, NOT_SATURATED, NOT_SATURATED
+    target/sent ops     : 200.00 / 200.00
+    ACK window/eventual : 199.97 / 200.00 OP/s
+    outstanding at end : 0.00
+    drain time/completed: 0.00 sec / 4/4
+    app avg / stdev     : 6.54 / 0.38 ms (CV=5.8%)
+    app p50 / p90       : 4.81 / 14.57 ms
+    app p99 / stdev     : 26.54 / 1.89 ms (CV=7.1%)
+    app max             : 79.58 ms
+    storage util / await: 7.06 % / 2.62 ms
+    raw util / await    : 7.06 % / 2.62 ms
+    cpu iowait          : 0.23 %
+  [scenario_b] valid: 4/4; states: NOT_SATURATED, NOT_SATURATED, NOT_SATURATED, NOT_SATURATED
+    target/sent ops     : 200.00 / 200.00
+    ACK window/eventual : 200.00 / 200.00 OP/s
+    outstanding at end : 0.00
+    drain time/completed: 0.00 sec / 4/4
+    app avg / stdev     : 5.93 / 0.38 ms (CV=6.4%)
+    app p50 / p90       : 4.44 / 12.80 ms
+    app p99 / stdev     : 24.61 / 1.78 ms (CV=7.2%)
+    app max             : 75.97 ms
+    storage util / await: 5.63 % / 2.50 ms
+    raw util / await    : 5.63 % / 2.50 ms
+    cpu iowait          : 0.19 %
+
+[Record Size: 1024000 Bytes]
+  [scenario_a] valid: 4/4; states: NOT_SATURATED, NOT_SATURATED, NOT_SATURATED, NOT_SATURATED
+    target/sent ops     : 20.00 / 20.00
+    ACK window/eventual : 20.00 / 20.00 OP/s
+    outstanding at end : 0.00
+    drain time/completed: 0.04 sec / 4/4
+    app avg / stdev     : 13.32 / 0.93 ms (CV=7.0%)
+    app p50 / p90       : 11.03 / 23.02 ms
+    app p99 / stdev     : 45.18 / 8.45 ms (CV=18.7%)
+    app max             : 71.71 ms
+    storage util / await: 4.26 % / 1.80 ms
+    raw util / await    : 4.26 % / 1.80 ms
+    cpu iowait          : 0.15 %
+  [scenario_b] valid: 4/4; states: NOT_SATURATED, NOT_SATURATED, NOT_SATURATED, NOT_SATURATED
+    target/sent ops     : 20.00 / 20.00
+    ACK window/eventual : 20.00 / 20.00 OP/s
+    outstanding at end : 0.00
+    drain time/completed: 0.07 sec / 4/4
+    app avg / stdev     : 13.76 / 0.46 ms (CV=3.4%)
+    app p50 / p90       : 11.57 / 23.73 ms
+    app p99 / stdev     : 42.05 / 1.54 ms (CV=3.7%)
+    app max             : 63.78 ms
+    storage util / await: 4.89 % / 1.74 ms
+    raw util / await    : 4.89 % / 1.74 ms
+    cpu iowait          : 0.10 %

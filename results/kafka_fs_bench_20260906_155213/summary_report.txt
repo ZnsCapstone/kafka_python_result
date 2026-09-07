@@ -1,0 +1,83 @@
+============================================================
+  KAFKA FILESYSTEM PERFORMANCE EXPERIMENT REPORT (M1-#1)
+============================================================
+Start Time : 2026-09-06 15:52:13
+Current Round Completed : 1
+End Time   : 2026-09-06 18:08:33
+
+Latency Layers
+  - App-level   : producer.send → broker ACK (Kafka client latency)
+  - Block-level : iostat await (block queue entry → completion)
+
+Experiment Scope
+- Kafka 4.2 (KRaft single broker, replication=1)
+- metadata.log.dir separated: True
+- Filesystems: ext4, f2fs on /dev/sdb
+- Storage backend: CNS direct (/dev/sdb)
+- Benchmark profile: latency
+- Scenario group: baseline
+- Raw device: /dev/sdb
+- Record sizes: [1024, 10240, 102400, 1024000]
+- Dynamic topic rate (/sec): 5
+- Measure: 60s (warmup 20s)
+- Drain timeout: 180s
+- Fail-fast ACK stall: 60s (0 disables)
+- FIXED_OPS_BY_RECORD_SIZE: {1024: 20000, 10240: 2000, 102400: 200, 1024000: 20}
+
+################ FILESYSTEM: EXT4 ################
+
+[Record Size: 1024 Bytes]
+  - scenario_a: no data
+  [scenario_b] valid: 1/1; states: BACKPRESSURED
+    target/sent ops     : 20000.00 / 2520.77
+    ACK window/eventual : 2520.49 / 2520.77 OP/s
+    outstanding at end : 588.00
+    drain time/completed: 0.66 sec / 1/1
+    app avg / stdev     : 395.51 / 0.00 ms (CV=0.0%)
+    app p50 / p90       : 113.00 / 1607.96 ms
+    app p99 / stdev     : 2671.61 / 0.00 ms (CV=0.0%)
+    app max             : 3718.41 ms
+    storage util / await: 5.20 % / 4.75 ms
+    raw util / await    : 5.20 % / 4.75 ms
+    cpu iowait          : 0.63 %
+
+[Record Size: 10240 Bytes]
+  - scenario_a: no data
+  - scenario_b: no data
+
+[Record Size: 102400 Bytes]
+  - scenario_a: no data
+  - scenario_b: no data
+
+[Record Size: 1024000 Bytes]
+  - scenario_a: no data
+  - scenario_b: no data
+
+################ FILESYSTEM: F2FS ################
+
+[Record Size: 1024 Bytes]
+  - scenario_a: no data
+  [scenario_b] valid: 1/1; states: BACKPRESSURED
+    target/sent ops     : 20000.00 / 2578.19
+    ACK window/eventual : 2577.91 / 2578.19 OP/s
+    outstanding at end : 502.00
+    drain time/completed: 0.68 sec / 1/1
+    app avg / stdev     : 386.61 / 0.00 ms (CV=0.0%)
+    app p50 / p90       : 102.84 / 1358.34 ms
+    app p99 / stdev     : 2490.09 / 0.00 ms (CV=0.0%)
+    app max             : 4174.65 ms
+    storage util / await: 4.57 % / 4.60 ms
+    raw util / await    : 4.57 % / 4.60 ms
+    cpu iowait          : 0.66 %
+
+[Record Size: 10240 Bytes]
+  - scenario_a: no data
+  - scenario_b: no data
+
+[Record Size: 102400 Bytes]
+  - scenario_a: no data
+  - scenario_b: no data
+
+[Record Size: 1024000 Bytes]
+  - scenario_a: no data
+  - scenario_b: no data

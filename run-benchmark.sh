@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Interactive launcher for the FEMU ZNS Kafka filesystem benchmark.
+# Interactive launcher for the Kafka filesystem benchmark.
 #
 # Usage:
 #   ./run-benchmark.sh          # show the menu
@@ -7,7 +7,8 @@
 #   ./run-benchmark.sh --list   # print menu items only
 #
 # Optional environment variables:
-#   BENCH_DM_IMPL=1             # 0=fixed, 1=dynamic (default: 1)
+#   BENCH_STORAGE=cns           # 0=fixed DM, 1=dynamic DM, or cns (default: 1)
+#   BENCH_CNS_DEVICE=/dev/nvme0n2  # required when BENCH_STORAGE=cns
 #   BENCH_ROUNDS=1              # repetitions (default: 1)
 #   BENCH_SCENARIO_GROUP=baseline  # baseline, dynamic, or all
 # Other BENCH_* variables documented in modify.md are passed through sudo -E.
@@ -15,13 +16,13 @@
 set -euo pipefail
 
 SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
-DM_IMPL="${BENCH_DM_IMPL:-1}"
+STORAGE="${BENCH_STORAGE:-${BENCH_DM_IMPL:-1}}"
 ROUNDS="${BENCH_ROUNDS:-1}"
 SCENARIO_GROUP="${BENCH_SCENARIO_GROUP:-baseline}"
 
 print_menu() {
     cat <<'EOF'
-Kafka FEMU/ZNS benchmark
+Kafka filesystem benchmark
 
   0) Run all             - run the five useful suites below
   1) Fresh latency       - normal-load latency, reset before every scenario
@@ -44,6 +45,7 @@ Examples:
   ./run-benchmark.sh 2
   BENCH_ROUNDS=3 ./run-benchmark.sh 1
   BENCH_LONG_DURATION_SECONDS=600 BENCH_LONG_WARMUP_SECONDS=60 ./run-benchmark.sh 4
+  BENCH_STORAGE=cns BENCH_CNS_DEVICE=/dev/nvme0n2 ./run-benchmark.sh 1
   BENCH_FAIL_FAST_STALL_SECONDS=60 ./run-benchmark.sh 4
 EOF
 }
@@ -83,8 +85,12 @@ case "$selection" in
         ;;
 esac
 
-if [[ "$DM_IMPL" != "0" && "$DM_IMPL" != "1" ]]; then
-    printf 'BENCH_DM_IMPL must be 0 (fixed) or 1 (dynamic).\n' >&2
+if [[ "$STORAGE" != "0" && "$STORAGE" != "1" && "$STORAGE" != "cns" ]]; then
+    printf 'BENCH_STORAGE must be 0 (fixed), 1 (dynamic), or cns.\n' >&2
+    exit 2
+fi
+if [[ "$STORAGE" == "cns" && -z "${BENCH_CNS_DEVICE:-}" ]]; then
+    printf 'BENCH_CNS_DEVICE is required when BENCH_STORAGE=cns.\n' >&2
     exit 2
 fi
 if [[ ! "$ROUNDS" =~ ^[1-9][0-9]*$ ]]; then
@@ -99,7 +105,11 @@ case "$SCENARIO_GROUP" in
         ;;
 esac
 
-for command in python3 sudo fio iostat vmstat dmsetup blkzone; do
+required_commands=(python3 sudo fio iostat vmstat findmnt)
+if [[ "$STORAGE" != "cns" ]]; then
+    required_commands+=(dmsetup blkzone)
+fi
+for command in "${required_commands[@]}"; do
     if ! command -v "$command" >/dev/null 2>&1; then
         printf 'Required command not found: %s\n' "$command" >&2
         exit 1
@@ -112,7 +122,10 @@ if [[ ! -f "$SCRIPT_DIR/bench_final.py" ]]; then
 fi
 
 printf '\nSelected benchmark\n'
-printf '  DM implementation : %s\n' "$DM_IMPL"
+printf '  Storage backend   : %s\n' "$STORAGE"
+if [[ "$STORAGE" == "cns" ]]; then
+    printf '  CNS device        : %s\n' "$BENCH_CNS_DEVICE"
+fi
 printf '  Rounds            : %s\n' "$ROUNDS"
 printf '  Profile           : %s\n' "$profile"
 printf '  Scenario group    : %s\n' "$SCENARIO_GROUP"
@@ -139,7 +152,11 @@ if [[ "$selection" == "0" ]]; then
     printf '  Suites            : fresh latency, occupancy latency, fresh saturation, endurance, steady-state\n'
     printf '  Note              : each suite starts from its own reset device\n'
 fi
-printf '\nWARNING: this resets the configured FEMU ZNS device and destroys its data.\n\n'
+if [[ "$STORAGE" == "cns" ]]; then
+    printf '\nWARNING: this formats %s and destroys all data on it.\n\n' "$BENCH_CNS_DEVICE"
+else
+    printf '\nWARNING: this resets the configured FEMU ZNS device and destroys its data.\n\n'
+fi
 
 sudo -v
 cd "$SCRIPT_DIR"
@@ -151,7 +168,7 @@ run_suite() {
     printf 'Starting suite: profile=%s, mode=%s\n' "$suite_profile" "$suite_mode"
     printf '======================================================================\n\n'
     sudo -E python3 "$SCRIPT_DIR/bench_final.py" \
-        "$DM_IMPL" "$ROUNDS" "$suite_profile" "$SCENARIO_GROUP" "$suite_mode"
+        "$STORAGE" "$ROUNDS" "$suite_profile" "$SCENARIO_GROUP" "$suite_mode"
 }
 
 if [[ "$selection" == "0" ]]; then

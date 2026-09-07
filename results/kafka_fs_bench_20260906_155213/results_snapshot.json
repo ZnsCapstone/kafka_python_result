@@ -1,0 +1,324 @@
+{
+  "ext4": {
+    "1024": {
+      "scenario_a": {
+        "rounds": []
+      },
+      "scenario_b": {
+        "rounds": [
+          {
+            "config": {
+              "record_size": 1024,
+              "target_ops": 20000,
+              "producers": 8,
+              "use_consumer": true,
+              "dynamic_topics": false,
+              "dynamic_topic_rate": 5,
+              "warmup_sec": 300,
+              "measure_sec": 3600,
+              "drain_timeout_sec": 180,
+              "fail_fast_stall_sec": 60,
+              "profile": "latency",
+              "max_in_flight_records": 1000,
+              "max_catch_up_records": 10,
+              "max_schedule_lag_ms": 100,
+              "phase": "endurance",
+              "occupancy_target_pct": 80,
+              "topic_retention_total_bytes": 2147483648,
+              "fs_usage_before": {
+                "total_bytes": 10464022528,
+                "usable_bytes": 9910374400,
+                "used_bytes": 7927468032,
+                "available_bytes": 1982906368,
+                "used_percent": 79.99160992343539
+              },
+              "fs_usage_after": {
+                "total_bytes": 10464022528,
+                "usable_bytes": 9910374400,
+                "used_bytes": 9605238784,
+                "available_bytes": 305135616,
+                "used_percent": 96.92104855291845
+              }
+            },
+            "metrics": {
+              "total_requests": 9074768,
+              "avg_ms": 395.51,
+              "p50_ms": 113.0,
+              "p90_ms": 1607.96,
+              "p99_ms": 2671.61,
+              "p999_ms": 3219.47,
+              "max_ms": 3718.41,
+              "achieved_ops": 2520.77,
+              "achieved_pct": 12.6,
+              "total_sent": 9811380,
+              "send_errors": 0,
+              "drain_time_sec": 0.66,
+              "drain_completed": true,
+              "sent_requests": 9074768,
+              "sent_ops": 2520.77,
+              "ack_window_requests": 9073769,
+              "ack_window_ops": 2520.49,
+              "eventual_ack_requests": 9074768,
+              "eventual_ack_ops": 2520.77,
+              "outstanding_at_end": 588,
+              "failed_requests": 0,
+              "unresolved_after_drain": 0,
+              "latency_dropped_samples": 0,
+              "backpressure_wait_count": 3432786,
+              "backpressure_wait_ms": 24139929.54,
+              "max_observed_outstanding": 1005,
+              "catch_up_resets": 2486322,
+              "catch_up_records_skipped": 66956397,
+              "max_schedule_lag_ms": 883.54,
+              "ack_stall_count": 0,
+              "ack_stall_total_sec": 0,
+              "ack_stall_max_sec": 0,
+              "consumer_records": 9811380,
+              "producer_acked_records": 9811380,
+              "consumer_record_delta": 0,
+              "consumer_drain_completed": true,
+              "malformed_headers": 0,
+              "payload_crc_errors": 0,
+              "sequence_gaps": 0,
+              "duplicate_records": 0,
+              "out_of_order_records": 0,
+              "topics_created": 0,
+              "topics_failed": 0,
+              "final_topic_count": 2,
+              "topic_first_failure_elapsed_ms": -1,
+              "topic_first_failure": "none",
+              "raw_samples": 3600,
+              "raw_util_avg": 5.202475,
+              "raw_util_max": 488.0,
+              "raw_await_avg": 4.753902777777777,
+              "raw_await_max": 64.31,
+              "raw_r_await_avg": 0.0,
+              "raw_w_await_avg": 4.753902777777777,
+              "raw_rkB_s_avg": 0.0,
+              "raw_wkB_s_avg": 2862.9504,
+              "raw_rps_avg": 0.0,
+              "raw_wps_avg": 9.14226388888889,
+              "raw_aqu_sz_avg": 0.2992388888888889,
+              "raw_rrqm_avg": 0.0,
+              "raw_wrqm_avg": 23.73246111111111,
+              "samples": 3600,
+              "cpu_us_avg": 7.8375,
+              "cpu_sy_avg": 59.83444444444444,
+              "cpu_id_avg": 31.66722222222222,
+              "cpu_wa_avg": 0.6272222222222222,
+              "cpu_st_avg": 0.0,
+              "bi_avg": 9.767777777777777,
+              "bo_avg": 2940.821111111111,
+              "cs_avg": 15117.636111111111
+            },
+            "bottleneck": {
+              "is_bottleneck": false,
+              "reasons": []
+            },
+            "validity": {
+              "valid": true,
+              "state": "BACKPRESSURED",
+              "invalid_reasons": []
+            },
+            "java_exit_code": 0,
+            "raw_output_path": "results/kafka_fs_bench_20260906_155213/raw/r1_ext4_scenario_b_1024B_20000ops_endurance_used80pct.txt.gz",
+            "monitor_files": {
+              "iostat": "results/kafka_fs_bench_20260906_155213/monitor/r1_ext4_scenario_b_1024B_20000ops_endurance_used80pct_iostat.txt.gz",
+              "vmstat": "results/kafka_fs_bench_20260906_155213/monitor/r1_ext4_scenario_b_1024B_20000ops_endurance_used80pct_vmstat.txt.gz"
+            },
+            "round": 1,
+            "calibration_reference": {
+              "mode": "latency",
+              "chosen_ops": 20000
+            }
+          }
+        ]
+      }
+    },
+    "10240": {
+      "scenario_a": {
+        "rounds": []
+      },
+      "scenario_b": {
+        "rounds": []
+      }
+    },
+    "102400": {
+      "scenario_a": {
+        "rounds": []
+      },
+      "scenario_b": {
+        "rounds": []
+      }
+    },
+    "1024000": {
+      "scenario_a": {
+        "rounds": []
+      },
+      "scenario_b": {
+        "rounds": []
+      }
+    }
+  },
+  "f2fs": {
+    "1024": {
+      "scenario_a": {
+        "rounds": []
+      },
+      "scenario_b": {
+        "rounds": [
+          {
+            "config": {
+              "record_size": 1024,
+              "target_ops": 20000,
+              "producers": 8,
+              "use_consumer": true,
+              "dynamic_topics": false,
+              "dynamic_topic_rate": 5,
+              "warmup_sec": 300,
+              "measure_sec": 3600,
+              "drain_timeout_sec": 180,
+              "fail_fast_stall_sec": 60,
+              "profile": "latency",
+              "max_in_flight_records": 1000,
+              "max_catch_up_records": 10,
+              "max_schedule_lag_ms": 100,
+              "phase": "endurance",
+              "occupancy_target_pct": 80,
+              "topic_retention_total_bytes": 2147483648,
+              "fs_usage_before": {
+                "total_bytes": 10735321088,
+                "usable_bytes": 10735321088,
+                "used_bytes": 8596480000,
+                "available_bytes": 2138841088,
+                "used_percent": 80.0765988230123
+              },
+              "fs_usage_after": {
+                "total_bytes": 10735321088,
+                "usable_bytes": 10735321088,
+                "used_bytes": 10321715200,
+                "available_bytes": 413605888,
+                "used_percent": 96.14724250341864
+              }
+            },
+            "metrics": {
+              "total_requests": 9281492,
+              "avg_ms": 386.61,
+              "p50_ms": 102.84,
+              "p90_ms": 1358.34,
+              "p99_ms": 2490.09,
+              "p999_ms": 3284.54,
+              "max_ms": 4174.65,
+              "achieved_ops": 2578.19,
+              "achieved_pct": 12.9,
+              "total_sent": 10030583,
+              "send_errors": 0,
+              "drain_time_sec": 0.68,
+              "drain_completed": true,
+              "sent_requests": 9281492,
+              "sent_ops": 2578.19,
+              "ack_window_requests": 9280492,
+              "ack_window_ops": 2577.91,
+              "eventual_ack_requests": 9281492,
+              "eventual_ack_ops": 2578.19,
+              "outstanding_at_end": 502,
+              "failed_requests": 0,
+              "unresolved_after_drain": 0,
+              "latency_dropped_samples": 0,
+              "backpressure_wait_count": 3538500,
+              "backpressure_wait_ms": 24197847.85,
+              "max_observed_outstanding": 1004,
+              "catch_up_resets": 2542290,
+              "catch_up_records_skipped": 66709626,
+              "max_schedule_lag_ms": 1259.48,
+              "ack_stall_count": 0,
+              "ack_stall_total_sec": 0,
+              "ack_stall_max_sec": 0,
+              "consumer_records": 10030583,
+              "producer_acked_records": 10030583,
+              "consumer_record_delta": 0,
+              "consumer_drain_completed": true,
+              "malformed_headers": 0,
+              "payload_crc_errors": 0,
+              "sequence_gaps": 0,
+              "duplicate_records": 0,
+              "out_of_order_records": 0,
+              "topics_created": 0,
+              "topics_failed": 0,
+              "final_topic_count": 2,
+              "topic_first_failure_elapsed_ms": -1,
+              "topic_first_failure": "none",
+              "raw_samples": 3600,
+              "raw_util_avg": 4.572761111111111,
+              "raw_util_max": 100.5,
+              "raw_await_avg": 4.595797222222222,
+              "raw_await_max": 67.52,
+              "raw_r_await_avg": 0.0,
+              "raw_w_await_avg": 4.595886111111111,
+              "raw_rkB_s_avg": 0.0,
+              "raw_wkB_s_avg": 2905.1477333333332,
+              "raw_rps_avg": 0.000275,
+              "raw_wps_avg": 11.287105555555556,
+              "raw_aqu_sz_avg": 0.4208222222222222,
+              "raw_rrqm_avg": 0.0,
+              "raw_wrqm_avg": 0.08111944444444444,
+              "samples": 3600,
+              "cpu_us_avg": 7.910277777777778,
+              "cpu_sy_avg": 59.95388888888889,
+              "cpu_id_avg": 31.433888888888887,
+              "cpu_wa_avg": 0.6572222222222223,
+              "cpu_st_avg": 0.0,
+              "bi_avg": 0.8955555555555555,
+              "bo_avg": 2985.257777777778,
+              "cs_avg": 15366.416666666666
+            },
+            "bottleneck": {
+              "is_bottleneck": false,
+              "reasons": []
+            },
+            "validity": {
+              "valid": true,
+              "state": "BACKPRESSURED",
+              "invalid_reasons": []
+            },
+            "java_exit_code": 0,
+            "raw_output_path": "results/kafka_fs_bench_20260906_155213/raw/r1_f2fs_scenario_b_1024B_20000ops_endurance_used80pct.txt.gz",
+            "monitor_files": {
+              "iostat": "results/kafka_fs_bench_20260906_155213/monitor/r1_f2fs_scenario_b_1024B_20000ops_endurance_used80pct_iostat.txt.gz",
+              "vmstat": "results/kafka_fs_bench_20260906_155213/monitor/r1_f2fs_scenario_b_1024B_20000ops_endurance_used80pct_vmstat.txt.gz"
+            },
+            "round": 1,
+            "calibration_reference": {
+              "mode": "latency",
+              "chosen_ops": 20000
+            }
+          }
+        ]
+      }
+    },
+    "10240": {
+      "scenario_a": {
+        "rounds": []
+      },
+      "scenario_b": {
+        "rounds": []
+      }
+    },
+    "102400": {
+      "scenario_a": {
+        "rounds": []
+      },
+      "scenario_b": {
+        "rounds": []
+      }
+    },
+    "1024000": {
+      "scenario_a": {
+        "rounds": []
+      },
+      "scenario_b": {
+        "rounds": []
+      }
+    }
+  }
+}

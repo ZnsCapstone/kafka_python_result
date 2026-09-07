@@ -26,10 +26,10 @@ def init_result_structure():
 def parse_arguments(argv):
     if len(argv) < 2 or len(argv) > 6:
         raise ValueError(
-            "Usage: python3 bench_final.py <0=fixed|1=dynamic> [rounds] "
+            "Usage: python3 bench_final.py <0=fixed|1=dynamic|cns> [rounds] "
             "[saturation|latency] [baseline|dynamic|all] [fresh|occupancy|long]"
         )
-    cfg.configure_dm_implementation(argv[1])
+    cfg.configure_storage(argv[1])
     rounds = int(argv[2]) if len(argv) >= 3 else cfg.DEFAULT_ROUNDS
     profile = argv[3] if len(argv) >= 4 else cfg.DEFAULT_PROFILE
     cfg.configure_profile(profile)
@@ -208,8 +208,9 @@ def run(argv=None):
         return 2
 
     cfg.initialize_result_directories()
-    print(f"[Config] DM implementation: {cfg.DM_IMPLEMENTATION_LABELS[cfg.DM_IMPLEMENTATION]}")
-    print(f"[Config] DM logical capacity: at most {cfg.LOGICAL_CAPACITY_PERCENT}% of physical")
+    print(f"[Config] Storage backend: {cfg.storage_label()}")
+    if cfg.STORAGE_BACKEND == "dm-zns":
+        print(f"[Config] DM logical capacity: at most {cfg.LOGICAL_CAPACITY_PERCENT}% of physical")
     print(f"[Config] Benchmark profile: {cfg.ACTIVE_PROFILE}")
     print(f"[Config] Scenario group: {cfg.ACTIVE_SCENARIO_GROUP}")
     print(f"[Config] Workload mode: {cfg.ACTIVE_WORKLOAD_MODE}")

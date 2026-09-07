@@ -21,7 +21,9 @@ KAFKA_PATH = os.path.expanduser("~/kafka-4.2.0-src")
 KRAFT_CONFIG = f"{KAFKA_PATH}/config/server.properties"
 EXPERIMENT_KRAFT_CONFIG = f"{ENV_DIR}/server-femu.properties"
 
+STORAGE_BACKEND = "dm-zns"
 RAW_ZNS_DEVICE = "/dev/nvme0n1"
+CNS_DEVICE = os.environ.get("BENCH_CNS_DEVICE", "")
 RAW_DEVICE_BASENAME = os.path.basename(os.path.realpath(RAW_ZNS_DEVICE))
 DM_NAME = "kafka-zns"
 FS_DEVICE = f"/dev/mapper/{DM_NAME}"
@@ -182,12 +184,36 @@ def initialize_result_directories():
         os.makedirs(directory, exist_ok=True)
 
 
-def configure_dm_implementation(value):
-    global DM_IMPLEMENTATION
+def configure_storage(value):
+    global STORAGE_BACKEND, DM_IMPLEMENTATION, FS_DEVICE, RAW_DEVICE_BASENAME
     implementations = {"0": "fixed", "1": "dynamic"}
-    if value not in implementations:
-        raise ValueError("implementation must be 0 (fixed/JW) or 1 (dynamic/MJ)")
-    DM_IMPLEMENTATION = implementations[value]
+    if value in implementations:
+        STORAGE_BACKEND = "dm-zns"
+        DM_IMPLEMENTATION = implementations[value]
+        FS_DEVICE = f"/dev/mapper/{DM_NAME}"
+        RAW_DEVICE_BASENAME = os.path.basename(os.path.realpath(RAW_ZNS_DEVICE))
+        return
+    if value == "cns":
+        if not CNS_DEVICE:
+            raise ValueError(
+                "BENCH_CNS_DEVICE must name the CNS block device, for example /dev/nvme0n2"
+            )
+        STORAGE_BACKEND = "cns"
+        FS_DEVICE = os.path.realpath(CNS_DEVICE)
+        RAW_DEVICE_BASENAME = os.path.basename(FS_DEVICE)
+        return
+    raise ValueError("storage must be 0 (fixed/JW), 1 (dynamic/MJ), or cns")
+
+
+def storage_label():
+    if STORAGE_BACKEND == "cns":
+        return f"CNS direct ({FS_DEVICE})"
+    return f"dm-zns {DM_IMPLEMENTATION_LABELS[DM_IMPLEMENTATION]} ({FS_DEVICE})"
+
+
+def configure_dm_implementation(value):
+    """Backward-compatible alias for older callers."""
+    configure_storage(value)
 
 
 def configure_profile(value):

@@ -1,8 +1,9 @@
 import io
 import os
+import stat
 import tempfile
 import unittest
-from unittest.mock import Mock, patch
+from unittest.mock import Mock, mock_open, patch
 
 import system_setup
 
@@ -58,6 +59,12 @@ class SystemSetupTest(unittest.TestCase):
             "pkill -9 -f 'QuorumPeerMain' || true",
         ], commands)
         self.assertNotIn("pkill -9 -f kafka || true", commands)
+
+    @patch.object(system_setup.os.path, "ismount", return_value=False)
+    @patch.object(system_setup.subprocess, "run")
+    def test_unmount_skips_missing_or_unmounted_path(self, run, _ismount):
+        system_setup.unmount_log_device()
+        run.assert_not_called()
 
     @patch.object(system_setup.os, "statvfs")
     def test_filesystem_usage_uses_mounted_target_blocks(self, statvfs):
@@ -120,6 +127,36 @@ class SystemSetupTest(unittest.TestCase):
                 with self.assertRaisesRegex(RuntimeError, "cluster id mismatch"):
                     system_setup.existing_kraft_cluster_id()
 
+
+    @patch.object(system_setup, "run_cmd_quiet", return_value="")
+    @patch.object(system_setup.os, "stat")
+    def test_cns_validation_accepts_unmounted_conventional_device(
+            self, os_stat, _run_cmd):
+        os_stat.return_value = Mock(st_mode=stat.S_IFBLK)
+        with patch.object(system_setup.cfg, "FS_DEVICE", "/dev/sdb"), \
+             patch.object(system_setup.cfg, "RAW_DEVICE_BASENAME", "sdb"), \
+             patch("builtins.open", mock_open(read_data="none\n")):
+            system_setup.validate_cns_device()
+
+    @patch.object(system_setup, "run_cmd_quiet", return_value="/")
+    @patch.object(system_setup.os, "stat")
+    def test_cns_validation_rejects_device_with_mounted_child(
+            self, os_stat, _run_cmd):
+        os_stat.return_value = Mock(st_mode=stat.S_IFBLK)
+        with patch.object(system_setup.cfg, "FS_DEVICE", "/dev/sda"), \
+             patch.object(system_setup.cfg, "RAW_DEVICE_BASENAME", "sda"):
+            with self.assertRaisesRegex(RuntimeError, "child device is mounted"):
+                system_setup.validate_cns_device()
+
+    @patch.object(system_setup, "run_cmd_quiet", return_value="")
+    @patch.object(system_setup.os, "stat")
+    def test_cns_validation_rejects_zoned_device(self, os_stat, _run_cmd):
+        os_stat.return_value = Mock(st_mode=stat.S_IFBLK)
+        with patch.object(system_setup.cfg, "FS_DEVICE", "/dev/nvme0n1"), \
+             patch.object(system_setup.cfg, "RAW_DEVICE_BASENAME", "nvme0n1"), \
+             patch("builtins.open", mock_open(read_data="host-managed\n")):
+            with self.assertRaisesRegex(RuntimeError, "requires a conventional"):
+                system_setup.validate_cns_device()
 
 if __name__ == "__main__":
     unittest.main()

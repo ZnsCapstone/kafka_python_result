@@ -11,8 +11,16 @@ class BenchRunnerTest(unittest.TestCase):
         self.scenario_group = cfg.ACTIVE_SCENARIO_GROUP
         self.scenario_keys = cfg.SCENARIO_KEYS
         self.workload_mode = cfg.ACTIVE_WORKLOAD_MODE
+        self.storage_backend = cfg.STORAGE_BACKEND
+        self.dm_implementation = cfg.DM_IMPLEMENTATION
+        self.fs_device = cfg.FS_DEVICE
+        self.raw_device_basename = cfg.RAW_DEVICE_BASENAME
 
     def tearDown(self):
+        cfg.STORAGE_BACKEND = self.storage_backend
+        cfg.DM_IMPLEMENTATION = self.dm_implementation
+        cfg.FS_DEVICE = self.fs_device
+        cfg.RAW_DEVICE_BASENAME = self.raw_device_basename
         cfg.configure_profile(self.profile)
         cfg.ACTIVE_SCENARIO_GROUP = self.scenario_group
         cfg.SCENARIO_KEYS = self.scenario_keys
@@ -25,6 +33,17 @@ class BenchRunnerTest(unittest.TestCase):
         self.assertEqual(2, rounds)
         self.assertEqual("endurance", cfg.ACTIVE_WORKLOAD_MODE)
         self.assertEqual(["scenario_a", "scenario_b"], cfg.SCENARIO_KEYS)
+
+    def test_parse_arguments_accepts_cns_backend(self):
+        with patch.object(cfg, "CNS_DEVICE", "/dev/sdb"):
+            rounds = bench_runner.parse_arguments(
+                ["bench_final.py", "cns", "1", "latency", "baseline", "fresh"]
+            )
+
+        self.assertEqual(1, rounds)
+        self.assertEqual("cns", cfg.STORAGE_BACKEND)
+        self.assertEqual("/dev/sdb", cfg.FS_DEVICE)
+        self.assertEqual("sdb", cfg.RAW_DEVICE_BASENAME)
 
     def test_parse_arguments_rejects_unknown_mode(self):
         with self.assertRaises(ValueError):
