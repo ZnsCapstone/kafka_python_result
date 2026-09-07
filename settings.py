@@ -40,7 +40,10 @@ DM_IMPLEMENTATION_LABELS = {
     "dynamic": "dynamic allocation (MJ)",
 }
 
-FILESYSTEMS = ("ext4", "f2fs")
+FILESYSTEMS = tuple(
+    value.strip() for value in os.environ.get("BENCH_FILESYSTEMS", "ext4,f2fs").split(",")
+    if value.strip()
+)
 MOUNT_POINT = "/result/kafka-logs"
 BOOTSTRAP = "localhost:9092"
 TOPIC_NAME = "bench-topic"
@@ -62,7 +65,11 @@ os.environ["KAFKA_HEAP_OPTS"] = "-Xms1G -Xmx2G"
 
 DEFAULT_ROUNDS = 3
 TOPIC_RATE = 5
-RECORD_SIZES = [1024, 10240, 102400, 1024000]
+RECORD_SIZES = [
+    int(value) for value in os.environ.get(
+        "BENCH_RECORD_SIZES", "1024,10240,102400,1024000"
+    ).split(",") if value.strip()
+]
 SATURATION_OPS_BY_RECORD_SIZE = {
     1024: 100000,
     10240: 10000,
@@ -214,6 +221,13 @@ def configure_workload_mode(value):
     global ACTIVE_WORKLOAD_MODE
     if value not in WORKLOAD_MODES:
         raise ValueError(f"workload mode must be one of: {', '.join(WORKLOAD_MODES)}")
+    if not FILESYSTEMS or any(fs not in ("ext4", "f2fs") for fs in FILESYSTEMS):
+        raise ValueError("BENCH_FILESYSTEMS must contain ext4 and/or f2fs")
+    if not RECORD_SIZES or any(size not in LATENCY_OPS_BY_RECORD_SIZE for size in RECORD_SIZES):
+        raise ValueError(
+            "BENCH_RECORD_SIZES must contain values from: "
+            + ", ".join(str(size) for size in LATENCY_OPS_BY_RECORD_SIZE)
+        )
     if any(point <= 0 or point > MAX_OCCUPANCY_PERCENT for point in OCCUPANCY_POINTS):
         raise ValueError(f"occupancy points must be between 1 and {MAX_OCCUPANCY_PERCENT}")
     if tuple(sorted(set(OCCUPANCY_POINTS))) != OCCUPANCY_POINTS:
