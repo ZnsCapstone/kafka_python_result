@@ -31,6 +31,9 @@ capture_diagnostics() {
     sudo dmsetup status kafka-zns > "$out/dm-status.txt" 2>&1 || true
     sudo blkzone report /dev/nvme0n1 > "$out/zones.txt" 2>&1 || true
     sudo journalctl -k -b -o short-monotonic > "$out/kernel.txt" 2>&1 || true
+    sudo journalctl -k -b -o short-monotonic --no-pager 2>/dev/null |
+        grep -E 'zns-base: (space diag|gc:|foreground allocation exhausted)' \
+        > "$out/dm-space-gc.txt" || true
     while read -r pid; do
         [[ -n "$pid" ]] || continue
         sudo sh -c "cat /proc/$pid/stack" > "$out/task-$pid-stack.txt" 2>&1 || true
