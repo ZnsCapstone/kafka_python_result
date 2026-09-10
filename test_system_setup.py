@@ -35,6 +35,29 @@ class SystemSetupTest(unittest.TestCase):
             with self.assertRaisesRegex(RuntimeError, "between 1 and 99"):
                 system_setup.zns_logical_sectors()
 
+    @patch.object(system_setup.subprocess, "run")
+    @patch.object(system_setup.os.path, "exists", return_value=True)
+    def test_create_dm_target_passes_gc_module_parameters(self, _exists, run):
+        run.return_value = Mock(returncode=0, stdout="", stderr="")
+        with patch.object(system_setup.cfg, "GC_RESERVE_ZONES", 2), \
+             patch.object(system_setup.cfg, "GC_LOW_WATERMARK", 5), \
+             patch.object(system_setup.cfg, "GC_HIGH_WATERMARK", 6), \
+             patch.object(system_setup, "zns_logical_sectors", return_value=1024):
+            system_setup.create_dm_target()
+
+        insmod = run.call_args_list[0].args[0]
+        self.assertIn("gc_reserved_zones=2", insmod)
+        self.assertIn("gc_low_watermark=5", insmod)
+        self.assertIn("gc_high_watermark=6", insmod)
+
+    def test_create_dm_target_rejects_invalid_gc_watermarks(self):
+        with patch.object(system_setup.cfg, "GC_RESERVE_ZONES", 2), \
+             patch.object(system_setup.cfg, "GC_LOW_WATERMARK", 2), \
+             patch.object(system_setup.cfg, "GC_HIGH_WATERMARK", 3), \
+             patch.object(system_setup.os.path, "exists", return_value=True):
+            with self.assertRaisesRegex(RuntimeError, "LOW_WATERMARK"):
+                system_setup.create_dm_target()
+
     @patch.object(system_setup.time, "sleep")
     @patch.object(system_setup, "run_cmd_quiet")
     def test_topic_retention_is_divided_across_partitions(self, run_cmd, _sleep):

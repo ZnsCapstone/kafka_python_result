@@ -29,7 +29,9 @@ DM_MODULE_PATH = os.environ.get(
     "DM_ZNS_MODULE_PATH", os.path.expanduser("~/dm-zns-base/src/dm-zns-base.ko")
 )
 METADATA_ZONES = 6
-GC_RESERVE_ZONES = 2
+GC_RESERVE_ZONES = int(os.environ.get("DM_GC_RESERVED_ZONES", "2"))
+GC_LOW_WATERMARK = int(os.environ.get("DM_GC_LOW_WATERMARK", "4"))
+GC_HIGH_WATERMARK = int(os.environ.get("DM_GC_HIGH_WATERMARK", "5"))
 # 로그 구조 변환 계층의 GC 이주, WAL, SSTable을 위해 물리 용량의 25%를
 # host-visible 논리 주소 밖에 남긴다. 환경변수로 실험별 조정 가능하다.
 LOGICAL_CAPACITY_PERCENT = int(os.environ.get("DM_LOGICAL_CAPACITY_PERCENT", "75"))

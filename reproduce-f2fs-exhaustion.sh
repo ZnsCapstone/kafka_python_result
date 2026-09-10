@@ -7,6 +7,10 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 DIAG_DELAY="${REPRO_DIAG_AFTER_SECONDS:-600}"
+LOGICAL_PERCENT="${REPRO_LOGICAL_PERCENT:-65}"
+GC_RESERVED_ZONES="${REPRO_GC_RESERVED_ZONES:-2}"
+GC_LOW_WATERMARK="${REPRO_GC_LOW_WATERMARK:-5}"
+GC_HIGH_WATERMARK="${REPRO_GC_HIGH_WATERMARK:-6}"
 STAMP="$(date +%Y%m%d_%H%M%S)"
 DIAG_DIR="$SCRIPT_DIR/results/f2fs_exhaustion_diag_$STAMP"
 WATCHDOG_PID=""
@@ -45,6 +49,9 @@ trap 'capture_diagnostics interrupted; exit 130' INT TERM
 printf 'Focused F2FS exhaustion reproducer\n'
 printf '  Flow        : reset F2FS, then 20/40/60/80%% with 1 KiB Kafka A+B\n'
 printf '  Watchdog    : capture diagnostics after %ss\n' "$DIAG_DELAY"
+printf '  Logical cap : %s%% of physical\n' "$LOGICAL_PERCENT"
+printf '  GC zones    : reserve/low/high=%s/%s/%s\n' \
+    "$GC_RESERVED_ZONES" "$GC_LOW_WATERMARK" "$GC_HIGH_WATERMARK"
 printf '  Diagnostics : %s\n\n' "$DIAG_DIR"
 
 sudo -v
@@ -62,6 +69,10 @@ BENCH_OCCUPANCY_POINTS=20,40,60,80 \
 BENCH_ROUNDS=1 \
 BENCH_SCENARIO_GROUP=baseline \
 BENCH_FAIL_FAST_STALL_SECONDS="${BENCH_FAIL_FAST_STALL_SECONDS:-60}" \
+DM_LOGICAL_CAPACITY_PERCENT="$LOGICAL_PERCENT" \
+DM_GC_RESERVED_ZONES="$GC_RESERVED_ZONES" \
+DM_GC_LOW_WATERMARK="$GC_LOW_WATERMARK" \
+DM_GC_HIGH_WATERMARK="$GC_HIGH_WATERMARK" \
 "$SCRIPT_DIR/run-benchmark.sh" 2
 rc=$?
 set -e

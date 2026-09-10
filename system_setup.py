@@ -41,6 +41,10 @@ def capture_environment():
         ("DM device", cfg.FS_DEVICE),
         ("DM module", cfg.DM_MODULE_PATH),
         ("DM implementation", cfg.DM_IMPLEMENTATION_LABELS[cfg.DM_IMPLEMENTATION]),
+        ("DM logical capacity percent", str(cfg.LOGICAL_CAPACITY_PERCENT)),
+        ("DM GC reserved zones", str(cfg.GC_RESERVE_ZONES)),
+        ("DM GC low watermark", str(cfg.GC_LOW_WATERMARK)),
+        ("DM GC high watermark", str(cfg.GC_HIGH_WATERMARK)),
         ("DM table", run_cmd_quiet(f"sudo dmsetup table {cfg.DM_NAME} 2>&1 || true")),
     ]
     content = "\n".join(f"### {name}\n{value}\n" for name, value in sections)
@@ -139,7 +143,20 @@ def create_dm_target():
             f"dm-zns-base module not found: {cfg.DM_MODULE_PATH}\n"
             "Build dm-zns-base.c into dm-zns-base.ko first, or set DM_ZNS_MODULE_PATH."
         )
-    result = run_cmd_full(f"sudo insmod {cfg.DM_MODULE_PATH}")
+    if cfg.GC_LOW_WATERMARK <= cfg.GC_RESERVE_ZONES:
+        raise RuntimeError("DM_GC_LOW_WATERMARK must be greater than DM_GC_RESERVED_ZONES")
+    if cfg.GC_HIGH_WATERMARK <= cfg.GC_LOW_WATERMARK:
+        raise RuntimeError("DM_GC_HIGH_WATERMARK must be greater than DM_GC_LOW_WATERMARK")
+    result = subprocess.run(
+        [
+            "sudo", "insmod", cfg.DM_MODULE_PATH,
+            f"gc_reserved_zones={cfg.GC_RESERVE_ZONES}",
+            f"gc_low_watermark={cfg.GC_LOW_WATERMARK}",
+            f"gc_high_watermark={cfg.GC_HIGH_WATERMARK}",
+        ],
+        capture_output=True,
+        text=True,
+    )
     if result.returncode != 0:
         raise RuntimeError(f"insmod failed:\n{result.stdout}\n{result.stderr}")
     logical_sectors = zns_logical_sectors()
@@ -155,7 +172,9 @@ def create_dm_target():
     print(
         f"[DM] Created {cfg.FS_DEVICE}: {logical_sectors} sectors "
         f"({logical_sectors * 512 / 1024**3:.2f} GiB, "
-        f"logical={cfg.LOGICAL_CAPACITY_PERCENT}% max)"
+        f"logical={cfg.LOGICAL_CAPACITY_PERCENT}% max, "
+        f"GC reserve/low/high={cfg.GC_RESERVE_ZONES}/"
+        f"{cfg.GC_LOW_WATERMARK}/{cfg.GC_HIGH_WATERMARK})"
     )
 
 
