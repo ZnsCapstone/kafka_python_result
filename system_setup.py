@@ -215,8 +215,9 @@ def setup_filesystem(fs_type):
         raise RuntimeError(f"mkfs failed:\n{result.stdout}\n{result.stderr}")
 
     run_cmd_quiet(f"sudo mkdir -p {cfg.MOUNT_POINT}")
+    discard_option = "discard" if fs_type == "f2fs" and cfg.F2FS_DISCARD else "nodiscard"
     result = run_cmd_full(
-        f"sudo mount -o noatime,nodiratime,nodiscard {cfg.FS_DEVICE} {cfg.MOUNT_POINT}"
+        f"sudo mount -o noatime,nodiratime,{discard_option} {cfg.FS_DEVICE} {cfg.MOUNT_POINT}"
     )
     if result.returncode != 0:
         raise RuntimeError(f"mount failed:\n{result.stdout}\n{result.stderr}")

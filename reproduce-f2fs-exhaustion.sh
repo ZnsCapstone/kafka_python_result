@@ -55,6 +55,7 @@ printf '  Watchdog    : capture diagnostics after %ss\n' "$DIAG_DELAY"
 printf '  Logical cap : %s%% of physical\n' "$LOGICAL_PERCENT"
 printf '  GC zones    : reserve/low/high=%s/%s/%s\n' \
     "$GC_RESERVED_ZONES" "$GC_LOW_WATERMARK" "$GC_HIGH_WATERMARK"
+printf '  F2FS discard: enabled (DM tombstone experiment)\n'
 printf '  Diagnostics : %s\n\n' "$DIAG_DIR"
 
 sudo -v
@@ -72,6 +73,7 @@ BENCH_OCCUPANCY_POINTS=20,40,60,80 \
 BENCH_ROUNDS=1 \
 BENCH_SCENARIO_GROUP=baseline \
 BENCH_FAIL_FAST_STALL_SECONDS="${BENCH_FAIL_FAST_STALL_SECONDS:-60}" \
+BENCH_F2FS_DISCARD=1 \
 DM_LOGICAL_CAPACITY_PERCENT="$LOGICAL_PERCENT" \
 DM_GC_RESERVED_ZONES="$GC_RESERVED_ZONES" \
 DM_GC_LOW_WATERMARK="$GC_LOW_WATERMARK" \
