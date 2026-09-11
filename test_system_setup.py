@@ -8,6 +8,28 @@ import system_setup
 
 
 class SystemSetupTest(unittest.TestCase):
+    @patch.object(system_setup.time, "sleep")
+    @patch.object(system_setup, "remove_dm_stack")
+    @patch.object(system_setup, "unmount_log_device")
+    @patch.object(system_setup, "stop_stale_kafka_processes")
+    @patch.object(system_setup, "create_dm_target")
+    @patch.object(system_setup, "run_cmd_quiet", return_value="")
+    @patch.object(system_setup, "run_cmd_full")
+    def test_ext4_discard_mount_option(
+            self, run_full, _run_quiet, _create_dm, _stop_kafka,
+            _unmount, _remove_dm, _sleep):
+        run_full.return_value = Mock(returncode=0, stdout="", stderr="")
+        with patch.object(system_setup.cfg, "FILESYSTEMS", ("ext4",)), \
+             patch.object(system_setup.cfg, "EXT4_DISCARD", True), \
+             patch.object(system_setup.cfg, "SEPARATE_METADATA_DIR", False):
+            system_setup.setup_filesystem("ext4")
+
+        commands = [call.args[0] for call in run_full.call_args_list]
+        self.assertTrue(any(
+            "mount -o noatime,nodiratime,discard " in command
+            for command in commands
+        ))
+
     @patch.object(system_setup, "run_cmd_quiet", return_value="host-managed")
     def test_dynamic_logical_size_excludes_gc_reserve(self, _run_cmd):
         geometry = [io.StringIO("4194304\n"), io.StringIO("16\n")]
