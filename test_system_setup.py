@@ -64,6 +64,7 @@ class SystemSetupTest(unittest.TestCase):
         with patch.object(system_setup.cfg, "GC_RESERVE_ZONES", 2), \
              patch.object(system_setup.cfg, "GC_LOW_WATERMARK", 5), \
              patch.object(system_setup.cfg, "GC_HIGH_WATERMARK", 6), \
+             patch.object(system_setup.cfg, "GC_DIAG_BUDGET", 0), \
              patch.object(system_setup, "zns_logical_sectors", return_value=1024):
             system_setup.create_dm_target()
 
@@ -71,6 +72,16 @@ class SystemSetupTest(unittest.TestCase):
         self.assertIn("gc_reserved_zones=2", insmod)
         self.assertIn("gc_low_watermark=5", insmod)
         self.assertIn("gc_high_watermark=6", insmod)
+        self.assertFalse(any(arg.startswith("gc_diag_budget=") for arg in insmod))
+
+    @patch.object(system_setup.subprocess, "run")
+    @patch.object(system_setup.os.path, "exists", return_value=True)
+    def test_create_dm_target_enables_opt_in_gc_audit(self, _exists, run):
+        run.return_value = Mock(returncode=0, stdout="", stderr="")
+        with patch.object(system_setup.cfg, "GC_DIAG_BUDGET", 8), \
+             patch.object(system_setup, "zns_logical_sectors", return_value=1024):
+            system_setup.create_dm_target()
+        self.assertIn("gc_diag_budget=8", run.call_args_list[0].args[0])
 
     def test_create_dm_target_rejects_invalid_gc_watermarks(self):
         with patch.object(system_setup.cfg, "GC_RESERVE_ZONES", 2), \

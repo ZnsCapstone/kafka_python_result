@@ -153,6 +153,7 @@ def create_dm_target():
             f"gc_reserved_zones={cfg.GC_RESERVE_ZONES}",
             f"gc_low_watermark={cfg.GC_LOW_WATERMARK}",
             f"gc_high_watermark={cfg.GC_HIGH_WATERMARK}",
+            *([f"gc_diag_budget={cfg.GC_DIAG_BUDGET}"] if cfg.GC_DIAG_BUDGET else []),
         ],
         capture_output=True,
         text=True,
