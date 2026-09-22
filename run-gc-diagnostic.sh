@@ -15,6 +15,7 @@ export BENCH_LONG_DURATION_SECONDS=${DIAG_DURATION_SECONDS:-600}
 export BENCH_RETENTION_SEGMENT_BYTES=134217728 BENCH_RETENTION_SEGMENT_MS=60000
 export DM_GC_LOW_WATERMARK=4 DM_GC_HIGH_WATERMARK=5 DM_GC_RESERVED_ZONES=2
 export DM_GC_DIAG_BUDGET=${DM_GC_DIAG_BUDGET:-8}
+export BENCH_INTEGRITY_DIAG=1
 module=${DM_ZNS_MODULE_PATH:-$HOME/dm-zns-base/src/dm-zns-base.ko}
 modinfo -p "$module" | grep -q '^gc_diag_budget:' || {
     echo 'Build the diagnostic dm-zns-base module first.' >&2; exit 2;
@@ -29,7 +30,11 @@ finish() {
     sudo journalctl -k -b --since "$start" --until "$(date --iso-8601=seconds)" \
         -o short-iso-precise --no-pager > "$diag_dir/kernel.log"
     journal_rc=$?
-    printf 'benchmark_exit=%s journal_exit=%s\n' "$rc" "$journal_rc" > "$diag_dir/status.txt"
+    # Copy rotations as well; they may include earlier runs. Use timestamps/run ID.
+    mkdir -p "$diag_dir/broker-logs"
+    sudo cp -a "$HOME/kafka-4.2.0-src/logs/." "$diag_dir/broker-logs/"
+    broker_rc=$?
+    printf 'benchmark_exit=%s journal_exit=%s broker_copy_exit=%s\n' "$rc" "$journal_rc" "$broker_rc" > "$diag_dir/status.txt"
     echo "Diagnostics: $diag_dir (kernel log collection status=$journal_rc)"
     exit "$rc"
 }

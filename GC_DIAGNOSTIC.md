@@ -47,6 +47,37 @@ checkpoint and compaction logs. Audits do not change victim selection, mappings
 or reserve policy, but allocate memory and consume CPU: use these runs for
 diagnosis, not published latency comparisons.
 
-This instrumentation does not yet establish whether ext4 excess consumption
-comes from Kafka offset replay, benchmark accounting, or stale storage reads.
-Preserve that run's broker logs and raw benchmark output as separate evidence.
+## ext4 excess-consumption diagnosis
+
+Build the accompanying Kafka-benchmark WIP before running:
+
+```bash
+cd ~/Kafka-benchmark
+./gradlew test jar
+cd ~/kafka_python_result
+DIAG_DURATION_SECONDS=3600 bash run-gc-diagnostic.sh ext4 75 0
+```
+
+The wrapper exports BENCH_INTEGRITY_DIAG=1. Confirm `[IntegrityDiag] run=...`
+appears before measurement; an old JAR silently ignores the environment variable.
+Every produced record carries a run UUID header. Consumer diagnostics retain
+partition offset and producer sequence high-water marks, print at most 64
+anomalous records with UTC timestamps, and print uncapped aggregate counts.
+Normal runs without the environment variable do not add headers or audit records.
+
+- offset_back: an offset at/below the partition high water was delivered again.
+- sequence_back with increasing offsets: sequence reuse or reordering at new
+  offsets; it is not by itself proof that the storage layer duplicated data.
+- foreign_run/missing_run: records not identified as belonging to this run.
+  These records do not update the current run's sequence high water.
+
+High-water checks are not an exact unique-record set and cannot distinguish
+every delayed record from a duplicate. Existing validity counters are unchanged.
+The extra header changes record overhead, so diagnostic throughput is not directly
+comparable with the uninstrumented baseline.
+
+At exit the wrapper also copies the broker logs directory, including rotations,
+to broker-logs/ (potentially large, root-owned files). It can include earlier
+runs; correlate timestamps. Check broker_copy_exit in status.txt. Archive rotation
+can still discard old events during long runs. A missing diagnostic start marker,
+failed collection, or absent logs must not be treated as evidence of no anomaly.
