@@ -22,12 +22,12 @@ modinfo -p "$module" | grep -q '^gc_diag_budget:' || {
 }
 sudo -v
 diag_dir=$(mktemp -d "$PWD/results-gc-diag.XXXXXXXX")
-start=$(date --iso-8601=seconds)
+start=$(date -u '+%Y-%m-%d %H:%M:%S UTC')
 finish() {
     rc=$?
     trap - EXIT
     set +e
-    sudo journalctl -k -b --since "$start" --until "$(date --iso-8601=seconds)" \
+    sudo journalctl -k -b --since "$start" --until "$(date -u '+%Y-%m-%d %H:%M:%S UTC')" \
         -o short-iso-precise --no-pager > "$diag_dir/kernel.log"
     journal_rc=$?
     # Copy rotations as well; they may include earlier runs. Use timestamps/run ID.
