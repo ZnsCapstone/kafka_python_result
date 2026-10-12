@@ -154,6 +154,7 @@ def parse_java_metrics(output):
     metrics = {
         "total_requests": 0, "avg_ms": 0.0, "p50_ms": 0.0, "p90_ms": 0.0,
         "p99_ms": 0.0, "p999_ms": 0.0, "max_ms": 0.0, "achieved_ops": 0.0,
+        "p95_ms": 0.0,
         "achieved_pct": 0.0, "total_sent": 0, "send_errors": 0,
         "drain_time_sec": 0.0, "drain_completed": False,
         "sent_requests": 0, "sent_ops": 0.0,
@@ -180,6 +181,7 @@ def parse_java_metrics(output):
         "avg_ms": (r"Average\s*:\s*([\d.]+)\s*ms", float),
         "p50_ms": (r"p50.*?:\s*([\d.]+)\s*ms", float),
         "p90_ms": (r"p90\s*:\s*([\d.]+)\s*ms", float),
+        "p95_ms": (r"p95\s*:\s*([\d.]+)\s*ms", float),
         "p99_ms": (r"p99\s*:\s*([\d.]+)\s*ms", float),
         "p999_ms": (r"p999\s*:\s*([\d.]+)\s*ms", float),
         "max_ms": (r"Max\s*:\s*([\d.]+)\s*ms", float),

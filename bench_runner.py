@@ -208,8 +208,10 @@ def run(argv=None):
         return 2
 
     cfg.initialize_result_directories()
-    print(f"[Config] DM implementation: {cfg.DM_IMPLEMENTATION_LABELS[cfg.DM_IMPLEMENTATION]}")
-    print(f"[Config] DM logical capacity: at most {cfg.LOGICAL_CAPACITY_PERCENT}% of physical")
+    print(f"[Config] Storage backend: {cfg.STORAGE_BACKEND}")
+    if cfg.STORAGE_BACKEND == "dm-zns":
+        print(f"[Config] DM implementation: {cfg.DM_IMPLEMENTATION_LABELS[cfg.DM_IMPLEMENTATION]}")
+        print(f"[Config] DM logical capacity: at most {cfg.LOGICAL_CAPACITY_PERCENT}% of physical")
     print(f"[Config] Benchmark profile: {cfg.ACTIVE_PROFILE}")
     print(f"[Config] Scenario group: {cfg.ACTIVE_SCENARIO_GROUP}")
     print(f"[Config] Workload mode: {cfg.ACTIVE_WORKLOAD_MODE}")
@@ -246,7 +248,8 @@ def run(argv=None):
     finally:
         control_kafka("stop")
         unmount_log_device(strict=False)
-        remove_dm_stack(strict=False)
+        if cfg.STORAGE_BACKEND == "dm-zns":
+            remove_dm_stack(strict=False)
         run_cmd_quiet("sudo sync")
         if completed:
             print(f"\n{'=' * 80}\n[Finish] All {rounds} rounds completed.")

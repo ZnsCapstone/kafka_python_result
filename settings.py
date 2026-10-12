@@ -23,8 +23,17 @@ EXPERIMENT_KRAFT_CONFIG = f"{ENV_DIR}/server-femu.properties"
 
 RAW_ZNS_DEVICE = "/dev/nvme0n1"
 RAW_DEVICE_BASENAME = os.path.basename(os.path.realpath(RAW_ZNS_DEVICE))
+STORAGE_BACKEND = os.environ.get("BENCH_STORAGE_BACKEND", "dm-zns")
+if STORAGE_BACKEND not in ("dm-zns", "cns"):
+    raise ValueError("BENCH_STORAGE_BACKEND must be dm-zns or cns")
+CNS_EXPECTED_MODEL = os.environ.get(
+    "BENCH_CNS_EXPECTED_MODEL", "FEMU BlackBox-SSD Controller"
+)
+CNS_EXPECTED_SECTORS = int(
+    os.environ.get("BENCH_CNS_EXPECTED_SECTORS", str(24 * 1024**3 // 512))
+)
 DM_NAME = "kafka-zns"
-FS_DEVICE = f"/dev/mapper/{DM_NAME}"
+FS_DEVICE = RAW_ZNS_DEVICE if STORAGE_BACKEND == "cns" else f"/dev/mapper/{DM_NAME}"
 DM_MODULE_PATH = os.environ.get(
     "DM_ZNS_MODULE_PATH", os.path.expanduser("~/dm-zns-base/src/dm-zns-base.ko")
 )

@@ -9,6 +9,31 @@ import system_setup
 
 class SystemSetupTest(unittest.TestCase):
     @patch.object(system_setup.time, "sleep")
+    @patch.object(system_setup, "validate_cns_device")
+    @patch.object(system_setup, "remove_dm_stack")
+    @patch.object(system_setup, "unmount_log_device")
+    @patch.object(system_setup, "stop_stale_kafka_processes")
+    @patch.object(system_setup, "create_dm_target")
+    @patch.object(system_setup, "run_cmd_quiet", return_value="")
+    @patch.object(system_setup, "run_cmd_full")
+    def test_cns_setup_skips_zns_and_dm_operations(
+            self, run_full, _run_quiet, create_dm, _stop_kafka,
+            _unmount, remove_dm, validate_cns, _sleep):
+        run_full.return_value = Mock(returncode=0, stdout="", stderr="")
+        with patch.object(system_setup.cfg, "FILESYSTEMS", ("ext4",)), \
+             patch.object(system_setup.cfg, "STORAGE_BACKEND", "cns"), \
+             patch.object(system_setup.cfg, "FS_DEVICE", "/dev/nvme0n1"), \
+             patch.object(system_setup.cfg, "SEPARATE_METADATA_DIR", False):
+            system_setup.setup_filesystem("ext4")
+
+        commands = [call.args[0] for call in run_full.call_args_list]
+        validate_cns.assert_called_once_with()
+        remove_dm.assert_not_called()
+        create_dm.assert_not_called()
+        self.assertFalse(any("blkzone" in command for command in commands))
+        self.assertTrue(any("wipefs -a /dev/nvme0n1" in command for command in commands))
+
+    @patch.object(system_setup.time, "sleep")
     @patch.object(system_setup, "remove_dm_stack")
     @patch.object(system_setup, "unmount_log_device")
     @patch.object(system_setup, "stop_stale_kafka_processes")

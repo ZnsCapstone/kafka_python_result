@@ -20,6 +20,13 @@ def capture_environment():
         ("Disk (lsblk)", run_cmd_quiet("lsblk")),
         ("Disk (df -h)", run_cmd_quiet("df -h")),
         ("Kernel cmdline", run_cmd_quiet("cat /proc/cmdline")),
+        ("NVMe I/O timeout", run_cmd_quiet(
+            "cat /sys/module/nvme_core/parameters/io_timeout"
+        )),
+        ("FEMU commit (launcher)", os.environ.get("BENCH_FEMU_COMMIT", "unknown")),
+        ("FEMU binary SHA-256 (launcher)", os.environ.get(
+            "BENCH_FEMU_BINARY_SHA256", "unknown"
+        )),
         ("vm.dirty_ratio", run_cmd_quiet("sysctl vm.dirty_ratio")),
         ("vm.dirty_background_ratio", run_cmd_quiet("sysctl vm.dirty_background_ratio")),
         ("vm.swappiness", run_cmd_quiet("sysctl vm.swappiness")),
@@ -37,16 +44,33 @@ def capture_environment():
         ("Occupancy points", str(cfg.OCCUPANCY_POINTS)),
         ("Kafka path", cfg.KAFKA_PATH),
         ("Kafka config", run_cmd_quiet(f"cat {cfg.EXPERIMENT_KRAFT_CONFIG} | head -50")),
-        ("Raw ZNS device", cfg.RAW_ZNS_DEVICE),
-        ("DM device", cfg.FS_DEVICE),
-        ("DM module", cfg.DM_MODULE_PATH),
-        ("DM implementation", cfg.DM_IMPLEMENTATION_LABELS[cfg.DM_IMPLEMENTATION]),
-        ("DM logical capacity percent", str(cfg.LOGICAL_CAPACITY_PERCENT)),
-        ("DM GC reserved zones", str(cfg.GC_RESERVE_ZONES)),
-        ("DM GC low watermark", str(cfg.GC_LOW_WATERMARK)),
-        ("DM GC high watermark", str(cfg.GC_HIGH_WATERMARK)),
-        ("DM table", run_cmd_quiet(f"sudo dmsetup table {cfg.DM_NAME} 2>&1 || true")),
+        ("Storage backend", cfg.STORAGE_BACKEND),
+        ("Raw FEMU device", cfg.RAW_ZNS_DEVICE),
+        ("Filesystem device", cfg.FS_DEVICE),
     ]
+    if cfg.STORAGE_BACKEND == "dm-zns":
+        sections.extend([
+            ("DM module", cfg.DM_MODULE_PATH),
+            ("DM implementation", cfg.DM_IMPLEMENTATION_LABELS[cfg.DM_IMPLEMENTATION]),
+            ("DM logical capacity percent", str(cfg.LOGICAL_CAPACITY_PERCENT)),
+            ("DM GC reserved zones", str(cfg.GC_RESERVE_ZONES)),
+            ("DM GC low watermark", str(cfg.GC_LOW_WATERMARK)),
+            ("DM GC high watermark", str(cfg.GC_HIGH_WATERMARK)),
+            ("DM table", run_cmd_quiet(
+                f"sudo dmsetup table {cfg.DM_NAME} 2>&1 || true"
+            )),
+        ])
+    else:
+        sections.extend([
+            ("CNS expected model", cfg.CNS_EXPECTED_MODEL),
+            ("CNS expected sectors", str(cfg.CNS_EXPECTED_SECTORS)),
+            ("CNS actual model", run_cmd_quiet(
+                f"cat /sys/block/{cfg.RAW_DEVICE_BASENAME}/device/model"
+            )),
+            ("CNS actual sectors", run_cmd_quiet(
+                f"cat /sys/block/{cfg.RAW_DEVICE_BASENAME}/size"
+            )),
+        ])
     content = "\n".join(f"### {name}\n{value}\n" for name, value in sections)
     path = f"{cfg.ENV_DIR}/system_info.txt"
     write_text(path, content)
@@ -96,6 +120,35 @@ def remove_dm_stack(strict=True):
             raise RuntimeError(message)
         print(f"[Warn] {message}")
 
+
+def validate_cns_device():
+    """Fail closed before destroying the conventional FEMU namespace."""
+    if cfg.FS_DEVICE != cfg.RAW_ZNS_DEVICE or cfg.RAW_ZNS_DEVICE != "/dev/nvme0n1":
+        raise RuntimeError("CNS backend is restricted to /dev/nvme0n1")
+    sysfs = f"/sys/block/{cfg.RAW_DEVICE_BASENAME}"
+    try:
+        with open(f"{sysfs}/queue/zoned", encoding="utf-8") as file:
+            zoned = file.read().strip()
+        with open(f"{sysfs}/device/model", encoding="utf-8") as file:
+            model = file.read().strip()
+        with open(f"{sysfs}/size", encoding="utf-8") as file:
+            sectors = int(file.read().strip())
+    except (OSError, ValueError) as exc:
+        raise RuntimeError(f"cannot identify CNS device {cfg.RAW_ZNS_DEVICE}: {exc}") from exc
+    if zoned != "none":
+        raise RuntimeError(f"CNS device must be non-zoned (zoned={zoned!r})")
+    if model != cfg.CNS_EXPECTED_MODEL:
+        raise RuntimeError(
+            f"unexpected CNS model {model!r}; expected {cfg.CNS_EXPECTED_MODEL!r}"
+        )
+    if sectors != cfg.CNS_EXPECTED_SECTORS:
+        raise RuntimeError(
+            f"unexpected CNS size {sectors} sectors; expected {cfg.CNS_EXPECTED_SECTORS}"
+        )
+    print(
+        f"[CNS] Verified {cfg.RAW_ZNS_DEVICE}: {model}, "
+        f"{sectors * 512 / 1024**3:.2f} GiB, zoned={zoned}"
+    )
 
 def zns_logical_sectors():
     zoned = run_cmd_quiet(f"cat /sys/block/{cfg.RAW_DEVICE_BASENAME}/queue/zoned")
@@ -147,14 +200,29 @@ def create_dm_target():
         raise RuntimeError("DM_GC_LOW_WATERMARK must be greater than DM_GC_RESERVED_ZONES")
     if cfg.GC_HIGH_WATERMARK <= cfg.GC_LOW_WATERMARK:
         raise RuntimeError("DM_GC_HIGH_WATERMARK must be greater than DM_GC_LOW_WATERMARK")
-    result = subprocess.run(
-        [
-            "sudo", "insmod", cfg.DM_MODULE_PATH,
+    module_args = [
+        "sudo", "insmod", cfg.DM_MODULE_PATH,
+        f"gc_low_watermark={cfg.GC_LOW_WATERMARK}",
+    ]
+    # Older settings.py versions do not expose the dynamic-only diagnostic knob.
+    diag_budget = getattr(cfg, "GC_DIAG_BUDGET", 0)
+    if cfg.DM_IMPLEMENTATION == "fixed":
+        if cfg.GC_RESERVE_ZONES != 2:
+            raise RuntimeError("fixed implementation requires DM_GC_RESERVED_ZONES=2")
+        if diag_budget:
+            raise RuntimeError("fixed implementation does not support gc_diag_budget")
+        module_args.append(f"gc_target_free_zones={cfg.GC_HIGH_WATERMARK}")
+    elif cfg.DM_IMPLEMENTATION == "dynamic":
+        module_args.extend([
             f"gc_reserved_zones={cfg.GC_RESERVE_ZONES}",
-            f"gc_low_watermark={cfg.GC_LOW_WATERMARK}",
             f"gc_high_watermark={cfg.GC_HIGH_WATERMARK}",
-            *([f"gc_diag_budget={cfg.GC_DIAG_BUDGET}"] if cfg.GC_DIAG_BUDGET else []),
-        ],
+        ])
+        if diag_budget:
+            module_args.append(f"gc_diag_budget={diag_budget}")
+    else:
+        raise RuntimeError(f"Unsupported DM implementation: {cfg.DM_IMPLEMENTATION}")
+    result = subprocess.run(
+        module_args,
         capture_output=True,
         text=True,
     )
@@ -194,16 +262,18 @@ def stop_stale_kafka_processes():
 def setup_filesystem(fs_type):
     if fs_type not in cfg.FILESYSTEMS:
         raise ValueError(f"Unsupported filesystem: {fs_type}")
-    print(f"\n[Setup] Resetting FEMU ZNS and mounting {fs_type} through {cfg.DM_NAME} ...")
+    print(f"\n[Setup] Reinitializing {cfg.STORAGE_BACKEND} and mounting {fs_type} ...")
     stop_stale_kafka_processes()
     time.sleep(2)
     unmount_log_device()
-    remove_dm_stack()
-
-    result = run_cmd_full(f"sudo blkzone reset {cfg.RAW_ZNS_DEVICE}")
-    if result.returncode != 0:
-        raise RuntimeError(f"zone reset failed:\n{result.stdout}\n{result.stderr}")
-    create_dm_target()
+    if cfg.STORAGE_BACKEND == "cns":
+        validate_cns_device()
+    else:
+        remove_dm_stack()
+        result = run_cmd_full(f"sudo blkzone reset {cfg.RAW_ZNS_DEVICE}")
+        if result.returncode != 0:
+            raise RuntimeError(f"zone reset failed:\n{result.stdout}\n{result.stderr}")
+        create_dm_target()
     result = run_cmd_full(f"sudo wipefs -a {cfg.FS_DEVICE}")
     if result.returncode != 0:
         raise RuntimeError(f"wipefs failed:\n{result.stdout}\n{result.stderr}")
@@ -229,7 +299,7 @@ def setup_filesystem(fs_type):
     run_cmd_quiet(f"sudo rm -rf {cfg.MOUNT_POINT}/lost+found")
     run_cmd_quiet(f"sudo chmod 777 {cfg.MOUNT_POINT}")
     print(run_cmd_quiet(f"lsblk {cfg.FS_DEVICE}"))
-    print(run_cmd_quiet(f"mount | grep {cfg.DM_NAME}"))
+    print(run_cmd_quiet(f"findmnt -no SOURCE,FSTYPE,OPTIONS {cfg.MOUNT_POINT}"))
     run_cmd_quiet("sudo sync")
     run_cmd_quiet("echo 3 | sudo tee /proc/sys/vm/drop_caches")
     if cfg.SEPARATE_METADATA_DIR:
